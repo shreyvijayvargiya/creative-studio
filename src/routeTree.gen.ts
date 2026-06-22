@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GridIndexRouteImport } from './routes/grid/index'
+import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GridIndexRoute = GridIndexRouteImport.update({
+  id: '/grid/',
+  path: '/grid/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
+  id: '/pdf/view/$filename',
+  path: '/pdf/view/$filename',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/grid/': typeof GridIndexRoute
+  '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/grid': typeof GridIndexRoute
+  '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/grid/': typeof GridIndexRoute
+  '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/grid/' | '/pdf/view/$filename'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/grid' | '/pdf/view/$filename'
+  id: '__root__' | '/' | '/grid/' | '/pdf/view/$filename'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GridIndexRoute: typeof GridIndexRoute
+  PdfViewFilenameRoute: typeof PdfViewFilenameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/grid/': {
+      id: '/grid/'
+      path: '/grid'
+      fullPath: '/grid/'
+      preLoaderRoute: typeof GridIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pdf/view/$filename': {
+      id: '/pdf/view/$filename'
+      path: '/pdf/view/$filename'
+      fullPath: '/pdf/view/$filename'
+      preLoaderRoute: typeof PdfViewFilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GridIndexRoute: GridIndexRoute,
+  PdfViewFilenameRoute: PdfViewFilenameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
