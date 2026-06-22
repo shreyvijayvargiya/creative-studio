@@ -55,13 +55,7 @@ export const settingsNavItems: NavItem[] = [
     badge: 'Soon',
     phaseTwo: true,
   },
-  {
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings',
-    badge: 'Soon',
-    phaseTwo: true,
-  },
+  { label: 'Settings', icon: Settings, href: '/settings' },
 ]
 
 export function isNavItemActive(pathname: string, href: string): boolean {

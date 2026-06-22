@@ -1,3 +1,5 @@
+import { AuthProvider } from '#/components/auth/auth-provider'
+import { LoginModalProvider } from '#/components/auth/login-modal-provider'
 import { DesktopSidebar } from '#/components/layout/sidebar'
 import { ThemeProvider } from '#/components/layout/theme-provider'
 import { ThemeToaster } from '#/components/layout/theme-toaster'
@@ -10,14 +12,18 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Topbar />
-        <DesktopSidebar />
-        <main className="mt-14 min-h-[calc(100vh-3.5rem)] p-6 lg:ml-60">
-          {children}
-        </main>
-      </div>
-      <ThemeToaster />
+      <AuthProvider>
+        <LoginModalProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <Topbar />
+            <DesktopSidebar />
+            <main className="mt-14 min-h-[calc(100vh-3.5rem)] p-6 lg:ml-60">
+              {children}
+            </main>
+          </div>
+          <ThemeToaster />
+        </LoginModalProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

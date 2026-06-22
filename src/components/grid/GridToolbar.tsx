@@ -60,8 +60,6 @@ export function GridToolbar({
             </TooltipContent>
           ) : null}
         </Tooltip>
-
-        <Badge variant="secondary">{rowCount} rows</Badge>
       </div>
     </TooltipProvider>
   )

@@ -19,6 +19,7 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 
 const IndexRoute = IndexRouteImport.update({
@@ -71,6 +72,11 @@ const DocumentsIdRoute = DocumentsIdRouteImport.update({
   path: '/documents/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
   id: '/pdf/view/$filename',
   path: '/pdf/view/$filename',
@@ -79,6 +85,7 @@ const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth/callback'
     | '/documents/$id'
     | '/documents/'
     | '/grid/'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth/callback'
     | '/documents/$id'
     | '/documents'
     | '/grid'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth/callback'
     | '/documents/$id'
     | '/documents/'
     | '/grid/'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
   DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pdf/view/$filename': {
       id: '/pdf/view/$filename'
       path: '/pdf/view/$filename'
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,
   DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,

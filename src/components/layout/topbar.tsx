@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Bell, Menu, Search } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { Bell, LogIn, LogOut, Menu, Search, Settings } from 'lucide-react'
 
+import { useAuth } from '#/components/auth/auth-provider'
+import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { SearchCommand } from '#/components/layout/search-command'
 import { SidebarContent } from '#/components/layout/sidebar'
-import { Avatar, AvatarFallback } from '#/components/ui/avatar'
+import {
+  getUserAvatarUrl,
+  getUserInitials,
+} from '#/lib/auth/user'
+import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar'
 import { Button } from '#/components/ui/button'
 import {
   DropdownMenu,
@@ -15,6 +22,8 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '#/components/ui/sheet'
 
 export function Topbar() {
+  const { user, profile, isAuthenticated, signOut } = useAuth()
+  const { openLoginModal } = useLoginModal()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
@@ -29,6 +38,9 @@ export function Topbar() {
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
+
+  const avatarUrl = user ? getUserAvatarUrl(user, profile) : undefined
+  const avatarInitials = user ? getUserInitials(user, profile) : 'U'
 
   return (
     <>
@@ -91,21 +103,42 @@ export function Topbar() {
                 className="relative size-9 rounded-full p-0"
               >
                 <Avatar className="size-8">
+                  {avatarUrl ? (
+                    <AvatarImage src={avatarUrl} alt="Account avatar" />
+                  ) : null}
                   <AvatarFallback className="bg-primary text-xs text-primary-foreground">
-                    RJ
+                    {avatarInitials}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem>Rajat</DropdownMenuItem>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {/* TODO Phase 2: add auth check here */}
-              <DropdownMenuItem disabled className="text-muted-foreground">
-                Sign Out
-              </DropdownMenuItem>
+              {isAuthenticated ? (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="flex items-center gap-2">
+                      <Settings className="size-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex items-center gap-2"
+                    onClick={() => void signOut()}
+                  >
+                    <LogOut className="size-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem
+                  className="flex items-center gap-2"
+                  onClick={openLoginModal}
+                >
+                  <LogIn className="size-4" />
+                  Login
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
