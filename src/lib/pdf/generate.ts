@@ -5,7 +5,7 @@ import type { BudgetRow } from '#/types'
 
 export async function renderFinancialPdfToBuffer(
   rows: BudgetRow[],
-  signature: string,
+  signature?: string,
 ): Promise<Buffer> {
   const document = createFinancialPdfDocument({ rows, signature })
   return renderToBuffer(document)

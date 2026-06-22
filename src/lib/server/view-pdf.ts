@@ -38,9 +38,7 @@ export const viewPdf = createServerFn({ method: 'GET' })
         .createSignedUrl(record.storage_path, 300)
 
     if (signedUrlError) {
-      throw new Error(
-        `Failed to create signed URL: ${signedUrlError.message}`,
-      )
+      throw new Error(`Failed to create signed URL: ${signedUrlError.message}`)
     }
 
     if (!signedUrlData.signedUrl) {

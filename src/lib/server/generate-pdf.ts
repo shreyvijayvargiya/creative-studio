@@ -7,19 +7,22 @@ import { getSupabaseAdmin } from '#/lib/supabase/admin'
 import { withCalculatedNetIncome } from '#/types'
 
 const budgetRowSchema = z.object({
+  id: z.string(),
   category: z.string(),
   amount: z.number(),
   taxRate: z.number(),
   notes: z.string(),
 })
 
-const generatePdfInputSchema = z.object({
-  rows: z.array(budgetRowSchema).min(1),
-  signature: z.string().min(1),
-})
-
 export const generatePdf = createServerFn({ method: 'POST' })
-  .validator((data: unknown) => generatePdfInputSchema.parse(data))
+  .validator((data: unknown) =>
+    z
+      .object({
+        rows: z.array(budgetRowSchema).min(1),
+        signature: z.string().min(1),
+      })
+      .parse(data),
+  )
   .handler(async ({ data }) => {
     // TODO Phase 2: add auth check here
 
@@ -46,6 +49,8 @@ export const generatePdf = createServerFn({ method: 'POST' })
     const { error: insertError } = await supabaseAdmin
       .from('documents')
       .insert({
+        name: `Financial Summary — ${new Date().toLocaleDateString('en-AU')}`,
+        kind: 'pdf',
         storage_path: storagePath,
         share_pin: pin,
       })

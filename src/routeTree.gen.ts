@@ -10,7 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as StorageIndexRouteImport } from './routes/storage/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as PdfIndexRouteImport } from './routes/pdf/index'
+import { Route as MessagesIndexRouteImport } from './routes/messages/index'
+import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
+import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
+import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +26,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersIndexRoute = UsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StorageIndexRoute = StorageIndexRouteImport.update({
+  id: '/storage/',
+  path: '/storage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PdfIndexRoute = PdfIndexRouteImport.update({
+  id: '/pdf/',
+  path: '/pdf/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesIndexRoute = MessagesIndexRouteImport.update({
+  id: '/messages/',
+  path: '/messages/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvoicesIndexRoute = InvoicesIndexRouteImport.update({
+  id: '/invoices/',
+  path: '/invoices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GridIndexRoute = GridIndexRouteImport.update({
   id: '/grid/',
   path: '/grid/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentsIndexRoute = DocumentsIndexRouteImport.update({
+  id: '/documents/',
+  path: '/documents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentsIdRoute = DocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
@@ -31,31 +79,97 @@ const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/documents/$id': typeof DocumentsIdRoute
+  '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
+  '/invoices/': typeof InvoicesIndexRoute
+  '/messages/': typeof MessagesIndexRoute
+  '/pdf/': typeof PdfIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/storage/': typeof StorageIndexRoute
+  '/users/': typeof UsersIndexRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/documents/$id': typeof DocumentsIdRoute
+  '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
+  '/invoices': typeof InvoicesIndexRoute
+  '/messages': typeof MessagesIndexRoute
+  '/pdf': typeof PdfIndexRoute
+  '/settings': typeof SettingsIndexRoute
+  '/storage': typeof StorageIndexRoute
+  '/users': typeof UsersIndexRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/documents/$id': typeof DocumentsIdRoute
+  '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
+  '/invoices/': typeof InvoicesIndexRoute
+  '/messages/': typeof MessagesIndexRoute
+  '/pdf/': typeof PdfIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/storage/': typeof StorageIndexRoute
+  '/users/': typeof UsersIndexRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/grid/' | '/pdf/view/$filename'
+  fullPaths:
+    | '/'
+    | '/documents/$id'
+    | '/documents/'
+    | '/grid/'
+    | '/invoices/'
+    | '/messages/'
+    | '/pdf/'
+    | '/settings/'
+    | '/storage/'
+    | '/users/'
+    | '/pdf/view/$filename'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/grid' | '/pdf/view/$filename'
-  id: '__root__' | '/' | '/grid/' | '/pdf/view/$filename'
+  to:
+    | '/'
+    | '/documents/$id'
+    | '/documents'
+    | '/grid'
+    | '/invoices'
+    | '/messages'
+    | '/pdf'
+    | '/settings'
+    | '/storage'
+    | '/users'
+    | '/pdf/view/$filename'
+  id:
+    | '__root__'
+    | '/'
+    | '/documents/$id'
+    | '/documents/'
+    | '/grid/'
+    | '/invoices/'
+    | '/messages/'
+    | '/pdf/'
+    | '/settings/'
+    | '/storage/'
+    | '/users/'
+    | '/pdf/view/$filename'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DocumentsIdRoute: typeof DocumentsIdRoute
+  DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
+  InvoicesIndexRoute: typeof InvoicesIndexRoute
+  MessagesIndexRoute: typeof MessagesIndexRoute
+  PdfIndexRoute: typeof PdfIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+  StorageIndexRoute: typeof StorageIndexRoute
+  UsersIndexRoute: typeof UsersIndexRoute
   PdfViewFilenameRoute: typeof PdfViewFilenameRoute
 }
 
@@ -68,11 +182,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/': {
+      id: '/users/'
+      path: '/users'
+      fullPath: '/users/'
+      preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/storage/': {
+      id: '/storage/'
+      path: '/storage'
+      fullPath: '/storage/'
+      preLoaderRoute: typeof StorageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pdf/': {
+      id: '/pdf/'
+      path: '/pdf'
+      fullPath: '/pdf/'
+      preLoaderRoute: typeof PdfIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages/': {
+      id: '/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof MessagesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invoices/': {
+      id: '/invoices/'
+      path: '/invoices'
+      fullPath: '/invoices/'
+      preLoaderRoute: typeof InvoicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/grid/': {
       id: '/grid/'
       path: '/grid'
       fullPath: '/grid/'
       preLoaderRoute: typeof GridIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents/': {
+      id: '/documents/'
+      path: '/documents'
+      fullPath: '/documents/'
+      preLoaderRoute: typeof DocumentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents/$id': {
+      id: '/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/documents/$id'
+      preLoaderRoute: typeof DocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pdf/view/$filename': {
@@ -87,7 +257,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DocumentsIdRoute: DocumentsIdRoute,
+  DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,
+  InvoicesIndexRoute: InvoicesIndexRoute,
+  MessagesIndexRoute: MessagesIndexRoute,
+  PdfIndexRoute: PdfIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+  StorageIndexRoute: StorageIndexRoute,
+  UsersIndexRoute: UsersIndexRoute,
   PdfViewFilenameRoute: PdfViewFilenameRoute,
 }
 export const routeTree = rootRouteImport

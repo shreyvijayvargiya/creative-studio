@@ -6,8 +6,9 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
+import { AppShell } from '#/components/layout/app-shell'
+import { THEME_STORAGE_KEY } from '#/components/layout/theme-provider'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-import { Toaster } from '#/components/ui/sonner'
 
 import appCss from '../styles.css?url'
 
@@ -16,6 +17,8 @@ import type { QueryClient } from '@tanstack/react-query'
 interface MyRouterContext {
   queryClient: QueryClient
 }
+
+const themeInitScript = `(function(){try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(!t)t=localStorage.getItem('finance-crm-sidebar-theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
@@ -43,13 +46,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
-      <body>
-        {children}
-        <Toaster richColors closeButton />
+      <body suppressHydrationWarning>
+        <AppShell>{children}</AppShell>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

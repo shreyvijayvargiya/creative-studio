@@ -26,7 +26,7 @@ export function PDFViewer({ url }: PDFViewerProps) {
   }
 
   return (
-    <div className="pdf-viewer-no-select space-y-4">
+    <div className="pdf-viewer-container pdf-viewer-no-select space-y-4">
       {isLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-[600px] w-full max-w-3xl" />

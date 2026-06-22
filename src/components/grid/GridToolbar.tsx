@@ -1,17 +1,5 @@
-import { Loader2 } from 'lucide-react'
+import { Loader2, Save } from 'lucide-react'
 
-import { BudgetGrid } from '#/components/grid/BudgetGrid'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '#/components/ui/alert-dialog'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
@@ -20,57 +8,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '#/components/ui/tooltip'
-import { DEFAULT_BUDGET_ROWS  } from '#/types'
-import type {BudgetRow} from '#/types';
 
 interface GridToolbarProps {
   rowCount: number
   hasSignature: boolean
   isGenerating: boolean
-  onAddRow: () => void
-  onClearAll: () => void
+  isSaving: boolean
   onGeneratePdf: () => void
+  onSaveDocument: () => void
 }
 
 export function GridToolbar({
   rowCount,
   hasSignature,
   isGenerating,
-  onAddRow,
-  onClearAll,
+  isSaving,
   onGeneratePdf,
+  onSaveDocument,
 }: GridToolbarProps) {
-  const generateDisabled = !hasSignature || isGenerating
+  const generateDisabled = !hasSignature || isGenerating || isSaving
 
   return (
     <TooltipProvider>
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="button" variant="outline" onClick={onAddRow}>
-          Add Row
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isSaving || isGenerating}
+          onClick={onSaveDocument}
+        >
+          {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+          Save to Documents
         </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button type="button" variant="destructive">
-              Clear All
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Reset budget data?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will restore the default budget rows and remove any custom
-                entries.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={onClearAll}>
-                Clear All
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
 
         <Tooltip>
           <TooltipTrigger asChild>
@@ -97,9 +66,3 @@ export function GridToolbar({
     </TooltipProvider>
   )
 }
-
-export function createEmptyRow(): BudgetRow {
-  return { category: '', amount: 0, taxRate: 0, notes: '' }
-}
-
-export { DEFAULT_BUDGET_ROWS }

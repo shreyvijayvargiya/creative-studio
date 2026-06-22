@@ -8,12 +8,12 @@ import {
 } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 
-import { calculateNetIncome  } from '#/types'
-import type {BudgetRow} from '#/types';
+import { calculateNetIncome } from '#/types'
+import type { BudgetRow } from '#/types'
 
 interface FinancialPdfDocumentProps {
   rows: BudgetRow[]
-  signature: string
+  signature?: string
 }
 
 const styles = StyleSheet.create({
@@ -168,7 +168,11 @@ export function createFinancialPdfDocument({
 
         <View style={styles.signatureSection}>
           <Text style={styles.signatureLabel}>Authorised Signature</Text>
-          <Image src={signature} style={styles.signatureImage} />
+          {signature ? (
+            <Image src={signature} style={styles.signatureImage} />
+          ) : (
+            <Text style={{ color: '#737373', fontSize: 9 }}>Unsigned draft</Text>
+          )}
         </View>
 
         <View style={styles.footer} fixed>
