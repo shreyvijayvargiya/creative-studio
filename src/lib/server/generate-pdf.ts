@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { v4 as uuidv4 } from 'uuid'
 
 import { renderFinancialPdfToBuffer } from '#/lib/pdf/generate'
+import { requireAuthUser } from '#/lib/server/require-auth-user'
 import { getSupabaseAdmin } from '#/lib/supabase/admin'
 import { withCalculatedNetIncome } from '#/types'
 
@@ -24,7 +25,7 @@ export const generatePdf = createServerFn({ method: 'POST' })
       .parse(data),
   )
   .handler(async ({ data }) => {
-    // TODO Phase 2: add auth check here
+    const user = await requireAuthUser()
 
     const rows = withCalculatedNetIncome(data.rows)
     const pdfBuffer = await renderFinancialPdfToBuffer(rows, data.signature)
@@ -46,18 +47,21 @@ export const generatePdf = createServerFn({ method: 'POST' })
       throw new Error(`Failed to upload PDF: ${uploadError.message}`)
     }
 
-    const { error: insertError } = await supabaseAdmin
+    const { data: record, error: insertError } = await supabaseAdmin
       .from('documents')
       .insert({
         name: `Financial Summary — ${new Date().toLocaleDateString('en-AU')}`,
         kind: 'pdf',
         storage_path: storagePath,
         share_pin: pin,
+        owner_id: user.id,
       })
+      .select('id')
+      .single()
 
     if (insertError) {
       throw new Error(`Failed to save document record: ${insertError.message}`)
     }
 
-    return { filename, pin }
+    return { id: record.id as string, filename, pin }
   })

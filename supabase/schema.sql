@@ -29,6 +29,28 @@ on conflict (id) do nothing;
 -- after PIN validation in the viewPdf server function.
 -- No public read policy is intentionally defined.
 
+alter table documents enable row level security;
+
+drop policy if exists "Users can view own documents" on documents;
+create policy "Users can view own documents"
+  on documents for select
+  using (auth.uid() = owner_id);
+
+drop policy if exists "Users can insert own documents" on documents;
+create policy "Users can insert own documents"
+  on documents for insert
+  with check (auth.uid() = owner_id);
+
+drop policy if exists "Users can update own documents" on documents;
+create policy "Users can update own documents"
+  on documents for update
+  using (auth.uid() = owner_id);
+
+drop policy if exists "Users can delete own documents" on documents;
+create policy "Users can delete own documents"
+  on documents for delete
+  using (auth.uid() = owner_id);
+
 -- ---------------------------------------------------------------------------
 -- User profiles (extends auth.users)
 -- ---------------------------------------------------------------------------

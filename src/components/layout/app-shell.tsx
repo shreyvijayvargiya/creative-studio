@@ -21,12 +21,12 @@ function AppShellLayout({ children }: AppShellProps) {
 
       <div
         className={cn(
-          'flex min-h-svh flex-col transition-[margin] duration-300 ease-in-out',
+          'flex min-h-svh min-w-0 flex-col overflow-x-hidden transition-[margin] duration-300 ease-in-out',
           collapsed ? 'lg:ml-0' : 'lg:ml-64',
         )}
       >
         <Topbar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
       </div>
     </div>
   )

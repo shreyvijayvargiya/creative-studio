@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
 import { renderFinancialPdfToBuffer } from '#/lib/pdf/generate'
+import { requireAuthUser } from '#/lib/server/require-auth-user'
 import { getSupabaseAdmin } from '#/lib/supabase/admin'
 import { withCalculatedNetIncome } from '#/types'
 import type { BudgetRow } from '#/types'
@@ -18,14 +19,14 @@ function toPdfFilename(name: string): string {
 export const downloadDocumentPdf = createServerFn({ method: 'GET' })
   .validator((data: unknown) => z.object({ id: z.string().min(1) }).parse(data))
   .handler(async ({ data }) => {
-    // TODO Phase 2: add auth check here
-
+    const user = await requireAuthUser()
     const supabaseAdmin = getSupabaseAdmin()
 
     const { data: record, error } = await supabaseAdmin
       .from('documents')
       .select('name, kind, storage_path, budget_data')
       .eq('id', data.id)
+      .eq('owner_id', user.id)
       .single()
 
     if (error) {

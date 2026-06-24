@@ -26,7 +26,7 @@ export function Topbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:gap-3 sm:px-4">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden">
@@ -63,11 +63,14 @@ export function Topbar() {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="relative flex h-9 w-full max-w-md items-center rounded-md border border-input bg-muted/50 px-3 text-left text-sm text-muted-foreground transition-colors hover:bg-muted"
+            className="relative flex h-9 w-full min-w-0 max-w-md items-center rounded-md border border-input bg-muted/50 px-2.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted sm:px-3"
           >
-            <Search className="mr-2 size-4 shrink-0" />
-            <span className="flex-1 truncate">Search documents...</span>
-            <kbd className="pointer-events-none hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline-block">
+            <Search className="mr-1.5 size-4 shrink-0 sm:mr-2" />
+            <span className="min-w-0 flex-1 truncate">
+              <span className="sm:hidden">Search...</span>
+              <span className="hidden sm:inline">Search documents...</span>
+            </span>
+            <kbd className="pointer-events-none ml-1 hidden shrink-0 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground md:inline-block">
               ⌘K
             </kbd>
           </button>

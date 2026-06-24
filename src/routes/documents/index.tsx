@@ -22,10 +22,13 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { useAuth } from '#/components/auth/auth-provider'
+import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { DataTable } from '#/components/ui/data-table'
 import { SharePdfDialog } from '#/components/pdf/share-pdf-dialog'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
+import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Checkbox } from '#/components/ui/checkbox'
 import {
@@ -67,6 +70,8 @@ function formatDate(value: string) {
 }
 
 function DocumentsPage() {
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
+  const { openLoginModal } = useLoginModal()
   const listDocumentsFn = useServerFn(listDocuments)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -78,6 +83,14 @@ function DocumentsPage() {
   )
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setDocuments([])
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+
     void listDocumentsFn()
       .then(setDocuments)
       .catch((error: unknown) => {
@@ -86,7 +99,7 @@ function DocumentsPage() {
         toast.error(message)
       })
       .finally(() => setIsLoading(false))
-  }, [listDocumentsFn])
+  }, [isAuthenticated, listDocumentsFn])
 
   const columns = useMemo<ColumnDef<DocumentListItem>[]>(
     () => [
@@ -264,10 +277,12 @@ function DocumentsPage() {
   const selectedCount = table.getFilteredSelectedRowModel().rows.length
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Documents</h1>
+          <h1 className="text-xl font-semibold text-foreground sm:text-2xl">
+            Documents
+          </h1>
           <p className="text-sm text-muted-foreground">
             Saved budgets and generated PDFs
           </p>
@@ -285,20 +300,29 @@ function DocumentsPage() {
       </div>
 
       <Card className="shadow-sm">
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="flex flex-col gap-4 space-y-0 p-4 sm:p-6">
           <CardTitle className="text-base">Generated Documents</CardTitle>
           <Input
             placeholder="Filter by name..."
             value={globalFilter}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="max-w-xs"
+            className="w-full sm:max-w-xs"
           />
         </CardHeader>
-        <CardContent>
-          {isLoading ? (
+        <CardContent className="min-w-0 p-4 pt-0 sm:p-6 sm:pt-0">
+          {isAuthLoading || isLoading ? (
             <p className="py-12 text-center text-sm text-muted-foreground">
               Loading documents...
             </p>
+          ) : !isAuthenticated ? (
+            <div className="flex flex-col items-center gap-3 py-12 text-center">
+              <Alert className="max-w-md border-dashed">
+                <AlertDescription>
+                  Sign in to view documents saved under your account.
+                </AlertDescription>
+              </Alert>
+              <Button onClick={openLoginModal}>Sign in</Button>
+            </div>
           ) : (
             <DataTable
               table={table}

@@ -18,7 +18,6 @@ export interface DocumentRecord {
   share_pin: string
   budget_data: BudgetRow[] | null
   created_at: string
-  // TODO Phase 2: scope documents to owner_id
   owner_id?: string
 }
 

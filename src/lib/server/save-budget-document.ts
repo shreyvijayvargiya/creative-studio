@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { v4 as uuidv4 } from 'uuid'
 
+import { requireAuthUser } from '#/lib/server/require-auth-user'
 import { getSupabaseAdmin } from '#/lib/supabase/admin'
 import { withCalculatedNetIncome } from '#/types'
 
@@ -21,7 +22,7 @@ const saveBudgetDocumentSchema = z.object({
 export const saveBudgetDocument = createServerFn({ method: 'POST' })
   .validator((data: unknown) => saveBudgetDocumentSchema.parse(data))
   .handler(async ({ data }) => {
-    // TODO Phase 2: add auth check here
+    const user = await requireAuthUser()
 
     const rows = withCalculatedNetIncome(data.rows)
     const supabaseAdmin = getSupabaseAdmin()
@@ -41,6 +42,7 @@ export const saveBudgetDocument = createServerFn({ method: 'POST' })
         storage_path: `budget/${uuidv4()}.json`,
         share_pin: '----',
         budget_data: rows,
+        owner_id: user.id,
       })
       .select('id, name')
       .single()

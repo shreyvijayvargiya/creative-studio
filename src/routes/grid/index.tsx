@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { CheckCircle, Info } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { BudgetGrid } from '#/components/grid/BudgetGrid'
 import { GridToolbar } from '#/components/grid/GridToolbar'
-import { PdfBrowserViewer } from '#/components/pdf/pdf-browser-viewer'
-import { SharePdfPanel } from '#/components/pdf/share-pdf-panel'
 import { SignaturePad } from '#/components/signature/SignaturePad'
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Badge } from '#/components/ui/badge'
@@ -20,7 +18,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '#/components/ui/breadcrumb'
-import { Button } from '#/components/ui/button'
 import {
   Card,
   CardContent,
@@ -28,11 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
-import { Separator } from '#/components/ui/separator'
 import { generatePdf } from '#/lib/server/generate-pdf'
 import { getDocument } from '#/lib/server/list-documents'
 import { saveBudgetDocument } from '#/lib/server/save-budget-document'
-import { viewPdf } from '#/lib/server/view-pdf'
 import { cloneDefaultBudgetRows, createEmptyRow  } from '#/types'
 import type {BudgetRow} from '#/types';
 
@@ -51,16 +46,13 @@ function formatCurrency(amount: number): string {
 
 function GridPage() {
   const { edit: editDocumentId } = Route.useSearch()
+  const navigate = useNavigate()
   const generatePdfFn = useServerFn(generatePdf)
-  const viewPdfFn = useServerFn(viewPdf)
   const getDocumentFn = useServerFn(getDocument)
   const saveBudgetDocumentFn = useServerFn(saveBudgetDocument)
 
   const [gridData, setGridData] = useState<BudgetRow[]>(cloneDefaultBudgetRows)
   const [signature, setSignature] = useState('')
-  const [pdfUrl, setPdfUrl] = useState('')
-  const [pin, setPin] = useState('')
-  const [filename, setFilename] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingBudget, setIsLoadingBudget] = useState(Boolean(editDocumentId))
@@ -80,9 +72,6 @@ function GridPage() {
 
         setGridData(doc.budgetData)
         setSignature('')
-        setPdfUrl('')
-        setPin('')
-        setFilename('')
         toast.success(`Loaded "${doc.name}" for editing`)
       })
       .catch((error: unknown) => {
@@ -104,9 +93,6 @@ function GridPage() {
 
   const handleClearAll = useCallback(() => {
     setGridData(cloneDefaultBudgetRows())
-    setPdfUrl('')
-    setPin('')
-    setFilename('')
   }, [])
 
   const handleSaveDocument = useCallback(async () => {
@@ -130,19 +116,15 @@ function GridPage() {
     setIsGenerating(true)
 
     try {
-      const { filename: generatedFilename, pin: generatedPin } =
-        await generatePdfFn({
-          data: { rows: gridData, signature },
-        })
-
-      const { url } = await viewPdfFn({
-        data: { filename: generatedFilename, pin: generatedPin },
+      const { id } = await generatePdfFn({
+        data: { rows: gridData, signature },
       })
 
-      setFilename(generatedFilename)
-      setPdfUrl(url)
-      setPin(generatedPin)
-      toast.success('PDF generated — share link and PIN are ready')
+      await navigate({
+        to: '/documents/pdf/$id',
+        params: { id },
+        search: { generated: true },
+      })
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Failed to generate PDF'
@@ -150,7 +132,7 @@ function GridPage() {
     } finally {
       setIsGenerating(false)
     }
-  }, [generatePdfFn, gridData, signature, viewPdfFn])
+  }, [generatePdfFn, gridData, navigate, signature])
 
   if (isLoadingBudget) {
     return (
@@ -234,28 +216,6 @@ function GridPage() {
           <SignaturePad onSave={setSignature} />
         </CardContent>
       </Card>
-
-      {pdfUrl && pin && filename ? (
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base text-emerald-700 dark:text-emerald-400">
-              <CheckCircle className="size-5" />
-              Document Ready
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <SharePdfPanel
-              storagePath={filename}
-              sharePin={pin}
-              documentName="Financial Summary"
-            />
-
-            <Separator />
-
-            <PdfBrowserViewer url={pdfUrl} title="Financial Summary" />
-          </CardContent>
-        </Card>
-      ) : null}
     </div>
   )
 }

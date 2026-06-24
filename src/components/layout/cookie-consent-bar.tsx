@@ -35,7 +35,7 @@ export function CookieConsentBar() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed bottom-4 right-4 z-50 w-[min(100vw-2rem,22rem)] rounded-lg border border-border bg-background p-4 shadow-lg"
+      className="fixed bottom-4 left-4 right-4 z-50 mx-auto w-auto max-w-sm rounded-lg border border-border bg-background p-4 shadow-lg sm:left-auto sm:right-4 sm:mx-0 sm:w-[min(100vw-2rem,22rem)]"
     >
       <div className="flex items-start gap-3">
         <Cookie className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
