@@ -55,7 +55,7 @@ function DashboardPage() {
       </div>
 
       {/* TODO Phase 2: wire stat cards to Supabase */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-1 xxs:grid-cols-1 xl:grid-cols-4 w-full">
         {statCards.map((card) => (
           <Card key={card.title} className="shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -74,7 +74,7 @@ function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 w-full">
         <Card className="shadow-sm lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-base">Recent Documents</CardTitle>

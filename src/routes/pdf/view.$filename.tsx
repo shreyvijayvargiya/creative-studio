@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
+import { KeyRound, ShieldCheck } from 'lucide-react'
 
-import { PDFViewer } from '#/components/pdf/PDFViewer'
+import { SecurePdfViewer } from '#/components/pdf/secure-pdf-viewer'
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { PageHeader } from '#/components/ui/page-header'
-import { viewPdf } from '#/lib/server/view-pdf'
+import { formatPin } from '#/lib/pdf/share'
 
 export const Route = createFileRoute('/pdf/view/$filename')({
   component: PdfViewPage,
@@ -16,73 +16,85 @@ export const Route = createFileRoute('/pdf/view/$filename')({
 
 function PdfViewPage() {
   const { filename } = Route.useParams()
-  const viewPdfFn = useServerFn(viewPdf)
 
   const [pin, setPin] = useState('')
-  const [pdfUrl, setPdfUrl] = useState('')
+  const [verifiedPin, setVerifiedPin] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
-    setIsSubmitting(true)
 
-    try {
-      const { url } = await viewPdfFn({ data: { filename, pin } })
-      setPdfUrl(url)
-    } catch (submitError) {
-      const message =
-        submitError instanceof Error
-          ? submitError.message
-          : 'Unable to view PDF'
-
-      if (message.toLowerCase().includes('incorrect pin')) {
-        setError('Incorrect PIN')
-      } else {
-        setError(message)
-      }
-      setPdfUrl('')
-    } finally {
-      setIsSubmitting(false)
+    if (pin.length !== 4) {
+      setError('Enter the 4-digit PIN shared with you')
+      return
     }
+
+    setVerifiedPin(formatPin(pin))
+  }
+
+  const handleAccessRevoked = () => {
+    setVerifiedPin(null)
+    setPin('')
+    setError('Access expired or PIN was rejected. Enter the PIN again.')
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Document Viewer"
-        description="Enter the PIN shared with you to view this document."
+        title="Secure Document Viewer"
+        description="PIN-protected view only. Files are served from private Supabase Storage via short-lived signed URLs."
       />
 
-      {!pdfUrl ? (
-        <form className="max-w-sm space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="pin">Document PIN</Label>
-            <Input
-              id="pin"
-              inputMode="numeric"
-              maxLength={4}
-              pattern="[0-9]{4}"
-              placeholder="0000"
-              value={pin}
-              onChange={(event) => setPin(event.target.value)}
-              required
-            />
-          </div>
-          <Button type="submit" disabled={isSubmitting || pin.length !== 4}>
-            View Document
-          </Button>
-        </form>
-      ) : null}
+      {!verifiedPin ? (
+        <div className="mx-auto max-w-md space-y-6">
+          <Alert>
+            <ShieldCheck className="size-4" />
+            <AlertDescription>
+              This PDF is not publicly accessible. You need the secret PIN that
+              was shared along with this link.
+            </AlertDescription>
+          </Alert>
 
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      ) : null}
+          <form className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="pin">Document PIN</Label>
+              <div className="relative">
+                <KeyRound className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="pin"
+                  inputMode="numeric"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  placeholder="0000"
+                  className="pl-9 font-mono tracking-widest"
+                  value={pin}
+                  onChange={(event) =>
+                    setPin(event.target.value.replace(/\D/g, '').slice(0, 4))
+                  }
+                  required
+                />
+              </div>
+            </div>
 
-      {pdfUrl ? <PDFViewer url={pdfUrl} /> : null}
+            {error ? (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <Button type="submit" className="w-full" disabled={pin.length !== 4}>
+              Unlock view-only access
+            </Button>
+          </form>
+        </div>
+      ) : (
+        <SecurePdfViewer
+          filename={filename}
+          pin={verifiedPin}
+          onAccessRevoked={handleAccessRevoked}
+        />
+      )}
     </div>
   )
 }

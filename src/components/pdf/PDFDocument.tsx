@@ -131,8 +131,6 @@ export function createFinancialPdfDocument({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.watermark}>CONFIDENTIAL</Text>
-
         <View style={styles.headerRow}>
           <Text style={styles.title}>Financial Summary Report</Text>
           <Text style={styles.date}>{generatedAt}</Text>
@@ -166,14 +164,7 @@ export function createFinancialPdfDocument({
           <Text style={styles.colNotes} />
         </View>
 
-        <View style={styles.signatureSection}>
-          <Text style={styles.signatureLabel}>Authorised Signature</Text>
-          {signature ? (
-            <Image src={signature} style={styles.signatureImage} />
-          ) : (
-            <Text style={{ color: '#737373', fontSize: 9 }}>Unsigned draft</Text>
-          )}
-        </View>
+       
 
         <View style={styles.footer} fixed>
           <Text>Confidential — Do not distribute</Text>

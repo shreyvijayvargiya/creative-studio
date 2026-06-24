@@ -25,6 +25,10 @@ insert into storage.buckets (id, name, public)
 values ('documents', 'documents', false)
 on conflict (id) do nothing;
 
+-- Private bucket: PDFs are only accessible via service-role signed URLs
+-- after PIN validation in the viewPdf server function.
+-- No public read policy is intentionally defined.
+
 -- ---------------------------------------------------------------------------
 -- User profiles (extends auth.users)
 -- ---------------------------------------------------------------------------

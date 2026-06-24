@@ -1,6 +1,7 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { Moon, Sun } from 'lucide-react'
 
+import { useSidebar } from '#/components/layout/sidebar-provider'
 import { useTheme } from '#/components/layout/theme-provider'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
@@ -85,7 +86,8 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
         <Button
           type="button"
           variant="ghost"
-          className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+          size="icon"
+          className="mx-auto text-muted-foreground hover:text-foreground"
           onClick={toggleTheme}
         >
           {theme === 'light' ? (
@@ -93,7 +95,9 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
           ) : (
             <Sun className="size-4" />
           )}
-          {theme === 'light' ? 'Dark mode' : 'Light mode'}
+          <span className="sr-only">
+            {theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          </span>
         </Button>
       </div>
     </div>
@@ -101,8 +105,17 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
 }
 
 export function DesktopSidebar() {
+  const { collapsed } = useSidebar()
+
   return (
-    <aside className="crm-sidebar fixed left-0 top-14 z-40 hidden h-[calc(100vh-3.5rem)] w-60 border-r border-border bg-card text-card-foreground lg:flex lg:flex-col">
+    <aside
+      className={cn(
+        'crm-sidebar fixed left-0 top-14 z-40 hidden h-[calc(100vh-3.5rem)] border-r border-border bg-card text-card-foreground transition-[width,transform,opacity] duration-300 ease-in-out lg:flex lg:flex-col',
+        collapsed
+          ? 'w-0 -translate-x-full overflow-hidden border-r-0 opacity-0'
+          : 'w-60 translate-x-0 opacity-100',
+      )}
+    >
       <SidebarContent />
     </aside>
   )

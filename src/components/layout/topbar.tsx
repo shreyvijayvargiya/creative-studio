@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Bell, LogIn, LogOut, Menu, Search, Settings } from 'lucide-react'
+import {
+  LogIn,
+  LogOut,
+  Menu,
+  PanelLeft,
+  PanelLeftClose,
+  Search,
+  Settings,
+} from 'lucide-react'
 
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { SearchCommand } from '#/components/layout/search-command'
 import { SidebarContent } from '#/components/layout/sidebar'
+import { useSidebar } from '#/components/layout/sidebar-provider'
 import {
   getUserAvatarUrl,
   getUserInitials,
@@ -24,6 +33,7 @@ import { Sheet, SheetContent, SheetTrigger } from '#/components/ui/sheet'
 export function Topbar() {
   const { user, profile, isAuthenticated, signOut } = useAuth()
   const { openLoginModal } = useLoginModal()
+  const { collapsed, toggleSidebar } = useSidebar()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
@@ -61,6 +71,23 @@ export function Topbar() {
             </SheetContent>
           </Sheet>
 
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="hidden text-muted-foreground lg:inline-flex"
+            onClick={toggleSidebar}
+          >
+            {collapsed ? (
+              <PanelLeft className="size-5" />
+            ) : (
+              <PanelLeftClose className="size-5" />
+            )}
+            <span className="sr-only">
+              {collapsed ? 'Open sidebar' : 'Close sidebar'}
+            </span>
+          </Button>
+
           <span className="text-lg font-semibold text-foreground">
             FinanceCRM
           </span>
@@ -89,11 +116,6 @@ export function Topbar() {
           >
             <Search className="size-5" />
             <span className="sr-only">Search</span>
-          </Button>
-
-          <Button variant="ghost" size="icon" className="text-muted-foreground">
-            <Bell className="size-5" />
-            <span className="sr-only">Notifications</span>
           </Button>
 
           <DropdownMenu>

@@ -7,7 +7,7 @@ import {
   
 } from '@tanstack/react-table'
 import type {ColumnDef} from '@tanstack/react-table';
-import { ArrowLeft, Download, Loader2 } from 'lucide-react'
+import { ArrowLeft, Download, Loader2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { DataTable } from '#/components/ui/data-table'
@@ -161,6 +161,12 @@ function DocumentDetailPage() {
             </CardDescription>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link to="/grid" search={{ edit: id }}>
+                <Pencil className="size-4" />
+                Edit budget
+              </Link>
+            </Button>
             <Button
               variant="outline"
               size="sm"

@@ -7,8 +7,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable
-  
-  
 } from '@tanstack/react-table'
 import type {ColumnDef, SortingState} from '@tanstack/react-table';
 import {
@@ -18,12 +16,14 @@ import {
   FileText,
   Link2,
   MoreHorizontal,
+  Share2,
   TableProperties,
   Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { DataTable } from '#/components/ui/data-table'
+import { SharePdfDialog } from '#/components/pdf/share-pdf-dialog'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
@@ -73,6 +73,9 @@ function DocumentsPage() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
+  const [shareDocument, setShareDocument] = useState<DocumentListItem | null>(
+    null,
+  )
 
   useEffect(() => {
     void listDocumentsFn()
@@ -193,20 +196,20 @@ function DocumentsPage() {
                     to={
                       doc.kind === 'budget'
                         ? '/documents/$id'
-                        : '/pdf/view/$filename'
+                        : '/documents/pdf/$id'
                     }
-                    params={
-                      doc.kind === 'budget'
-                        ? { id: doc.id }
-                        : { filename: doc.storagePath }
-                    }
+                    params={{ id: doc.id }}
                   >
                     <Eye className="size-4" />
-                    View
+                    View in browser
                   </Link>
                 </DropdownMenuItem>
                 {doc.kind === 'pdf' ? (
                   <>
+                    <DropdownMenuItem onClick={() => setShareDocument(doc)}>
+                      <Share2 className="size-4" />
+                      Share securely
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={async () => {
                         const url = `${window.location.origin}/pdf/view/${doc.storagePath}`
@@ -343,6 +346,20 @@ function DocumentsPage() {
           )}
         </CardContent>
       </Card>
+
+      {shareDocument ? (
+        <SharePdfDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              setShareDocument(null)
+            }
+          }}
+          storagePath={shareDocument.storagePath}
+          sharePin={shareDocument.sharePin}
+          documentName={shareDocument.name}
+        />
+      ) : null}
     </div>
   )
 }

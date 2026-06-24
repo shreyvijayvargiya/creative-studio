@@ -1,12 +1,14 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { CheckCircle, Copy, Info, Link2 } from 'lucide-react'
+import { CheckCircle, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 import { BudgetGrid } from '#/components/grid/BudgetGrid'
 import { GridToolbar } from '#/components/grid/GridToolbar'
-import { PDFViewer } from '#/components/pdf/PDFViewer'
+import { PdfBrowserViewer } from '#/components/pdf/pdf-browser-viewer'
+import { SharePdfPanel } from '#/components/pdf/share-pdf-panel'
 import { SignaturePad } from '#/components/signature/SignaturePad'
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Badge } from '#/components/ui/badge'
@@ -28,12 +30,15 @@ import {
 } from '#/components/ui/card'
 import { Separator } from '#/components/ui/separator'
 import { generatePdf } from '#/lib/server/generate-pdf'
+import { getDocument } from '#/lib/server/list-documents'
 import { saveBudgetDocument } from '#/lib/server/save-budget-document'
 import { viewPdf } from '#/lib/server/view-pdf'
 import { cloneDefaultBudgetRows, createEmptyRow  } from '#/types'
 import type {BudgetRow} from '#/types';
 
 export const Route = createFileRoute('/grid/')({
+  validateSearch: (search) =>
+    z.object({ edit: z.string().optional() }).parse(search),
   component: GridPage,
 })
 
@@ -45,8 +50,10 @@ function formatCurrency(amount: number): string {
 }
 
 function GridPage() {
+  const { edit: editDocumentId } = Route.useSearch()
   const generatePdfFn = useServerFn(generatePdf)
   const viewPdfFn = useServerFn(viewPdf)
+  const getDocumentFn = useServerFn(getDocument)
   const saveBudgetDocumentFn = useServerFn(saveBudgetDocument)
 
   const [gridData, setGridData] = useState<BudgetRow[]>(cloneDefaultBudgetRows)
@@ -56,6 +63,35 @@ function GridPage() {
   const [filename, setFilename] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isLoadingBudget, setIsLoadingBudget] = useState(Boolean(editDocumentId))
+
+  useEffect(() => {
+    if (!editDocumentId) {
+      return
+    }
+
+    setIsLoadingBudget(true)
+
+    void getDocumentFn({ data: { id: editDocumentId } })
+      .then((doc) => {
+        if (doc.kind !== 'budget' || !doc.budgetData) {
+          throw new Error('This document is not a saved budget')
+        }
+
+        setGridData(doc.budgetData)
+        setSignature('')
+        setPdfUrl('')
+        setPin('')
+        setFilename('')
+        toast.success(`Loaded "${doc.name}" for editing`)
+      })
+      .catch((error: unknown) => {
+        const message =
+          error instanceof Error ? error.message : 'Failed to load budget'
+        toast.error(message)
+      })
+      .finally(() => setIsLoadingBudget(false))
+  }, [editDocumentId, getDocumentFn])
 
   const amountTotal = useMemo(
     () => gridData.reduce((sum, row) => sum + row.amount, 0),
@@ -106,7 +142,7 @@ function GridPage() {
       setFilename(generatedFilename)
       setPdfUrl(url)
       setPin(generatedPin)
-      toast.success('PDF generated successfully')
+      toast.success('PDF generated — share link and PIN are ready')
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Failed to generate PDF'
@@ -116,16 +152,13 @@ function GridPage() {
     }
   }, [generatePdfFn, gridData, signature, viewPdfFn])
 
-  const handleCopyPin = useCallback(async () => {
-    await navigator.clipboard.writeText(pin)
-    toast.success('PIN copied to clipboard')
-  }, [pin])
-
-  const handleCopyShareLink = useCallback(async () => {
-    const shareUrl = `${window.location.origin}/pdf/view/${filename}`
-    await navigator.clipboard.writeText(shareUrl)
-    toast.success('Share link copied to clipboard')
-  }, [filename])
+  if (isLoadingBudget) {
+    return (
+      <p className="py-12 text-center text-sm text-muted-foreground">
+        Loading budget for editing...
+      </p>
+    )
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
@@ -211,36 +244,15 @@ function GridPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm text-muted-foreground">
-                Document PIN:
-              </span>
-              <Badge
-                variant="outline"
-                className="font-mono text-lg tracking-widest"
-              >
-                {pin}
-              </Badge>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={handleCopyPin}>
-                <Copy className="size-4" />
-                Copy PIN
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCopyShareLink}
-              >
-                <Link2 className="size-4" />
-                Share View Link
-              </Button>
-            </div>
+            <SharePdfPanel
+              storagePath={filename}
+              sharePin={pin}
+              documentName="Financial Summary"
+            />
 
             <Separator />
 
-            <PDFViewer url={pdfUrl} />
+            <PdfBrowserViewer url={pdfUrl} title="Financial Summary" />
           </CardContent>
         </Card>
       ) : null}

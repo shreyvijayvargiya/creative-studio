@@ -21,6 +21,7 @@ import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
+import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,11 @@ const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
   path: '/pdf/view/$filename',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
+  id: '/documents/pdf/$id',
+  path: '/documents/pdf/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
+  '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/documents/pdf/$id'
     | '/pdf/view/$filename'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/storage'
     | '/users'
+    | '/documents/pdf/$id'
     | '/pdf/view/$filename'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/documents/pdf/$id'
     | '/pdf/view/$filename'
   fileRoutesById: FileRoutesById
 }
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  DocumentsPdfIdRoute: typeof DocumentsPdfIdRoute
   PdfViewFilenameRoute: typeof PdfViewFilenameRoute
 }
 
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PdfViewFilenameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documents/pdf/$id': {
+      id: '/documents/pdf/$id'
+      path: '/documents/pdf/$id'
+      fullPath: '/documents/pdf/$id'
+      preLoaderRoute: typeof DocumentsPdfIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  DocumentsPdfIdRoute: DocumentsPdfIdRoute,
   PdfViewFilenameRoute: PdfViewFilenameRoute,
 }
 export const routeTree = rootRouteImport

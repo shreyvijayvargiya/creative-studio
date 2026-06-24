@@ -164,9 +164,15 @@ body {
   background-color: color-mix(in oklab, #3b82f6 20%, var(--card)) !important;
 }
 
-/* PDF Viewer — prevent download */
+/* PDF Viewer — view only, PDF.js canvas rendering */
+.pdf-browser-viewer,
 .pdf-viewer-container {
   user-select: none;
+  -webkit-user-select: none;
+}
+
+.pdf-viewer-no-select canvas {
+  pointer-events: none;
 }
 
 .pdf-viewer-container canvas {
@@ -175,4 +181,8 @@ body {
 
 .pdf-viewer-container .react-pdf__Page {
   user-select: none;
+}
+
+.pdf-browser-viewer iframe {
+  pointer-events: none;
 }
