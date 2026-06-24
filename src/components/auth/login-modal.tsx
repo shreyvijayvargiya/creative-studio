@@ -15,6 +15,7 @@ import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { Separator } from '#/components/ui/separator'
 import { normalizeUsername } from '#/lib/auth/user'
+import { logAuthError } from '#/lib/auth/log-auth-error'
 
 type AuthMode = 'sign-in' | 'sign-up'
 
@@ -78,6 +79,11 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Google sign-in failed'
+      logAuthError(
+        mode === 'sign-in' ? 'sign-in-google' : 'sign-up-google',
+        error,
+        { mode },
+      )
       toast.error(message)
       setIsGoogleLoading(false)
     }
@@ -104,6 +110,11 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
       closeModal()
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Request failed'
+      logAuthError(
+        mode === 'sign-in' ? 'sign-in-email' : 'sign-up-email',
+        error,
+        { mode },
+      )
       toast.error(message)
     } finally {
       setIsSubmitting(false)

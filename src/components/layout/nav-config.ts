@@ -11,52 +11,105 @@ import {
   Users,
 } from 'lucide-react'
 
-export interface NavItem {
+export interface NavChildItem {
   label: string
   href: string
-  icon: LucideIcon
   badge?: string
   phaseTwo?: boolean
 }
 
-export const mainNavItems: NavItem[] = [
-  { label: 'Dashboard', icon: LayoutDashboard, href: '/' },
-  { label: 'Budget Planner', icon: TableProperties, href: '/grid' },
-  { label: 'Documents', icon: FileText, href: '/documents' },
-  { label: 'PDF Viewer', icon: Eye, href: '/pdf' },
+export interface NavGroupItem {
+  label: string
+  icon: LucideIcon
+  href?: string
+  badge?: string
+  phaseTwo?: boolean
+  children?: NavChildItem[]
+}
+
+export interface NavSection {
+  label: string
+  items: NavGroupItem[]
+}
+
+export const navSections: NavSection[] = [
   {
-    label: 'Storage',
-    icon: HardDrive,
-    href: '/storage',
-    badge: 'Soon',
-    phaseTwo: true,
+    label: 'Platform',
+    items: [
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/' },
+      {
+        label: 'Finance',
+        icon: TableProperties,
+        children: [
+          { label: 'Budget Planner', href: '/grid' },
+          { label: 'Documents', href: '/documents' },
+          { label: 'PDF Viewer', href: '/pdf' },
+        ],
+      },
+      {
+        label: 'Workspace',
+        icon: HardDrive,
+        children: [
+          {
+            label: 'Storage',
+            href: '/storage',
+            badge: 'Soon',
+            phaseTwo: true,
+          },
+          {
+            label: 'Messages',
+            href: '/messages',
+            badge: 'Soon',
+            phaseTwo: true,
+          },
+          {
+            label: 'Invoices',
+            href: '/invoices',
+            badge: 'Soon',
+            phaseTwo: true,
+          },
+        ],
+      },
+    ],
   },
   {
-    label: 'Messages',
-    icon: MessageSquare,
-    href: '/messages',
-    badge: 'Soon',
-    phaseTwo: true,
-  },
-  {
-    label: 'Invoices',
-    icon: Receipt,
-    href: '/invoices',
-    badge: 'Soon',
-    phaseTwo: true,
+    label: 'Account',
+    items: [
+      { label: 'Settings', icon: Settings, href: '/settings' },
+      {
+        label: 'Users & Roles',
+        icon: Users,
+        href: '/users',
+        badge: 'Soon',
+        phaseTwo: true,
+      },
+    ],
   },
 ]
 
-export const settingsNavItems: NavItem[] = [
-  {
-    label: 'Users & Roles',
-    icon: Users,
-    href: '/users',
-    badge: 'Soon',
-    phaseTwo: true,
-  },
-  { label: 'Settings', icon: Settings, href: '/settings' },
-]
+/** @deprecated Use navSections — kept for search command compatibility */
+export const mainNavItems = navSections[0].items.flatMap((item) =>
+  item.children
+    ? item.children.map((child) => ({
+        label: child.label,
+        href: child.href,
+        icon: item.icon,
+        badge: child.badge,
+        phaseTwo: child.phaseTwo,
+      }))
+    : [{ label: item.label, href: item.href!, icon: item.icon, badge: item.badge }],
+)
+
+/** @deprecated Use navSections */
+export const settingsNavItems = navSections[1].items.map((item) => ({
+  label: item.label,
+  href: item.href!,
+  icon: item.icon,
+  badge: item.badge,
+  phaseTwo: item.phaseTwo,
+}))
+
+export type NavItem = (typeof mainNavItems)[number]
 
 export function isNavItemActive(pathname: string, href: string): boolean {
   if (href === '/') {
@@ -64,4 +117,18 @@ export function isNavItemActive(pathname: string, href: string): boolean {
   }
 
   return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+export function isNavGroupActive(
+  pathname: string,
+  item: NavGroupItem,
+): boolean {
+  if (item.href && isNavItemActive(pathname, item.href)) {
+    return true
+  }
+
+  return (
+    item.children?.some((child) => isNavItemActive(pathname, child.href)) ??
+    false
+  )
 }

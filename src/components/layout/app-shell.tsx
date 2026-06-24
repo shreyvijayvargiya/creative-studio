@@ -1,5 +1,6 @@
 import { AuthProvider } from '#/components/auth/auth-provider'
 import { LoginModalProvider } from '#/components/auth/login-modal-provider'
+import { CookieConsentBar } from '#/components/layout/cookie-consent-bar'
 import { DesktopSidebar } from '#/components/layout/sidebar'
 import { SidebarProvider, useSidebar } from '#/components/layout/sidebar-provider'
 import { ThemeProvider } from '#/components/layout/theme-provider'
@@ -15,17 +16,18 @@ function AppShellLayout({ children }: AppShellProps) {
   const { collapsed } = useSidebar()
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Topbar />
+    <div className="min-h-svh bg-background text-foreground">
       <DesktopSidebar />
-      <main
+
+      <div
         className={cn(
-          'mt-14 min-h-[calc(100vh-3.5rem)] p-6 transition-[margin] duration-300 ease-in-out',
-          collapsed ? 'lg:ml-0' : 'lg:ml-60',
+          'flex min-h-svh flex-col transition-[margin] duration-300 ease-in-out',
+          collapsed ? 'lg:ml-0' : 'lg:ml-64',
         )}
       >
-        {children}
-      </main>
+        <Topbar />
+        <main className="flex-1 p-6">{children}</main>
+      </div>
     </div>
   )
 }
@@ -39,6 +41,7 @@ export function AppShell({ children }: AppShellProps) {
             <AppShellLayout>{children}</AppShellLayout>
           </SidebarProvider>
           <ThemeToaster />
+          <CookieConsentBar />
         </LoginModalProvider>
       </AuthProvider>
     </ThemeProvider>

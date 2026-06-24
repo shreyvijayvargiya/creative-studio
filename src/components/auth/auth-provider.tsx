@@ -11,6 +11,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { toast } from 'sonner'
 
 import { mapProfileRow } from '#/lib/auth/user'
+import { logAuthDebug, logAuthError } from '#/lib/auth/log-auth-error'
 import { resolveLoginEmail } from '#/lib/server/resolve-login-email'
 import { supabase } from '#/lib/supabase/client'
 import type {
@@ -29,6 +30,7 @@ interface AuthContextValue {
   signUpWithEmail: (input: EmailSignUpInput) => Promise<void>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  syncSessionAfterOAuth: (serverUser?: User | null) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -74,19 +76,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await loadProfile(user)
   }, [loadProfile, user])
 
-  useEffect(() => {
-    let isMounted = true
-
-    void supabase.auth.getSession().then(async ({ data, error }) => {
-      if (!isMounted) {
-        return
-      }
-
-      if (error) {
-        toast.error(error.message)
-      }
-
-      const sessionUser = data.session?.user ?? null
+  const applySessionUser = useCallback(
+    async (sessionUser: User | null) => {
       setUser(sessionUser)
 
       if (sessionUser) {
@@ -96,40 +87,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setIsLoading(false)
+    },
+    [loadProfile],
+  )
+
+  const syncSessionAfterOAuth = useCallback(
+    async (serverUser?: User | null) => {
+      setIsLoading(true)
+
+      const { data, error } = await supabase.auth.getSession()
+
+      if (error) {
+        logAuthError('session-init', error)
+      }
+
+      const sessionUser = data.session?.user ?? serverUser ?? null
+      await applySessionUser(sessionUser)
+    },
+    [applySessionUser],
+  )
+
+  useEffect(() => {
+    let isMounted = true
+
+    void supabase.auth.getSession().then(async ({ data, error }) => {
+      if (!isMounted) {
+        return
+      }
+
+      if (error) {
+        logAuthError('session-init', error)
+        toast.error(error.message)
+      }
+
+      await applySessionUser(data.session?.user ?? null)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      const sessionUser = session?.user ?? null
-      setUser(sessionUser)
-
-      if (sessionUser) {
-        void loadProfile(sessionUser)
-      } else {
-        setProfile(null)
-      }
-
-      setIsLoading(false)
+      void applySessionUser(session?.user ?? null)
     })
 
     return () => {
       isMounted = false
       subscription.unsubscribe()
     }
-  }, [loadProfile])
+  }, [applySessionUser])
 
   const signInWithGoogle = useCallback(async () => {
     const redirectTo = `${window.location.origin}/auth/callback`
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    logAuthDebug('sign-in-google', 'Starting Google OAuth', { redirectTo })
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo },
     })
 
     if (error) {
+      logAuthError('sign-in-google', error, { redirectTo })
       toast.error(error.message)
+      throw error
     }
+
+    logAuthDebug('sign-in-google', 'OAuth redirect URL issued', {
+      redirectTo,
+      providerUrl: data.url,
+    })
   }, [])
 
   const signInWithEmail = useCallback(
@@ -144,6 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        logAuthError('sign-in-email', error, { email })
         throw new Error(error.message)
       }
 
@@ -170,6 +196,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        logAuthError('sign-up-email', error, {
+          email: email.trim().toLowerCase(),
+          username: normalizedUsername,
+        })
         throw new Error(error.message)
       }
 
@@ -209,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUpWithEmail,
       signOut,
       refreshProfile,
+      syncSessionAfterOAuth,
     }),
     [
       user,
@@ -219,6 +250,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUpWithEmail,
       signOut,
       refreshProfile,
+      syncSessionAfterOAuth,
     ],
   )
 

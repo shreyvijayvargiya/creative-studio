@@ -9,7 +9,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
   )
 }
 
-export const supabase = createBrowserClient(
-  supabaseUrl ?? '',
-  supabaseAnonKey ?? '',
-)
+export const supabase = createBrowserClient(supabaseUrl ?? '', supabaseAnonKey ?? '', {
+  auth: {
+    flowType: 'pkce',
+    detectSessionInUrl: false,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+})

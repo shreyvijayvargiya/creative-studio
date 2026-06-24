@@ -97,7 +97,7 @@ function navToResult(item: (typeof mainNavItems)[number]): SearchResult {
   return {
     id: `nav-${item.href}`,
     label: item.label,
-    description: item.phaseTwo ? 'Coming soon' : item.href,
+    description: item?.badge ? 'Coming soon' : item.href,
     href: item.href,
     icon: item.icon,
     group: 'Navigation',
