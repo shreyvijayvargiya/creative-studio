@@ -3,12 +3,10 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Suspense, lazy } from 'react'
 
 import { AppShell } from '#/components/layout/app-shell'
 import { THEME_STORAGE_KEY } from '#/components/layout/theme-provider'
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
@@ -19,6 +17,14 @@ interface MyRouterContext {
 }
 
 const themeInitScript = `(function(){try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(!t)t=localStorage.getItem('finance-crm-sidebar-theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`
+
+const AppDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('#/components/devtools').then((module) => ({
+        default: module.AppDevtools,
+      })),
+    )
+  : null
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
@@ -53,18 +59,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body suppressHydrationWarning>
         <AppShell>{children}</AppShell>
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
+        {AppDevtools ? (
+          <Suspense fallback={null}>
+            <AppDevtools />
+          </Suspense>
+        ) : null}
         <Scripts />
       </body>
     </html>
