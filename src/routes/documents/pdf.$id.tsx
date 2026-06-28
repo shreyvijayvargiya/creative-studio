@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, ExternalLink } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { DocumentPdfPreview } from '#/components/pdf/document-pdf-preview'
@@ -40,6 +40,7 @@ function DocumentPdfPage() {
   const [storagePath, setStoragePath] = useState('')
   const [sharePin, setSharePin] = useState('')
   const [createdAt, setCreatedAt] = useState('')
+  const [driveUrl, setDriveUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -53,6 +54,7 @@ function DocumentPdfPage() {
         setStoragePath(doc.storagePath)
         setSharePin(doc.sharePin)
         setCreatedAt(doc.createdAt)
+        setDriveUrl(doc.driveUrl ?? null)
       })
       .catch((error: unknown) => {
         const message =
@@ -120,6 +122,15 @@ function DocumentPdfPage() {
             sharePin={sharePin}
             documentName={name}
           />
+
+          {driveUrl ? (
+            <Button asChild variant="outline" className="w-fit gap-2">
+              <a href={driveUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="size-4" />
+                Open in Google Drive
+              </a>
+            </Button>
+          ) : null}
 
           <Separator />
 

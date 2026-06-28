@@ -1,9 +1,7 @@
 import {
-  flexRender
-  
-  
+  flexRender,
 } from '@tanstack/react-table'
-import type {ColumnDef, Table as TanstackTable} from '@tanstack/react-table';
+import type { ColumnDef, Row, Table as TanstackTable } from '@tanstack/react-table'
 
 import {
   Table,
@@ -13,12 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from '#/components/ui/table'
+import { cn } from '#/lib/utils'
 
 interface DataTableProps<TData> {
   table: TanstackTable<TData>
   columnCount: number
   emptyState?: React.ReactNode
   footer?: React.ReactNode
+  getRowClassName?: (row: Row<TData>) => string | undefined
 }
 
 export function DataTable<TData>({
@@ -26,6 +26,7 @@ export function DataTable<TData>({
   columnCount,
   emptyState,
   footer,
+  getRowClassName,
 }: DataTableProps<TData>) {
   const rows = table.getRowModel().rows
 
@@ -55,6 +56,7 @@ export function DataTable<TData>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className={getRowClassName?.(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

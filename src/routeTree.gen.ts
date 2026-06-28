@@ -19,8 +19,10 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
+import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
+import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -73,6 +75,11 @@ const DocumentsIdRoute = DocumentsIdRouteImport.update({
   path: '/documents/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthDriveCallbackRoute = AuthDriveCallbackRouteImport.update({
+  id: '/auth/drive-callback',
+  path: '/auth/drive-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -81,6 +88,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
   id: '/pdf/view/$filename',
   path: '/pdf/view/$filename',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GridSignSubmissionIdRoute = GridSignSubmissionIdRouteImport.update({
+  id: '/grid/sign/$submissionId',
+  path: '/grid/sign/$submissionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
@@ -92,6 +104,7 @@ const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -102,11 +115,13 @@ export interface FileRoutesByFullPath {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
+  '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
@@ -117,12 +132,14 @@ export interface FileRoutesByTo {
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
+  '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -133,6 +150,7 @@ export interface FileRoutesById {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
+  '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +158,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth/callback'
+    | '/auth/drive-callback'
     | '/documents/$id'
     | '/documents/'
     | '/grid/'
@@ -150,11 +169,13 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/documents/pdf/$id'
+    | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth/callback'
+    | '/auth/drive-callback'
     | '/documents/$id'
     | '/documents'
     | '/grid'
@@ -165,11 +186,13 @@ export interface FileRouteTypes {
     | '/storage'
     | '/users'
     | '/documents/pdf/$id'
+    | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
   id:
     | '__root__'
     | '/'
     | '/auth/callback'
+    | '/auth/drive-callback'
     | '/documents/$id'
     | '/documents/'
     | '/grid/'
@@ -180,12 +203,14 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/documents/pdf/$id'
+    | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
   DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
@@ -196,6 +221,7 @@ export interface RootRouteChildren {
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   DocumentsPdfIdRoute: typeof DocumentsPdfIdRoute
+  GridSignSubmissionIdRoute: typeof GridSignSubmissionIdRoute
   PdfViewFilenameRoute: typeof PdfViewFilenameRoute
 }
 
@@ -271,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/drive-callback': {
+      id: '/auth/drive-callback'
+      path: '/auth/drive-callback'
+      fullPath: '/auth/drive-callback'
+      preLoaderRoute: typeof AuthDriveCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -283,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/pdf/view/$filename'
       fullPath: '/pdf/view/$filename'
       preLoaderRoute: typeof PdfViewFilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/grid/sign/$submissionId': {
+      id: '/grid/sign/$submissionId'
+      path: '/grid/sign/$submissionId'
+      fullPath: '/grid/sign/$submissionId'
+      preLoaderRoute: typeof GridSignSubmissionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents/pdf/$id': {
@@ -298,6 +338,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthDriveCallbackRoute: AuthDriveCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,
   DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,
@@ -308,6 +349,7 @@ const rootRouteChildren: RootRouteChildren = {
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   DocumentsPdfIdRoute: DocumentsPdfIdRoute,
+  GridSignSubmissionIdRoute: GridSignSubmissionIdRoute,
   PdfViewFilenameRoute: PdfViewFilenameRoute,
 }
 export const routeTree = rootRouteImport

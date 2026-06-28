@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { Info } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import {
+  AtoTaxForm,
+  isAtoTaxFormValid,
+} from '#/components/ato/AtoTaxForm'
 import { BudgetGrid } from '#/components/grid/BudgetGrid'
 import { GridToolbar } from '#/components/grid/GridToolbar'
-import { SignaturePad } from '#/components/signature/SignaturePad'
-import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Badge } from '#/components/ui/badge'
 import {
   Breadcrumb,
@@ -25,11 +26,15 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
-import { generatePdf } from '#/lib/server/generate-pdf'
+import { initiatePdfSigning } from '#/lib/server/initiate-pdf-signing'
 import { getDocument } from '#/lib/server/list-documents'
 import { saveBudgetDocument } from '#/lib/server/save-budget-document'
-import { cloneDefaultBudgetRows, createEmptyRow  } from '#/types'
-import type {BudgetRow} from '#/types';
+import {
+  DEFAULT_ATO_TAXPAYER,
+  cloneDefaultBudgetRows,
+  createEmptyRow,
+} from '#/types'
+import type { AtoTaxpayerInfo, BudgetRow } from '#/types'
 
 export const Route = createFileRoute('/grid/')({
   validateSearch: (search) =>
@@ -47,12 +52,12 @@ function formatCurrency(amount: number): string {
 function GridPage() {
   const { edit: editDocumentId } = Route.useSearch()
   const navigate = useNavigate()
-  const generatePdfFn = useServerFn(generatePdf)
+  const initiatePdfSigningFn = useServerFn(initiatePdfSigning)
   const getDocumentFn = useServerFn(getDocument)
   const saveBudgetDocumentFn = useServerFn(saveBudgetDocument)
 
   const [gridData, setGridData] = useState<BudgetRow[]>(cloneDefaultBudgetRows)
-  const [signature, setSignature] = useState('')
+  const [taxpayer, setTaxpayer] = useState<AtoTaxpayerInfo>(DEFAULT_ATO_TAXPAYER)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingBudget, setIsLoadingBudget] = useState(Boolean(editDocumentId))
@@ -71,7 +76,6 @@ function GridPage() {
         }
 
         setGridData(doc.budgetData)
-        setSignature('')
         toast.success(`Loaded "${doc.name}" for editing`)
       })
       .catch((error: unknown) => {
@@ -86,6 +90,8 @@ function GridPage() {
     () => gridData.reduce((sum, row) => sum + row.amount, 0),
     [gridData],
   )
+
+  const isFormValid = isAtoTaxFormValid(taxpayer)
 
   const handleAddRow = useCallback(() => {
     setGridData((current) => [...current, createEmptyRow()])
@@ -111,19 +117,18 @@ function GridPage() {
   }, [gridData, saveBudgetDocumentFn])
 
   const handleGeneratePdf = useCallback(async () => {
-    if (!signature) return
+    if (!isFormValid) return
 
     setIsGenerating(true)
 
     try {
-      const { id } = await generatePdfFn({
-        data: { rows: gridData, signature },
+      const session = await initiatePdfSigningFn({
+        data: { rows: gridData, taxpayer },
       })
 
       await navigate({
-        to: '/documents/pdf/$id',
-        params: { id },
-        search: { generated: true },
+        to: '/grid/sign/$submissionId',
+        params: { submissionId: String(session.submissionId) },
       })
     } catch (error) {
       const message =
@@ -132,7 +137,7 @@ function GridPage() {
     } finally {
       setIsGenerating(false)
     }
-  }, [generatePdfFn, gridData, navigate, signature])
+  }, [gridData, initiatePdfSigningFn, isFormValid, navigate, taxpayer])
 
   if (isLoadingBudget) {
     return (
@@ -164,14 +169,15 @@ function GridPage() {
               Budget Planner
             </h1>
             <p className="text-sm text-muted-foreground">
-              Create financial summaries and generate signed PDF documents
+              Enter budget data and ATO details, then generate and sign on a
+              dedicated page
             </p>
           </div>
         </div>
 
         <GridToolbar
           rowCount={gridData.length}
-          hasSignature={signature.length > 0}
+          isFormValid={isFormValid}
           isGenerating={isGenerating}
           isSaving={isSaving}
           onGeneratePdf={handleGeneratePdf}
@@ -201,19 +207,21 @@ function GridPage() {
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">Authorised Signature</CardTitle>
+          <CardTitle className="text-base">
+            ATO Tax Return — Individual Information
+          </CardTitle>
           <CardDescription>
-            Your signature will appear on every page of the generated PDF
+            2025 Tax return for individuals (NAT 2541). These values are written
+            into the generated PDF form.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Alert>
-            <Info className="size-4" />
-            <AlertDescription>
-              Once applied, your signature is embedded permanently into the PDF
-            </AlertDescription>
-          </Alert>
-          <SignaturePad onSave={setSignature} />
+        <CardContent>
+          <AtoTaxForm value={taxpayer} onChange={setTaxpayer} />
+          {!isFormValid ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Fill TFN, name, and full postal address to enable PDF generation.
+            </p>
+          ) : null}
         </CardContent>
       </Card>
     </div>

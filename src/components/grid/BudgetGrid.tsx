@@ -2,11 +2,9 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   getCoreRowModel,
   getSortedRowModel,
-  useReactTable
-  
-  
+  useReactTable,
 } from '@tanstack/react-table'
-import type {ColumnDef, SortingState} from '@tanstack/react-table';
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import {
   ArrowUpDown,
   MoreHorizontal,
@@ -139,7 +137,7 @@ export function BudgetGrid({
               }
               className={cn(
                 'h-8 border-transparent bg-transparent shadow-none focus-visible:ring-1',
-                isNetIncome && 'bg-primary/5 font-semibold',
+                isNetIncome && 'bg-muted/60 font-semibold',
               )}
             />
           )
@@ -174,7 +172,7 @@ export function BudgetGrid({
               }
               className={cn(
                 'h-8 border-transparent bg-transparent text-right shadow-none focus-visible:ring-1',
-                isNetIncome && 'bg-primary/5 font-semibold tabular-nums',
+                isNetIncome && 'bg-muted/60 font-semibold tabular-nums',
               )}
             />
           )
@@ -209,7 +207,7 @@ export function BudgetGrid({
               }
               className={cn(
                 'h-8 border-transparent bg-transparent text-right shadow-none focus-visible:ring-1',
-                isNetIncome && 'bg-primary/5 font-semibold tabular-nums',
+                isNetIncome && 'bg-muted/60 font-semibold tabular-nums',
               )}
             />
           )
@@ -229,7 +227,7 @@ export function BudgetGrid({
               }
               className={cn(
                 'h-8 border-transparent bg-transparent shadow-none focus-visible:ring-1',
-                isNetIncome && 'bg-primary/5',
+                isNetIncome && 'bg-muted/60',
               )}
             />
           )
@@ -338,6 +336,9 @@ export function BudgetGrid({
       <DataTable
         table={table}
         columnCount={columns.length}
+        getRowClassName={(row) =>
+          row.original.category === NET_INCOME_CATEGORY ? 'bg-muted/60' : undefined
+        }
         footer={
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">

@@ -11,7 +11,7 @@ import {
 
 interface GridToolbarProps {
   rowCount: number
-  hasSignature: boolean
+  isFormValid: boolean
   isGenerating: boolean
   isSaving: boolean
   onGeneratePdf: () => void
@@ -20,17 +20,19 @@ interface GridToolbarProps {
 
 export function GridToolbar({
   rowCount,
-  hasSignature,
+  isFormValid,
   isGenerating,
   isSaving,
   onGeneratePdf,
   onSaveDocument,
 }: GridToolbarProps) {
-  const generateDisabled = !hasSignature || isGenerating || isSaving
+  const generateDisabled = !isFormValid || isGenerating || isSaving
 
   return (
     <TooltipProvider>
       <div className="flex flex-wrap items-center gap-3">
+        <Badge variant="secondary">{rowCount} rows</Badge>
+
         <Button
           type="button"
           variant="outline"
@@ -50,13 +52,13 @@ export function GridToolbar({
                 onClick={onGeneratePdf}
               >
                 {isGenerating ? <Loader2 className="animate-spin" /> : null}
-                Generate PDF
+                Generate & Sign PDF
               </Button>
             </span>
           </TooltipTrigger>
-          {!hasSignature ? (
+          {!isFormValid ? (
             <TooltipContent>
-              Apply a signature before generating the PDF
+              Complete the ATO taxpayer details before generating
             </TooltipContent>
           ) : null}
         </Tooltip>

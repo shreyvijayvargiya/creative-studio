@@ -29,6 +29,7 @@ export interface DocumentListItem {
   sharePin: string
   createdAt: string
   pinProtected: boolean
+  driveUrl: string | null
 }
 
 export const NET_INCOME_CATEGORY = 'Net Income'
@@ -113,4 +114,38 @@ export function withCalculatedNetIncome(rows: BudgetRow[]): BudgetRow[] {
 
 export function cloneDefaultBudgetRows(): BudgetRow[] {
   return DEFAULT_BUDGET_ROWS.map((row) => ({ ...row }))
+}
+
+export interface AtoTaxpayerInfo {
+  tfn: string
+  isAustralianResident: boolean
+  title: string
+  surname: string
+  firstName: string
+  nameChanged: boolean
+  postalAddress: string
+  suburb: string
+  state: string
+  postcode: string
+  homeAddressDifferent: boolean
+  homeAddress: string
+}
+
+export const DEFAULT_ATO_TAXPAYER: AtoTaxpayerInfo = {
+  tfn: '',
+  isAustralianResident: true,
+  title: '',
+  surname: '',
+  firstName: '',
+  nameChanged: false,
+  postalAddress: '',
+  suburb: '',
+  state: '',
+  postcode: '',
+  homeAddressDifferent: false,
+  homeAddress: '',
+}
+
+export function getBudgetAmount(rows: BudgetRow[], category: string): number {
+  return rows.find((row) => row.category === category)?.amount ?? 0
 }

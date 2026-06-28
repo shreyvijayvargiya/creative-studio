@@ -53,8 +53,6 @@ export const navSections: NavSection[] = [
           {
             label: 'Storage',
             href: '/storage',
-            badge: 'Soon',
-            phaseTwo: true,
           },
           {
             label: 'Messages',

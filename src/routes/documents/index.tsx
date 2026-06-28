@@ -25,10 +25,21 @@ import { toast } from 'sonner'
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { DataTable } from '#/components/ui/data-table'
+import { Skeleton } from "#/components/ui/skeleton"
 import { SharePdfDialog } from '#/components/pdf/share-pdf-dialog'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import { Alert, AlertDescription } from '#/components/ui/alert'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '#/components/ui/alert-dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Checkbox } from '#/components/ui/checkbox'
 import {
@@ -53,7 +64,9 @@ import {
   TooltipTrigger,
 } from '#/components/ui/tooltip'
 import { listDocuments } from '#/lib/server/list-documents'
+import { deleteDocument } from '#/lib/server/delete-document'
 import type { DocumentListItem } from '#/types'
+
 
 export const Route = createFileRoute('/documents/')({
   component: DocumentsPage,
@@ -73,8 +86,12 @@ function DocumentsPage() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { openLoginModal } = useLoginModal()
   const listDocumentsFn = useServerFn(listDocuments)
+  const deleteDocumentFn = useServerFn(deleteDocument)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [documentToDelete, setDocumentToDelete] =
+    useState<DocumentListItem | null>(null)
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
@@ -100,6 +117,24 @@ function DocumentsPage() {
       })
       .finally(() => setIsLoading(false))
   }, [isAuthenticated, listDocumentsFn])
+
+  const handleDeleteDocument = async (doc: DocumentListItem) => {
+    setDeletingId(doc.id)
+
+    try {
+      await deleteDocumentFn({ data: { id: doc.id } })
+      setDocuments((current) => current.filter((item) => item.id !== doc.id))
+      setRowSelection({})
+      toast.success(`"${doc.name}" deleted`)
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to delete document'
+      toast.error(message)
+    } finally {
+      setDeletingId(null)
+      setDocumentToDelete(null)
+    }
+  }
 
   const columns = useMemo<ColumnDef<DocumentListItem>[]>(
     () => [
@@ -245,7 +280,11 @@ function DocumentsPage() {
                   </>
                 ) : null}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  disabled={deletingId === doc.id}
+                  onClick={() => setDocumentToDelete(doc)}
+                >
                   <Trash2 className="size-4" />
                   Delete
                 </DropdownMenuItem>
@@ -255,7 +294,7 @@ function DocumentsPage() {
         },
       },
     ],
-    [],
+    [deletingId],
   )
 
   const table = useReactTable({
@@ -309,12 +348,11 @@ function DocumentsPage() {
             className="w-full sm:max-w-xs"
           />
         </CardHeader>
-        <CardContent className="min-w-0 p-4 pt-0 sm:p-6 sm:pt-0">
+        <CardContent className="min-w-0 p-4 pt-0 sm:p-6 sm:pt-0 space-y-1">
           {isAuthLoading || isLoading ? (
-            <p className="py-12 text-center text-sm text-muted-foreground">
-              Loading documents...
-            </p>
-          ) : !isAuthenticated ? (
+            ([...Array(5)]).map((item: number) => <Skeleton key={item} className="h-4 w-full" />)
+          )
+          : !isAuthenticated ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <Alert className="max-w-md border-dashed">
                 <AlertDescription>
@@ -384,6 +422,43 @@ function DocumentsPage() {
           documentName={shareDocument.name}
         />
       ) : null}
+
+      <AlertDialog
+        open={documentToDelete != null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDocumentToDelete(null)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete document?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {documentToDelete
+                ? `"${documentToDelete.name}" will be permanently removed. This cannot be undone.`
+                : 'This document will be permanently removed.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingId != null}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              disabled={deletingId != null || documentToDelete == null}
+              onClick={(event) => {
+                event.preventDefault()
+                if (documentToDelete) {
+                  void handleDeleteDocument(documentToDelete)
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

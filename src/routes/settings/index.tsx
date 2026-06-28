@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { LogOut } from 'lucide-react'
 
+import { GoogleDriveConnectCard } from '#/components/settings/google-drive-connect'
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar'
@@ -128,6 +129,8 @@ function SettingsPage() {
           </Button>
         </CardContent>
       </Card>
+
+      <GoogleDriveConnectCard />
     </div>
   )
 }
