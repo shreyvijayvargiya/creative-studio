@@ -2,6 +2,42 @@
 
 A finance CRM for budget planning, ATO tax return PDF generation, DocuSeal e-signing, document storage (Supabase), and optional per-user Google Drive backup.
 
+## Prerequisites
+
+| Requirement | Version |
+|-------------|---------|
+| [Node.js](https://nodejs.org/) | **20.19+**, **22.12+**, or **24+** (recommended: **22 LTS** — matches Vercel production) |
+| npm | **10+** (bundled with Node 20+) |
+| Git | Any recent version |
+
+Check your versions:
+
+```bash
+node -v   # e.g. v22.x.x
+npm -v    # e.g. 10.x.x
+```
+
+Optional — pin Node 22 locally with [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
+nvm install 22
+nvm use 22
+```
+
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | [TanStack Start](https://tanstack.com/start) + [React 19](https://react.dev/) |
+| Build | [Vite 8](https://vite.dev/) + [Nitro](https://nitro.build/) |
+| Language | TypeScript 6 |
+| Styling | Tailwind CSS 4 |
+| Database & auth | [Supabase](https://supabase.com/) (Postgres, Auth, Storage) |
+| E-signing | [DocuSeal](https://www.docuseal.com/) |
+| Google Drive | OAuth 2.0 per user (`googleapis`) |
+| Testing | [Vitest](https://vitest.dev/) |
+| Production host | Vercel (`nodejs22.x` runtime) |
+
 ## Quick start
 
 ```bash
@@ -259,6 +295,7 @@ DOCUSEAL_API_URL=https://your-docuseal-instance.com
 
 | Step | Action |
 |------|--------|
+| Node runtime | **Node.js 22.x** on Vercel (configured in `vite.config.ts` → `nodejs22.x`) |
 | Env vars | Set all variables in your host (Vercel, etc.) |
 | `APP_URL` | `https://your-production-domain.com` |
 | Supabase Site URL | Match production domain |
@@ -268,6 +305,13 @@ DOCUSEAL_API_URL=https://your-docuseal-instance.com
 | Database | `schema.sql` + migrations applied |
 | OAuth consent | Publish app or add test users in Google Cloud |
 
+Build and run locally like production:
+
+```bash
+npm run build
+npm run start    # serves .output/server (default Nitro output)
+```
+
 ---
 
 ## 5. Development commands
@@ -275,11 +319,16 @@ DOCUSEAL_API_URL=https://your-docuseal-instance.com
 ```bash
 npm run dev          # Start dev server (http://localhost:3000)
 npm run build        # Production build
-npm run preview      # Preview production build
-npm test             # Run Vitest test suite
+npm run start        # Run production server after build
+npm run preview      # Preview production build (Vite preview)
+npm test             # Run Vitest test suite (33 tests)
 npm run lint         # ESLint
 npm run format       # Prettier + ESLint fix
+npm run check        # Prettier check only
+npm run generate-routes  # Regenerate TanStack Router route tree
 ```
+
+**Default ports:** dev server `3000` (set in `package.json` → `npm run dev`).
 
 ---
 
