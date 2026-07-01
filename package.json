@@ -5,6 +5,9 @@
   "imports": {
     "#/*": "./src/*"
   },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite dev --port 3000",
     "generate-routes": "tsr generate",

@@ -13,3 +13,7 @@ __unconfig*
 todos.json
 .output
 .vercel
+.vscode
+package-lock.json
+yarn.lock
+yarn.error
