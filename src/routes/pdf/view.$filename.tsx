@@ -56,7 +56,7 @@ function PdfViewPage() {
             </AlertDescription>
           </Alert>
 
-          <form className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm" onSubmit={handleSubmit}>
+          <form className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="pin">Document PIN</Label>
               <div className="relative">

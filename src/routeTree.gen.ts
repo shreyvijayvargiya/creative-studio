@@ -9,6 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as StorageIndexRouteImport } from './routes/storage/index'
@@ -18,6 +22,7 @@ import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
 import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
@@ -25,6 +30,26 @@ import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename
 import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -70,6 +95,11 @@ const DocumentsIndexRoute = DocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocumentsIdRoute = DocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
@@ -103,9 +133,14 @@ const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/features': typeof FeaturesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -120,9 +155,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/features': typeof FeaturesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
   '/invoices': typeof InvoicesIndexRoute
@@ -138,9 +178,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/features': typeof FeaturesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
@@ -157,9 +202,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/features'
+    | '/how-it-works'
+    | '/pricing'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/documents/$id'
+    | '/dashboard/'
     | '/documents/'
     | '/grid/'
     | '/invoices/'
@@ -174,9 +224,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/features'
+    | '/how-it-works'
+    | '/pricing'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/documents/$id'
+    | '/dashboard'
     | '/documents'
     | '/grid'
     | '/invoices'
@@ -191,9 +246,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/features'
+    | '/how-it-works'
+    | '/pricing'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/documents/$id'
+    | '/dashboard/'
     | '/documents/'
     | '/grid/'
     | '/invoices/'
@@ -209,9 +269,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  FeaturesRoute: typeof FeaturesRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  PricingRoute: typeof PricingRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
@@ -227,6 +292,34 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -290,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/documents/$id': {
       id: '/documents/$id'
       path: '/documents/$id'
@@ -337,9 +437,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  FeaturesRoute: FeaturesRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  PricingRoute: PricingRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,

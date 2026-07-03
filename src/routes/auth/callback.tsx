@@ -34,7 +34,7 @@ function AuthCallbackPage() {
           search: window.location.search,
         })
         toast.error(errorDescription)
-        await navigate({ to: '/', replace: true })
+        await navigate({ to: '/dashboard', replace: true })
         return
       }
 
@@ -43,7 +43,7 @@ function AuthCallbackPage() {
           search: window.location.search,
         })
         toast.error('No authorization code received.')
-        await navigate({ to: '/', replace: true })
+        await navigate({ to: '/dashboard', replace: true })
         return
       }
 
@@ -60,7 +60,7 @@ function AuthCallbackPage() {
           result,
         })
         toast.error(result.error)
-        await navigate({ to: '/', replace: true })
+        await navigate({ to: '/dashboard', replace: true })
         return
       }
 

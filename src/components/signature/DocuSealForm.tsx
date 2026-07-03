@@ -97,7 +97,7 @@ export function DocuSealForm({
   return (
     <div
       className={cn(
-        'min-h-[70vh] overflow-hidden rounded-lg border bg-card',
+        'min-h-[70vh] overflow-hidden rounded-xl border bg-card',
         disabled && 'pointer-events-none opacity-50',
       )}
     >

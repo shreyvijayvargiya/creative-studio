@@ -3,6 +3,7 @@ import { ChevronsUpDown, LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react
 
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
+import { ThemeToggleButton } from '#/components/layout/theme-toggle-button'
 import { useTheme } from '#/components/layout/theme-provider'
 import {
   getUserAvatarUrl,
@@ -38,19 +39,7 @@ export function SidebarUserFooter() {
           <LogIn className="size-4" />
           Sign in
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={toggleTheme}
-        >
-          {theme === 'light' ? (
-            <Moon className="size-4" />
-          ) : (
-            <Sun className="size-4" />
-          )}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        <ThemeToggleButton />
       </div>
     )
   }
