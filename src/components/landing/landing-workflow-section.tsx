@@ -76,7 +76,7 @@ export function LandingWorkflowSection({
   ctaHref = '/how-it-works',
 }: LandingWorkflowSectionProps) {
   return (
-    <section className="relative bg-background py-20 sm:py-24 lg:py-28">
+    <section className="relative bg-background py-12 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <LandingSectionHeading
           eyebrow={eyebrow}
@@ -91,11 +91,11 @@ export function LandingWorkflowSection({
         </div>
 
         {showCta ? (
-          <div className="mt-10 text-center">
+          <div className="mt-8 text-center sm:mt-10">
             <Button
               asChild
               size="lg"
-              className="h-12 rounded-full bg-violet-600 px-6 text-base font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700"
+              className="h-11 w-full max-w-xs rounded-full bg-violet-600 px-6 text-sm font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700 sm:h-12 sm:w-auto sm:max-w-none sm:text-base"
             >
               <Link to={ctaHref}>
                 {ctaLabel}

@@ -50,7 +50,7 @@ function AboutPage() {
         primaryCta={{ label: 'Open workspace', href: '/dashboard' }}
       />
 
-      <section className="bg-background py-20 sm:py-24">
+      <section className="bg-background py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
             <div>
@@ -74,7 +74,7 @@ function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm dark:bg-card sm:p-8">
+            <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm sm:p-8">
               <span
                 aria-hidden
                 className="float-right text-5xl font-bold leading-none text-muted-foreground/15"
@@ -103,7 +103,7 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-muted/30 py-20 sm:py-24">
+      <section className="bg-muted/30 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
             eyebrow="Contact"
@@ -116,7 +116,7 @@ function AboutPage() {
           />
 
           <form
-            className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm dark:bg-card sm:p-8"
+            className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm sm:p-8"
             onSubmit={(event) => event.preventDefault()}
           >
             <div className="grid gap-4 sm:grid-cols-2">

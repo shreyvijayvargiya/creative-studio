@@ -183,7 +183,7 @@ function FeaturesPage() {
         primaryCta={{ label: 'Start free', href: '/dashboard' }}
       />
 
-      <section className="bg-background py-20 sm:py-24">
+      <section className="bg-background py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
             eyebrow="Capabilities"
@@ -217,7 +217,7 @@ function FeaturesPage() {
         </div>
       </section>
 
-      <section className="bg-muted/30 py-20 sm:py-24">
+      <section className="bg-muted/30 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
             eyebrow="For professionals"

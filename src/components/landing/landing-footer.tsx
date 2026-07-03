@@ -8,8 +8,8 @@ export function LandingFooter() {
 
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:gap-10">
           <div className="space-y-4">
             <LandingLogo />
             <p className="max-w-sm text-sm leading-6 text-muted-foreground">
@@ -18,7 +18,7 @@ export function LandingFooter() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
             <div>
               <p className="landing-label mb-3 text-foreground">Product</p>
               <ul className="space-y-2">
@@ -63,7 +63,7 @@ export function LandingFooter() {
                 </li>
               </ul>
             </div>
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <p className="landing-label mb-3 text-foreground">Legal</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Privacy policy</li>
@@ -73,7 +73,7 @@ export function LandingFooter() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6 text-sm text-muted-foreground">
+        <div className="mt-8 border-t border-border pt-6 text-center text-sm text-muted-foreground sm:mt-10 sm:text-left">
           © {year} Finance CRM. Built for accounting professionals.
         </div>
       </div>

@@ -7,7 +7,7 @@ interface LandingLayoutProps {
 
 export function LandingLayout({ children }: LandingLayoutProps) {
   return (
-    <div className="landing-page relative flex min-h-svh flex-col bg-background font-sans text-foreground">
+    <div className="landing-page relative flex min-h-svh flex-col overflow-x-hidden bg-background font-sans text-foreground">
       <LandingNav />
       <main className="flex-1 relative">{children}</main>
       <LandingFooter />

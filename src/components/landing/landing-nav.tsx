@@ -22,7 +22,7 @@ export function LandingNav({ className }: LandingNavProps) {
         className,
       )}
     >
-      <div className="mx-auto flex h-14 items-center justify-between gap-4 rounded-full border border-border/60 bg-background/90 px-4 shadow-lg shadow-violet-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-violet-500/20 sm:px-6">
+      <div className="mx-auto flex h-12 items-center justify-between gap-2 rounded-full border border-border/60 bg-background/90 px-3 shadow-lg shadow-violet-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-violet-500/20 sm:h-14 sm:gap-4 sm:px-6">
         <LandingLogo />
 
         <nav className="hidden items-center gap-4 md:flex">

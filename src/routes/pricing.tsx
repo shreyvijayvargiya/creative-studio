@@ -35,7 +35,7 @@ function FaqItem({
   const number = String(index + 1).padStart(2, '0')
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm dark:bg-card">
+    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6">
       <div className="flex items-start gap-4">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-sm font-bold text-violet-600 dark:bg-violet-950/50 dark:text-violet-400">
           {number}
@@ -64,7 +64,7 @@ function PricingPage() {
         primaryCta={{ label: 'Get started free', href: '/dashboard' }}
       />
 
-      <section className="bg-background py-20 sm:py-24">
+      <section className="bg-background py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
             eyebrow="Plans"
@@ -77,7 +77,7 @@ function PricingPage() {
             description="Start on the free tier today. Upgrade when you need Drive sync and higher limits."
           />
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {LANDING_PRICING_TIERS.map((tier, index) => (
               <PricingCard key={tier.name} tier={tier} index={index} />
             ))}
@@ -85,7 +85,7 @@ function PricingPage() {
         </div>
       </section>
 
-      <section className="bg-muted/30 py-20 sm:py-24">
+      <section className="bg-muted/30 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
             eyebrow="FAQ"

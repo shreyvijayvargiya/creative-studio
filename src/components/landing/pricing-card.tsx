@@ -21,7 +21,7 @@ export function PricingCard({ tier, index }: PricingCardProps) {
   return (
     <article
       className={cn(
-        'relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:bg-card',
+        'relative flex h-full flex-col rounded-2xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6',
         tier.highlighted
           ? 'border-violet-300 bg-linear-to-b from-violet-50/80 to-white dark:from-violet-950/20 dark:to-card'
           : TIER_ACCENTS[index] ?? 'border-border/60',

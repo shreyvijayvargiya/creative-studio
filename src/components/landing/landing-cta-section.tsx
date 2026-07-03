@@ -90,40 +90,40 @@ export function LandingCtaSection({
   return (
     <section
       className={cn(
-        'relative flex w-full items-center justify-center overflow-hidden bg-background py-20',
-        fullScreen && 'min-h-screen',
+        'relative flex w-full items-center justify-center overflow-hidden bg-background py-12 sm:py-20',
+        fullScreen && 'min-h-0 sm:min-h-screen',
       )}
     >
       <LandingGradientBackground />
 
       <div className="relative z-0 mx-auto w-full max-w-3xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card/95 p-8 shadow-xl shadow-violet-500/10 backdrop-blur-sm sm:p-12 dark:border-violet-500/20 dark:shadow-violet-500/5">
+        <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/95 p-5 shadow-xl shadow-violet-500/10 backdrop-blur-sm sm:rounded-[2rem] sm:p-8 md:p-12 dark:border-violet-500/20 dark:shadow-violet-500/5">
           <div className="pointer-events-none absolute -top-16 -left-16 size-48 rounded-full bg-violet-500/10 blur-3xl" />
           <div className="pointer-events-none absolute -right-16 -bottom-16 size-48 rounded-full bg-fuchsia-500/10 blur-3xl" />
 
           <div className="relative text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50 px-4 py-1.5 text-sm font-medium text-amber-800 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-300">
+            <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-amber-200/80 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-800 sm:mb-6 sm:px-4 sm:text-sm dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-300">
               <Zap className="size-4" />
               {badge}
             </div>
 
-            <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <h2 className="text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl lg:text-5xl">
               {title}
             </h2>
 
-            <p className="mx-auto mt-5 max-w-lg text-base leading-7 text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-muted-foreground sm:mt-5 sm:text-base">
               {description}
             </p>
 
             {benefits.length > 0 ? (
-              <div className="mt-10 grid gap-3 sm:grid-cols-2">
+              <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2">
                 {benefits.map((benefit) => (
                   <BenefitItem key={benefit.label} {...benefit} />
                 ))}
               </div>
             ) : null}
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:mt-10 sm:gap-4">
               <Button
                 asChild
                 size="lg"
