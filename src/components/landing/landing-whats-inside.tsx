@@ -1,5 +1,34 @@
+import type { LucideIcon } from 'lucide-react'
+
 import type { HomeInsideFeature } from '#/components/landing/landing-inside-content'
+import { FollowerPointerCard } from '#/components/ui/following-pointer'
 import { cn } from '#/lib/utils'
+
+function FeaturePointerTitle({
+  title,
+  icon: Icon,
+  iconBg,
+  iconColor,
+}: {
+  title: string
+  icon: LucideIcon
+  iconBg: string
+  iconColor: string
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className={cn(
+          'flex size-6 items-center justify-center rounded-full',
+          iconBg,
+        )}
+      >
+        <Icon className={cn('size-3.5', iconColor)} strokeWidth={2} />
+      </div>
+      <span className="font-medium">{title}</span>
+    </div>
+  )
+}
 
 interface WhatsInsideFeatureCardProps {
   feature: HomeInsideFeature
@@ -9,30 +38,47 @@ export function WhatsInsideFeatureCard({ feature }: WhatsInsideFeatureCardProps)
   const Icon = feature.icon
 
   return (
-    <article className="relative rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute top-4 right-5 select-none text-5xl font-bold leading-none text-muted-foreground/15 sm:text-6xl"
-      >
-        {feature.number}
-      </span>
-
-      <div
+    <FollowerPointerCard
+      className="h-full"
+      title={
+        <FeaturePointerTitle
+          title={feature.title}
+          icon={feature.icon}
+          iconBg={feature.iconBg}
+          iconColor={feature.iconColor}
+        />
+      }
+    >
+      <article
         className={cn(
-          'relative flex size-12 items-center justify-center rounded-xl',
-          feature.iconBg,
+          'group relative h-full scale-100 rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md sm:p-6',
+          feature.cardHoverBg,
         )}
       >
-        <Icon className={cn('size-6', feature.iconColor)} strokeWidth={1.75} />
-      </div>
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-4 right-5 select-none text-5xl font-bold leading-none text-muted-foreground/15 sm:text-6xl"
+        >
+          {feature.number}
+        </span>
 
-      <h3 className="relative mt-6 text-lg font-semibold tracking-tight text-foreground">
-        {feature.title}
-      </h3>
-      <p className="relative mt-2 text-sm leading-6 text-muted-foreground">
-        {feature.description}
-      </p>
-    </article>
+        <div
+          className={cn(
+            'relative flex size-12 items-center justify-center rounded-xl',
+            feature.iconBg,
+          )}
+        >
+          <Icon className={cn('size-6', feature.iconColor)} strokeWidth={1.75} />
+        </div>
+
+        <h3 className="relative mt-6 text-lg font-semibold tracking-tight text-foreground">
+          {feature.title}
+        </h3>
+        <p className="relative mt-2 text-sm leading-6 text-muted-foreground">
+          {feature.description}
+        </p>
+      </article>
+    </FollowerPointerCard>
   )
 }
 

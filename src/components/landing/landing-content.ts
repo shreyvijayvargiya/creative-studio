@@ -10,10 +10,9 @@ import {
 import type { LucideIcon } from 'lucide-react'
 
 export const LANDING_NAV_LINKS = [
-  { label: 'Features', href: '/features' },
+  { label: 'Feature', href: '/features' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'How it works', href: '/how-it-works' },
-  { label: 'About', href: '/about' },
 ] as const
 
 export const HERO_HOME_STATS = [

@@ -10,6 +10,7 @@ describe('public-paths', () => {
   it('marks marketing routes as public', () => {
     expect(isPublicRoute('/')).toBe(true)
     expect(isPublicRoute('/features')).toBe(true)
+    expect(isPublicRoute('/blog')).toBe(true)
     expect(isPublicRoute('/pricing')).toBe(true)
   })
 

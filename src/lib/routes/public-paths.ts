@@ -2,6 +2,7 @@
 export const PUBLIC_PATHS = [
   '/',
   '/features',
+  '/blog',
   '/pricing',
   '/how-it-works',
   '/about',
