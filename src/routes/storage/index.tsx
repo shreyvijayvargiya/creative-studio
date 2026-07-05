@@ -84,7 +84,7 @@ function StoragePage() {
               {driveDocuments.map((doc) => (
                 <li
                   key={doc.id}
-                  className="flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
                     <p className="font-medium">{doc.name}</p>

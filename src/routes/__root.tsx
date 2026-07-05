@@ -5,7 +5,8 @@ import {
 } from '@tanstack/react-router'
 import { Suspense, lazy } from 'react'
 
-import { AppShell } from '#/components/layout/app-shell'
+import { AppProviders } from '#/components/layout/app-providers'
+import { RootLayout } from '#/components/layout/root-layout'
 import { THEME_STORAGE_KEY } from '#/components/layout/theme-provider'
 
 import appCss from '../styles.css?url'
@@ -58,7 +59,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
-        <AppShell>{children}</AppShell>
+        <AppProviders>
+          <RootLayout>{children}</RootLayout>
+        </AppProviders>
         {AppDevtools ? (
           <Suspense fallback={null}>
             <AppDevtools />

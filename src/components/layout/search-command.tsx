@@ -69,7 +69,7 @@ const featureItems: SearchResult[] = [
     id: 'feature-dashboard',
     label: 'Dashboard',
     description: 'Overview and activity',
-    href: '/',
+    href: '/dashboard',
     icon: LayoutDashboard,
     group: 'Features',
   },

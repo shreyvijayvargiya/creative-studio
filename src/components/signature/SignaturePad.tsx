@@ -29,7 +29,7 @@ export function SignaturePad({ onSave }: SignaturePadProps) {
 
   return (
     <div className="space-y-4">
-      <div className="w-full max-w-[500px] overflow-hidden rounded-lg border bg-white">
+      <div className="w-full max-w-[500px] overflow-hidden rounded-xl border bg-white">
         <SignatureCanvas
           ref={canvasRef}
           penColor="black"

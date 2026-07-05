@@ -1,19 +1,39 @@
-import { AuthProvider } from '#/components/auth/auth-provider'
-import { LoginModalProvider } from '#/components/auth/login-modal-provider'
-import { CookieConsentBar } from '#/components/layout/cookie-consent-bar'
+import { useRouterState } from '@tanstack/react-router'
+
+import { useAuth } from '#/components/auth/auth-provider'
+import {
+  AuthLoadingScreen,
+  AuthRequiredScreen,
+} from '#/components/auth/auth-required-screen'
 import { DesktopSidebar } from '#/components/layout/sidebar'
-import { SidebarProvider, useSidebar } from '#/components/layout/sidebar-provider'
-import { ThemeProvider } from '#/components/layout/theme-provider'
-import { ThemeToaster } from '#/components/layout/theme-toaster'
+import { useSidebar } from '#/components/layout/sidebar-provider'
 import { Topbar } from '#/components/layout/topbar'
+import { requiresAuth } from '#/lib/routes/public-paths'
 import { cn } from '#/lib/utils'
 
-interface AppShellProps {
+interface AppShellLayoutProps {
   children: React.ReactNode
 }
 
-function AppShellLayout({ children }: AppShellProps) {
+export function AppShellLayout({ children }: AppShellLayoutProps) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const { isAuthenticated, isLoading } = useAuth()
   const { collapsed } = useSidebar()
+
+  const mustAuthenticate = requiresAuth(pathname)
+
+  if (mustAuthenticate && isLoading) {
+    return <AuthLoadingScreen />
+  }
+
+  if (mustAuthenticate && !isAuthenticated) {
+    return (
+      <AuthRequiredScreen
+        title="Sign in to open your dashboard"
+        description="Your budget planner, documents, and signed PDFs are available after you sign in or create a free account."
+      />
+    )
+  }
 
   return (
     <div className="min-h-svh bg-background text-foreground">
@@ -29,21 +49,5 @@ function AppShellLayout({ children }: AppShellProps) {
         <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
       </div>
     </div>
-  )
-}
-
-export function AppShell({ children }: AppShellProps) {
-  return (
-    <ThemeProvider>
-      <AuthProvider>
-        <LoginModalProvider>
-          <SidebarProvider>
-            <AppShellLayout>{children}</AppShellLayout>
-          </SidebarProvider>
-          <ThemeToaster />
-          <CookieConsentBar />
-        </LoginModalProvider>
-      </AuthProvider>
-    </ThemeProvider>
   )
 }

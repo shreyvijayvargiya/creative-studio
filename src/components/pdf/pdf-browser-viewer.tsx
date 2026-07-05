@@ -96,7 +96,7 @@ export function PdfBrowserViewer({
   return (
     <div
       className={cn(
-        'pdf-browser-viewer overflow-hidden rounded-lg border border-border bg-card shadow-sm',
+        'pdf-browser-viewer overflow-hidden rounded-xl border border-border bg-card shadow-sm',
         isFullscreen && 'fixed inset-4 z-50 flex flex-col',
         className,
       )}

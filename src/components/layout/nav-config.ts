@@ -36,7 +36,7 @@ export const navSections: NavSection[] = [
   {
     label: 'Platform',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/' },
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
       {
         label: 'Finance',
         icon: TableProperties,
@@ -110,8 +110,8 @@ export const settingsNavItems = navSections[1].items.map((item) => ({
 export type NavItem = (typeof mainNavItems)[number]
 
 export function isNavItemActive(pathname: string, href: string): boolean {
-  if (href === '/') {
-    return pathname === '/'
+  if (href === '/dashboard') {
+    return pathname === '/dashboard'
   }
 
   return pathname === href || pathname.startsWith(`${href}/`)
