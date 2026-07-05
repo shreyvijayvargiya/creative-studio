@@ -77,16 +77,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loadProfile, user])
 
   const applySessionUser = useCallback(
-    async (sessionUser: User | null) => {
+    (sessionUser: User | null) => {
       setUser(sessionUser)
+      setIsLoading(false)
 
-      if (sessionUser) {
-        await loadProfile(sessionUser)
-      } else {
+      if (!sessionUser) {
         setProfile(null)
+        return
       }
 
-      setIsLoading(false)
+      void loadProfile(sessionUser).catch((error) => {
+        logAuthError('profile-load', error, { userId: sessionUser.id })
+      })
     },
     [loadProfile],
   )
@@ -95,14 +97,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (serverUser?: User | null) => {
       setIsLoading(true)
 
-      const { data, error } = await supabase.auth.getSession()
+      try {
+        const { data, error } = await supabase.auth.getSession()
 
-      if (error) {
+        if (error) {
+          logAuthError('session-init', error)
+        }
+
+        const sessionUser = data.session?.user ?? serverUser ?? null
+        applySessionUser(sessionUser)
+      } catch (error) {
         logAuthError('session-init', error)
+        applySessionUser(serverUser ?? null)
       }
-
-      const sessionUser = data.session?.user ?? serverUser ?? null
-      await applySessionUser(sessionUser)
     },
     [applySessionUser],
   )
@@ -110,27 +117,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
-    void supabase.auth.getSession().then(async ({ data, error }) => {
-      if (!isMounted) {
-        return
-      }
+    const initSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession()
 
-      if (error) {
+        if (!isMounted) {
+          return
+        }
+
+        if (error) {
+          logAuthError('session-init', error)
+          toast.error(error.message)
+        }
+
+        applySessionUser(data.session?.user ?? null)
+      } catch (error) {
+        if (!isMounted) {
+          return
+        }
+
         logAuthError('session-init', error)
-        toast.error(error.message)
+        setUser(null)
+        setProfile(null)
+        setIsLoading(false)
       }
+    }
 
-      await applySessionUser(data.session?.user ?? null)
-    })
+    void initSession()
+
+    const loadingTimeout = window.setTimeout(() => {
+      if (isMounted) {
+        setIsLoading(false)
+      }
+    }, 8_000)
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      void applySessionUser(session?.user ?? null)
+      // Defer async work — awaiting inside this callback can deadlock getSession().
+      window.setTimeout(() => {
+        if (!isMounted) {
+          return
+        }
+
+        applySessionUser(session?.user ?? null)
+      }, 0)
     })
 
     return () => {
       isMounted = false
+      window.clearTimeout(loadingTimeout)
       subscription.unsubscribe()
     }
   }, [applySessionUser])
