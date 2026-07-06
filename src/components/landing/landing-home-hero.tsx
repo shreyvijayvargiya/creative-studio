@@ -192,7 +192,7 @@ function LandingHomeHeroBackground() {
 
 export function LandingHomeHero() {
   return (
-    <section className="relative flex h-screen min-h-screen flex-col justify-center overflow-hidden bg-background pt-20 pb-12 sm:pt-24 sm:pb-16">
+    <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-background pt-20 pb-12 sm:pt-24 sm:pb-16">
       <LandingHomeHeroBackground />
       <img
         alt=""
