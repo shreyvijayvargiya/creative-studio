@@ -9,12 +9,13 @@ import {
   LandingSectionHeading,
 } from '#/components/landing/landing-section-heading'
 import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
+import { buildPageMetaTags } from '#/lib/blog/seo'
 import { cn } from '#/lib/utils'
 
 const FEATURE_STYLES = [
   {
-    iconBg: 'bg-violet-100 dark:bg-violet-950/50',
-    iconColor: 'text-violet-600 dark:text-violet-400',
+    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
     iconBg: 'bg-fuchsia-100 dark:bg-fuchsia-950/50',
@@ -42,8 +43,8 @@ const PROFESSIONAL_HIGHLIGHTS = [
   {
     number: '01',
     icon: FileCheck,
-    iconBg: 'bg-violet-100 dark:bg-violet-950/50',
-    iconColor: 'text-violet-600 dark:text-violet-400',
+    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
     title: 'Audit-friendly exports',
     description:
       'Generate PDFs with structured taxpayer data and budget summaries suitable for review and filing preparation.',
@@ -156,14 +157,12 @@ function ProfessionalHighlightCard({
 
 export const Route = createFileRoute('/features')({
   head: () => ({
-    meta: [
-      { title: 'Features | Finance CRM Accounting Software' },
-      {
-        name: 'description',
-        content:
-          'Budget planner, ATO tax PDF generation, DocuSeal e-signing, Google Drive backup, and PIN-protected document sharing for accounting teams.',
-      },
-    ],
+    meta: buildPageMetaTags({
+      title: 'Features | Finance CRM Accounting Software',
+      description:
+        'Budget planner, ATO tax PDF generation, DocuSeal e-signing, Google Drive backup, and PIN-protected document sharing for accounting teams.',
+      path: '/features',
+    }),
   }),
   component: FeaturesPage,
 })
@@ -242,7 +241,7 @@ function FeaturesPage() {
         title={
           <>
             See the features in your own{' '}
-            <span className="text-violet-600 dark:text-violet-400">workspace</span>
+            <span className="text-blue-600 dark:text-blue-400">workspace</span>
           </>
         }
         description="Sign up free and walk through the budget planner, PDF generation, and signing flow today."

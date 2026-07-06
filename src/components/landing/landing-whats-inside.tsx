@@ -95,7 +95,7 @@ export function LandingWhatsInsideSection({
         <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-14">
           <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5 sm:gap-4">
             <div className="hidden h-px w-6 bg-border min-[400px]:block sm:w-16" />
-            <p className="text-[10px] font-semibold tracking-[0.15em] text-violet-600 uppercase min-[400px]:text-xs min-[400px]:tracking-[0.2em] dark:text-violet-400">
+            <p className="text-[10px] font-semibold tracking-[0.15em] text-blue-600 uppercase min-[400px]:text-xs min-[400px]:tracking-[0.2em] dark:text-blue-400">
               What&apos;s inside
             </p>
             <div className="hidden h-px w-6 bg-border min-[400px]:block sm:w-16" />
@@ -103,7 +103,7 @@ export function LandingWhatsInsideSection({
 
           <h2 className="text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl lg:text-5xl">
             Everything an{' '}
-            <span className="bg-linear-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 to-fuchsia-600 bg-clip-text text-transparent">
               accounting practice
             </span>{' '}
             needs

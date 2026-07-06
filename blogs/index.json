@@ -1,0 +1,24 @@
+{
+  "posts": [
+    {
+      "name": "digitising-client-workflows",
+      "slug": "digitising-client-workflows",
+      "title": "How Australian practices are digitising client workflows",
+      "description": "Why budget planning, ATO PDFs, and e-signing belong in one workspace — not five disconnected tools.",
+      "tags": ["workflow", "ato", "accounting", "practice"],
+      "publishedAt": "2026-07-02",
+      "image": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=630&fit=crop",
+      "filePath": "digitising-client-workflows.md"
+    },
+    {
+      "name": "calmer-client-signatures",
+      "slug": "calmer-client-signatures",
+      "title": "A calmer way to collect signatures from clients",
+      "description": "Embedded DocuSeal signing keeps clients in your branded experience without email ping-pong.",
+      "tags": ["e-sign", "docuseal", "clients", "documents"],
+      "publishedAt": "2026-06-18",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=630&fit=crop",
+      "filePath": "calmer-client-signatures.md"
+    }
+  ]
+}

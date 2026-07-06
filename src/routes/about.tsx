@@ -81,8 +81,8 @@ function AboutPage() {
               >
                 01
               </span>
-              <div className="flex size-12 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-950/50">
-                <Layers className="size-6 text-violet-600 dark:text-violet-400" />
+              <div className="flex size-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50">
+                <Layers className="size-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="mt-6 text-lg font-semibold text-foreground">
                 Built with modern infrastructure
@@ -93,7 +93,7 @@ function AboutPage() {
                     key={item.label}
                     className="flex gap-3 text-sm leading-6 text-muted-foreground"
                   >
-                    <item.icon className="mt-0.5 size-4 shrink-0 text-violet-500" />
+                    <item.icon className="mt-0.5 size-4 shrink-0 text-blue-500" />
                     <span>{item.label}</span>
                   </li>
                 ))}
@@ -148,7 +148,7 @@ function AboutPage() {
             </div>
             <Button
               type="submit"
-              className="mt-6 h-11 w-full rounded-full bg-violet-600 text-white hover:bg-violet-700 sm:w-auto sm:px-8"
+              className="mt-6 h-11 w-full rounded-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto sm:px-8"
             >
               Send message
             </Button>
@@ -163,7 +163,7 @@ function AboutPage() {
         title={
           <>
             Join accounting teams{' '}
-            <span className="text-violet-600 dark:text-violet-400">
+            <span className="text-blue-600 dark:text-blue-400">
               shipping faster
             </span>
           </>

@@ -28,8 +28,8 @@ const AFTER_SIGNING = [
   {
     number: '01',
     icon: LayoutDashboard,
-    iconBg: 'bg-violet-100 dark:bg-violet-950/50',
-    iconColor: 'text-violet-600 dark:text-violet-400',
+    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
     text: 'Document appears in your dashboard with created date and type.',
   },
   {
@@ -139,7 +139,7 @@ function HowItWorksPage() {
         title={
           <>
             Walk through the workflow{' '}
-            <span className="text-violet-600 dark:text-violet-400">yourself</span>
+            <span className="text-blue-600 dark:text-blue-400">yourself</span>
           </>
         }
         description="Open the budget planner, generate a PDF, and see how signing and storage fit together."

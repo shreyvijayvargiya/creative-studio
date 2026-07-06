@@ -1,16 +1,9 @@
-import { useEffect } from 'react'
-import { Link } from '@tanstack/react-router'
-import { Loader2, LogIn } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 
+import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
-import { Button } from '#/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '#/components/ui/card'
 
 export function AuthLoadingScreen() {
   return (
@@ -23,45 +16,26 @@ export function AuthLoadingScreen() {
   )
 }
 
-interface AuthRequiredScreenProps {
-  /** When set, shown as the protected destination (e.g. Dashboard) */
-  title?: string
-  description?: string
-  autoOpenLogin?: boolean
-}
-
-export function AuthRequiredScreen({
-  title = 'Sign in to continue',
-  description = 'Create an account or sign in to access your finance workspace, documents, and budget tools.',
-  autoOpenLogin = true,
-}: AuthRequiredScreenProps) {
-  const { openLoginModal } = useLoginModal()
+export function AuthRequiredScreen() {
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+  const { open, openLoginModal } = useLoginModal()
+  const allowDismissRedirect = useRef(false)
 
   useEffect(() => {
-    if (autoOpenLogin) {
-      openLoginModal()
-    }
-  }, [autoOpenLogin, openLoginModal])
+    openLoginModal()
+  }, [openLoginModal])
 
-  return (
-    <div className="flex min-h-svh items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md shadow-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-muted">
-            <LogIn className="size-6 text-foreground" />
-          </div>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <Button type="button" className="w-full" onClick={openLoginModal}>
-            Sign in
-          </Button>
-          <Button asChild variant="outline" className="w-full">
-            <Link to="/">Back to home</Link>
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  useEffect(() => {
+    if (open) {
+      allowDismissRedirect.current = true
+      return
+    }
+
+    if (allowDismissRedirect.current && !isAuthenticated) {
+      void navigate({ to: '/' })
+    }
+  }, [open, isAuthenticated, navigate])
+
+  return <div className="min-h-svh bg-background" aria-hidden />
 }

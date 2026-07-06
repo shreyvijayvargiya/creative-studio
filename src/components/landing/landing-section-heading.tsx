@@ -34,7 +34,7 @@ export function LandingSectionHeading({
         )}
       >
         <div className="hidden h-px w-6 bg-border min-[400px]:block sm:w-16" />
-        <p className="text-[10px] font-semibold tracking-[0.15em] text-violet-600 uppercase min-[400px]:text-xs min-[400px]:tracking-[0.2em] dark:text-violet-400">
+        <p className="text-[10px] font-semibold tracking-[0.15em] text-blue-600 uppercase min-[400px]:text-xs min-[400px]:tracking-[0.2em] dark:text-blue-400">
           {eyebrow}
         </p>
         <div className="hidden h-px w-6 bg-border min-[400px]:block sm:w-16" />
@@ -61,7 +61,7 @@ export function LandingSectionHeading({
 
 export function LandingGradientText({ children }: { children: ReactNode }) {
   return (
-    <span className="bg-linear-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+    <span className="bg-linear-to-r from-blue-600 to-fuchsia-600 bg-clip-text text-transparent">
       {children}
     </span>
   )

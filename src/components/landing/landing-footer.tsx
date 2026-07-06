@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-import { LANDING_NAV_LINKS } from '#/components/landing/landing-content'
+import { LANDING_LEGAL_LINKS, LANDING_NAV_LINKS } from '#/components/landing/landing-content'
 import { LandingLogo } from '#/components/landing/landing-logo'
 
 export function LandingFooter() {
@@ -65,16 +65,35 @@ export function LandingFooter() {
             </div>
             <div className="col-span-2 sm:col-span-1">
               <p className="landing-label mb-3 text-foreground">Legal</p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Privacy policy</li>
-                <li>Terms of service</li>
+              <ul className="space-y-2">
+                {LANDING_LEGAL_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-6 text-center text-sm text-muted-foreground sm:mt-10 sm:text-left">
-          © {year} Finance CRM. Built for accounting professionals.
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:mt-10 sm:flex-row">
+          <p>© {year} Finance CRM. Built for accounting professionals.</p>
+          <div className="flex items-center gap-4">
+            {LANDING_LEGAL_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

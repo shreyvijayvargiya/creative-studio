@@ -31,7 +31,7 @@ export function LandingSubpageHero({
       <LandingGradientBackground />
 
       <div className="relative mx-auto w-full max-w-3xl px-4 text-center sm:px-6">
-        <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-violet-200/80 bg-violet-50 px-3 py-1.5 text-xs font-medium text-violet-700 sm:mb-5 sm:px-4 sm:text-sm dark:border-violet-500/30 dark:bg-violet-950/40 dark:text-violet-300">
+        <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 sm:mb-5 sm:px-4 sm:text-sm dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300">
           {eyebrow}
         </div>
 
@@ -47,7 +47,7 @@ export function LandingSubpageHero({
           <Button
             asChild
             size="lg"
-            className="h-11 w-full max-w-xs rounded-full bg-violet-600 px-6 text-sm font-medium text-white shadow-lg shadow-violet-600/25 hover:bg-violet-700 sm:h-12 sm:w-auto sm:max-w-none sm:text-base"
+            className="h-11 w-full max-w-xs rounded-full bg-blue-600 px-6 text-sm font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700 sm:h-12 sm:w-auto sm:max-w-none sm:text-base"
           >
             <Link to={primaryCta.href}>
               {primaryCta.label}

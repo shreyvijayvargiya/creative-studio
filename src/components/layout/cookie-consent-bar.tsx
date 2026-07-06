@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Cookie } from 'lucide-react'
 
@@ -44,8 +45,21 @@ export function CookieConsentBar() {
             <p className="text-sm font-medium text-foreground">We use cookies</p>
             <p className="text-xs leading-relaxed text-muted-foreground">
               Essential cookies keep you signed in and remember your preferences.
-              By continuing, you agree to our use of cookies for authentication
-              and app functionality.
+              By continuing, you agree to our{' '}
+              <Link
+                to="/privacy-policy"
+                className="font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Privacy Policy
+              </Link>{' '}
+              and{' '}
+              <Link
+                to="/terms-of-service"
+                className="font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Terms of Service
+              </Link>
+              .
             </p>
           </div>
           <Button size="sm" className="w-full" onClick={acceptCookies}>

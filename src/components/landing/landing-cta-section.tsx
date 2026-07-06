@@ -31,8 +31,8 @@ const DEFAULT_CTA_BENEFITS: CtaBenefitItem[] = [
   {
     icon: Rocket,
     label: 'Generate ATO-ready PDFs in minutes',
-    iconBg: 'bg-violet-100 dark:bg-violet-950/50',
-    iconColor: 'text-violet-600 dark:text-violet-400',
+    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
     icon: Briefcase,
@@ -97,8 +97,8 @@ export function LandingCtaSection({
       <LandingGradientBackground />
 
       <div className="relative z-0 mx-auto w-full max-w-3xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/95 p-5 shadow-xl shadow-violet-500/10 backdrop-blur-sm sm:rounded-[2rem] sm:p-8 md:p-12 dark:border-violet-500/20 dark:shadow-violet-500/5">
-          <div className="pointer-events-none absolute -top-16 -left-16 size-48 rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/95 p-5 shadow-xl shadow-blue-500/10 backdrop-blur-sm sm:rounded-[2rem] sm:p-8 md:p-12 dark:border-blue-500/20 dark:shadow-blue-500/5">
+          <div className="pointer-events-none absolute -top-16 -left-16 size-48 rounded-full bg-blue-500/10 blur-3xl" />
           <div className="pointer-events-none absolute -right-16 -bottom-16 size-48 rounded-full bg-fuchsia-500/10 blur-3xl" />
 
           <div className="relative text-center">
@@ -127,7 +127,7 @@ export function LandingCtaSection({
               <Button
                 asChild
                 size="lg"
-                className="h-12 w-full max-w-sm rounded-full bg-violet-600 px-8 text-base font-medium text-white shadow-lg shadow-violet-600/25 hover:bg-violet-700 sm:w-auto"
+                className="h-12 w-full max-w-sm rounded-full bg-blue-600 px-8 text-base font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700 sm:w-auto"
               >
                 <Link to={primaryHref}>
                   {primaryLabel}

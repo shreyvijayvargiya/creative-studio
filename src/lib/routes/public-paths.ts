@@ -6,6 +6,8 @@ export const PUBLIC_PATHS = [
   '/pricing',
   '/how-it-works',
   '/about',
+  '/privacy-policy',
+  '/terms-of-service',
 ] as const
 
 /** App routes that must work without an existing session */

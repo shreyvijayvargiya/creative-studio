@@ -6,12 +6,18 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { User } from '@supabase/supabase-js'
+import type { AuthChangeEvent, User } from '@supabase/supabase-js'
 import { useServerFn } from '@tanstack/react-start'
 import { toast } from 'sonner'
 
-import { mapProfileRow } from '#/lib/auth/user'
+import {
+  clearAuthCookie,
+  getInitialAuthState,
+  readAuthCookie,
+  setAuthCookie,
+} from '#/lib/auth/auth-cookie'
 import { logAuthDebug, logAuthError } from '#/lib/auth/log-auth-error'
+import { mapProfileRow } from '#/lib/auth/user'
 import { resolveLoginEmail } from '#/lib/server/resolve-login-email'
 import { supabase } from '#/lib/supabase/client'
 import type {
@@ -51,11 +57,20 @@ async function fetchProfile(userId: string): Promise<UserProfile | null> {
   return mapProfileRow(data)
 }
 
+function shouldKeepCachedUser(event: AuthChangeEvent, sessionUser: User | null): boolean {
+  if (sessionUser || event !== 'INITIAL_SESSION') {
+    return false
+  }
+
+  return readAuthCookie() !== null
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resolveLoginEmailFn = useServerFn(resolveLoginEmail)
-  const [user, setUser] = useState<User | null>(null)
+  const initialAuth = getInitialAuthState()
+  const [user, setUser] = useState<User | null>(initialAuth.user)
   const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   const loadProfile = useCallback(async (nextUser: User | null) => {
     if (!nextUser) {
@@ -82,9 +97,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false)
 
       if (!sessionUser) {
+        clearAuthCookie()
         setProfile(null)
         return
       }
+
+      setAuthCookie(sessionUser)
 
       void loadProfile(sessionUser).catch((error) => {
         logAuthError('profile-load', error, { userId: sessionUser.id })
@@ -93,22 +111,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [loadProfile],
   )
 
+  const handleAuthStateChange = useCallback(
+    (event: AuthChangeEvent, sessionUser: User | null) => {
+      if (shouldKeepCachedUser(event, sessionUser)) {
+        setIsLoading(false)
+        return
+      }
+
+      applySessionUser(sessionUser)
+    },
+    [applySessionUser],
+  )
+
   const syncSessionAfterOAuth = useCallback(
     async (serverUser?: User | null) => {
+      if (serverUser) {
+        applySessionUser(serverUser)
+        return
+      }
+
       setIsLoading(true)
 
       try {
-        const { data, error } = await supabase.auth.getSession()
+        const result = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 3_000)),
+        ])
+
+        if (!result) {
+          logAuthError('session-init', 'Timed out waiting for OAuth session')
+          return
+        }
+
+        const { data, error } = result
 
         if (error) {
           logAuthError('session-init', error)
+          return
         }
 
-        const sessionUser = data.session?.user ?? serverUser ?? null
-        applySessionUser(sessionUser)
+        if (data.session?.user) {
+          applySessionUser(data.session.user)
+        }
       } catch (error) {
         logAuthError('session-init', error)
-        applySessionUser(serverUser ?? null)
+      } finally {
+        setIsLoading(false)
       }
     },
     [applySessionUser],
@@ -117,59 +165,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
-    const initSession = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession()
-
-        if (!isMounted) {
-          return
-        }
-
-        if (error) {
-          logAuthError('session-init', error)
-          toast.error(error.message)
-        }
-
-        applySessionUser(data.session?.user ?? null)
-      } catch (error) {
-        if (!isMounted) {
-          return
-        }
-
-        logAuthError('session-init', error)
-        setUser(null)
-        setProfile(null)
-        setIsLoading(false)
-      }
+    if (initialAuth.user) {
+      setAuthCookie(initialAuth.user)
+      void loadProfile(initialAuth.user).catch((error) => {
+        logAuthError('profile-load', error, { userId: initialAuth.user?.id })
+      })
     }
-
-    void initSession()
-
-    const loadingTimeout = window.setTimeout(() => {
-      if (isMounted) {
-        setIsLoading(false)
-      }
-    }, 8_000)
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Defer async work — awaiting inside this callback can deadlock getSession().
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Never await Supabase calls here — it deadlocks getSession().
       window.setTimeout(() => {
         if (!isMounted) {
           return
         }
 
-        applySessionUser(session?.user ?? null)
+        handleAuthStateChange(event, session?.user ?? null)
       }, 0)
     })
 
     return () => {
       isMounted = false
-      window.clearTimeout(loadingTimeout)
       subscription.unsubscribe()
     }
-  }, [applySessionUser])
+  }, [handleAuthStateChange, initialAuth.user, loadProfile])
 
   const signInWithGoogle = useCallback(async () => {
     const redirectTo = `${window.location.origin}/auth/callback`
@@ -209,11 +229,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error.message)
       }
 
-      setUser(data.user)
-      await loadProfile(data.user)
+      applySessionUser(data.user)
       toast.success('Signed in successfully')
     },
-    [loadProfile, resolveLoginEmailFn],
+    [applySessionUser, resolveLoginEmailFn],
   )
 
   const signUpWithEmail = useCallback(
@@ -240,15 +259,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (data.session?.user) {
-        setUser(data.session.user)
-        await loadProfile(data.session.user)
+        applySessionUser(data.session.user)
         toast.success('Account created')
         return
       }
 
       toast.success('Check your email to confirm your account')
     },
-    [loadProfile],
+    [applySessionUser],
   )
 
   const signOut = useCallback(async () => {
@@ -259,10 +277,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    setUser(null)
-    setProfile(null)
+    applySessionUser(null)
     toast.success('Signed out')
-  }, [])
+  }, [applySessionUser])
 
   const value = useMemo<AuthContextValue>(
     () => ({

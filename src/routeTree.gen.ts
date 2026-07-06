@@ -9,11 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FeaturesRouteImport } from './routes/features'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BlogRouteRouteImport } from './routes/blog/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as StorageIndexRouteImport } from './routes/storage/index'
@@ -24,13 +27,30 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -46,14 +66,14 @@ const FeaturesRoute = FeaturesRouteImport.update({
   path: '/features',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRouteRoute = BlogRouteRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -106,10 +126,20 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogRouteRoute,
+} as any)
 const DocumentsIdRoute = DocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 const AuthDriveCallbackRoute = AuthDriveCallbackRouteImport.update({
   id: '/auth/drive-callback',
@@ -139,14 +169,19 @@ const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -163,13 +198,17 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
@@ -186,14 +225,19 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -211,14 +255,19 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/blog'
+    | '/about'
     | '/features'
     | '/how-it-works'
     | '/pricing'
+    | '/privacy-policy'
+    | '/sitemap.xml'
+    | '/terms-of-service'
     | '/auth/callback'
     | '/auth/drive-callback'
+    | '/blog/$slug'
     | '/documents/$id'
+    | '/blog/'
     | '/dashboard/'
     | '/documents/'
     | '/grid/'
@@ -235,13 +284,17 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/blog'
     | '/features'
     | '/how-it-works'
     | '/pricing'
+    | '/privacy-policy'
+    | '/sitemap.xml'
+    | '/terms-of-service'
     | '/auth/callback'
     | '/auth/drive-callback'
+    | '/blog/$slug'
     | '/documents/$id'
+    | '/blog'
     | '/dashboard'
     | '/documents'
     | '/grid'
@@ -257,14 +310,19 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/blog'
+    | '/about'
     | '/features'
     | '/how-it-works'
     | '/pricing'
+    | '/privacy-policy'
+    | '/sitemap.xml'
+    | '/terms-of-service'
     | '/auth/callback'
     | '/auth/drive-callback'
+    | '/blog/$slug'
     | '/documents/$id'
+    | '/blog/'
     | '/dashboard/'
     | '/documents/'
     | '/grid/'
@@ -281,11 +339,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogRouteRoute: typeof BlogRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRoute
   FeaturesRoute: typeof FeaturesRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PricingRoute: typeof PricingRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
@@ -305,6 +366,27 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -326,18 +408,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeaturesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -410,12 +492,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof BlogRouteRoute
+    }
     '/documents/$id': {
       id: '/documents/$id'
       path: '/documents/$id'
       fullPath: '/documents/$id'
       preLoaderRoute: typeof DocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRouteRoute
     }
     '/auth/drive-callback': {
       id: '/auth/drive-callback'
@@ -455,13 +551,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BlogRouteRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+}
+
+const BlogRouteRouteChildren: BlogRouteRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
+}
+
+const BlogRouteRouteWithChildren = BlogRouteRoute._addFileChildren(
+  BlogRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogRouteRoute: BlogRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRoute,
   FeaturesRoute: FeaturesRoute,
   HowItWorksRoute: HowItWorksRoute,
   PricingRoute: PricingRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,

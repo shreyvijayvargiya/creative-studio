@@ -15,6 +15,11 @@ export const LANDING_NAV_LINKS = [
   { label: 'Pricing', href: '/pricing' },
 ] as const
 
+export const LANDING_LEGAL_LINKS = [
+  { label: 'Privacy policy', href: '/privacy-policy' },
+  { label: 'Terms of service', href: '/terms-of-service' },
+] as const
+
 export const HERO_HOME_STATS = [
   { value: 'Free', label: 'To get started' },
   { value: 'ATO', label: 'PDF templates' },

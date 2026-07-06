@@ -7,12 +7,12 @@ export function AccountCreateAnimation({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative flex h-full min-h-36 items-center justify-center overflow-hidden bg-linear-to-br from-violet-500/10 via-violet-500/5 to-transparent dark:from-violet-500/20',
+        'relative flex h-full min-h-36 items-center justify-center overflow-hidden bg-linear-to-br from-blue-500/10 via-blue-500/5 to-transparent dark:from-blue-500/20',
         className,
       )}
     >
       <motion.div
-        className="absolute size-24 rounded-full bg-violet-500/10"
+        className="absolute size-24 rounded-full bg-blue-500/10"
         animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -21,7 +21,7 @@ export function AccountCreateAnimation({ className }: { className?: string }) {
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative flex size-16 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-600/30"
+        className="relative flex size-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30"
       >
         <UserPlus className="size-8" strokeWidth={1.75} />
       </motion.div>
@@ -32,7 +32,7 @@ export function AccountCreateAnimation({ className }: { className?: string }) {
         animate={{ opacity: 1, y: [0, -4, 0] }}
         transition={{ delay: 0.2, duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <Mail className="size-3 text-violet-500" />
+        <Mail className="size-3 text-blue-500" />
         Email sign-up
       </motion.div>
 
@@ -42,7 +42,7 @@ export function AccountCreateAnimation({ className }: { className?: string }) {
         animate={{ opacity: 1, y: [0, -3, 0] }}
         transition={{ delay: 0.4, duration: 2.8, repeat: Infinity }}
       >
-        <span className="text-xs font-bold text-violet-600">G</span>
+        <span className="text-xs font-bold text-blue-600">G</span>
         Google OAuth
       </motion.div>
     </div>

@@ -9,6 +9,7 @@ import {
 import { LoginModal } from '#/components/auth/login-modal'
 
 interface LoginModalContextValue {
+  open: boolean
   openLoginModal: () => void
   closeLoginModal: () => void
 }
@@ -23,10 +24,11 @@ export function LoginModalProvider({ children }: { children: React.ReactNode }) 
 
   const value = useMemo(
     () => ({
+      open,
       openLoginModal,
       closeLoginModal,
     }),
-    [openLoginModal, closeLoginModal],
+    [open, openLoginModal, closeLoginModal],
   )
 
   return (

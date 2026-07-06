@@ -10,7 +10,7 @@ interface PricingCardProps {
 
 const TIER_ACCENTS = [
   'border-border/60',
-  'border-violet-300 ring-2 ring-violet-500/20 dark:border-violet-500/40',
+  'border-blue-300 ring-2 ring-blue-500/20 dark:border-blue-500/40',
   'border-border/60',
 ]
 
@@ -23,7 +23,7 @@ export function PricingCard({ tier, index }: PricingCardProps) {
       className={cn(
         'relative flex h-full flex-col rounded-2xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6',
         tier.highlighted
-          ? 'border-violet-300 bg-linear-to-b from-violet-50/80 to-white dark:from-violet-950/20 dark:to-card'
+          ? 'border-blue-300 bg-linear-to-b from-blue-50/80 to-white dark:from-blue-950/20 dark:to-card'
           : TIER_ACCENTS[index] ?? 'border-border/60',
       )}
     >
@@ -39,7 +39,7 @@ export function PricingCard({ tier, index }: PricingCardProps) {
           className={cn(
             'text-xs font-semibold tracking-[0.15em] uppercase',
             tier.highlighted
-              ? 'text-violet-600 dark:text-violet-400'
+              ? 'text-blue-600 dark:text-blue-400'
               : 'text-muted-foreground',
           )}
         >
@@ -62,7 +62,7 @@ export function PricingCard({ tier, index }: PricingCardProps) {
             key={feature}
             className="flex gap-2 text-sm leading-5 text-muted-foreground"
           >
-            <span className="text-violet-500" aria-hidden>
+            <span className="text-blue-500" aria-hidden>
               ✓
             </span>
             <span>{feature}</span>
@@ -75,7 +75,7 @@ export function PricingCard({ tier, index }: PricingCardProps) {
         className={cn(
           'relative mt-8 h-11 w-full rounded-full',
           tier.highlighted
-            ? 'bg-violet-600 text-white hover:bg-violet-700'
+            ? 'bg-blue-600 text-white hover:bg-blue-700'
             : 'border border-border bg-white hover:bg-muted',
         )}
         variant={tier.highlighted ? 'default' : 'outline'}

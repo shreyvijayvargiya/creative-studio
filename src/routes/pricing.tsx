@@ -8,17 +8,16 @@ import {
 } from '#/components/landing/landing-section-heading'
 import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
 import { PricingCard } from '#/components/landing/pricing-card'
+import { buildPageMetaTags } from '#/lib/blog/seo'
 
 export const Route = createFileRoute('/pricing')({
   head: () => ({
-    meta: [
-      { title: 'Pricing | Finance CRM — Free & Pro Plans' },
-      {
-        name: 'description',
-        content:
-          'Simple pricing for accounting teams. Start free with budget planning and PDF signing. Pro and Team plans with Google Drive sync coming soon.',
-      },
-    ],
+    meta: buildPageMetaTags({
+      title: 'Pricing | Finance CRM — Free & Pro Plans',
+      description:
+        'Simple pricing for accounting teams. Start free with budget planning and PDF signing. Pro and Team plans with Google Drive sync coming soon.',
+      path: '/pricing',
+    }),
   }),
   component: PricingPage,
 })
@@ -37,7 +36,7 @@ function FaqItem({
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-6">
       <div className="flex items-start gap-4">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-sm font-bold text-violet-600 dark:bg-violet-950/50 dark:text-violet-400">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-sm font-bold text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
           {number}
         </span>
         <div>
@@ -111,7 +110,7 @@ function PricingPage() {
         title={
           <>
             Use the free tier{' '}
-            <span className="text-violet-600 dark:text-violet-400">today</span>
+            <span className="text-blue-600 dark:text-blue-400">today</span>
           </>
         }
         description="Create documents, sign PDFs, and explore the full workflow while paid plans roll out."

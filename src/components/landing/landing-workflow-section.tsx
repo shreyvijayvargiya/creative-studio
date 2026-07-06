@@ -16,7 +16,7 @@ export interface WorkflowStepItem {
 }
 
 const STEP_STYLES: Record<string, { bg: string; icon: LucideIcon }> = {
-  '01': { bg: 'bg-violet-600', icon: UserPlus },
+  '01': { bg: 'bg-blue-600', icon: UserPlus },
   '02': { bg: 'bg-orange-500', icon: TableProperties },
   '03': { bg: 'bg-emerald-600', icon: PenLine },
   '04': { bg: 'bg-fuchsia-600', icon: Cloud },
@@ -155,7 +155,7 @@ export function LandingWorkflowSection({
             <Button
               asChild
               size="lg"
-              className="h-11 w-full max-w-xs rounded-full bg-violet-600 px-6 text-sm font-medium text-white shadow-lg shadow-violet-600/20 hover:bg-violet-700 sm:h-12 sm:w-auto sm:max-w-none sm:text-base"
+              className="h-11 w-full max-w-xs rounded-full bg-blue-600 px-6 text-sm font-medium text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 sm:h-12 sm:w-auto sm:max-w-none sm:text-base"
             >
               <Link to={ctaHref}>
                 {ctaLabel}

@@ -27,12 +27,7 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
   }
 
   if (mustAuthenticate && !isAuthenticated) {
-    return (
-      <AuthRequiredScreen
-        title="Sign in to open your dashboard"
-        description="Your budget planner, documents, and signed PDFs are available after you sign in or create a free account."
-      />
-    )
+    return <AuthRequiredScreen />
   }
 
   return (

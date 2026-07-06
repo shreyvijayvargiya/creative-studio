@@ -49,7 +49,7 @@ export const FollowerPointerCard = ({
       onMouseMove={handleMouseMove}
       ref={ref}
       className={cn(
-        'relative cursor-none max-md:cursor-auto',
+        'relative max-md:cursor-auto',
         className,
       )}
     >
@@ -105,7 +105,7 @@ export const FollowPointer = ({
         fill="currentColor"
         strokeWidth="1"
         viewBox="0 0 16 16"
-        className="h-6 w-6 -translate-x-[12px] -translate-y-[10px] -rotate-[70deg] transform text-violet-500"
+        className="h-6 w-6 -translate-x-[12px] -translate-y-[10px] -rotate-[70deg] transform text-blue-500"
         height="1em"
         width="1em"
         xmlns="http://www.w3.org/2000/svg"

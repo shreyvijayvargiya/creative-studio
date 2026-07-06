@@ -22,7 +22,7 @@ export function LandingNav({ className }: LandingNavProps) {
         className,
       )}
     >
-      <div className="mx-auto flex h-12 items-center justify-between gap-2 rounded-full border border-border/60 bg-background/90 px-3 shadow-lg shadow-violet-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-violet-500/20 sm:h-14 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-12 items-center justify-between gap-2 rounded-full border border-border/60 bg-white dark:bg-zinc-900 px-3 shadow-lg shadow-blue-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-blue-500/20 sm:h-14 sm:gap-4 sm:px-6">
         <LandingLogo />
 
         <nav className="hidden items-center gap-4 md:flex">
@@ -42,7 +42,7 @@ export function LandingNav({ className }: LandingNavProps) {
           <ThemeToggleButton />
           <Button
             asChild
-            className="h-9 rounded-full bg-violet-600 px-4 text-sm font-medium text-white hover:bg-violet-700"
+            className="h-9 rounded-full bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
           >
             <Link to="/dashboard">Get started</Link>
           </Button>
@@ -78,7 +78,7 @@ export function LandingNav({ className }: LandingNavProps) {
             ))}
           </nav>
           <div className="mt-4">
-            <Button asChild className="h-10 w-full rounded-full bg-violet-600 text-white hover:bg-violet-700">
+            <Button asChild className="h-10 w-full rounded-full bg-blue-600 text-white hover:bg-blue-700">
               <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
                 Get started
               </Link>
