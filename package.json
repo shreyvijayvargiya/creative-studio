@@ -15,6 +15,7 @@
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
     "test": "vitest run",
+    "db:payees": "node scripts/migrate-payees.mjs",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check ."
@@ -91,6 +92,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.20.0",
     "jsdom": "^28.1.0",
+    "pg": "^8.22.0",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",

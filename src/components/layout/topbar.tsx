@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react'
-import { Menu, PanelLeft, PanelLeftClose, Search } from 'lucide-react'
+import { Bell, Menu, PanelLeft, PanelLeftClose, Search } from 'lucide-react'
 
+import {
+  AppAiSidebarMobile,
+  AppAiSidebarToggle,
+} from '#/components/layout/app-ai-sidebar'
 import { SearchCommand } from '#/components/layout/search-command'
 import { SidebarContent } from '#/components/layout/sidebar'
 import { useSidebar } from '#/components/layout/sidebar-provider'
+import { ThemeToggleButton } from '#/components/layout/theme-toggle-button'
+import { TopbarUserMenu } from '#/components/layout/topbar-user-menu'
 import { Button } from '#/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '#/components/ui/sheet'
 
 export function Topbar() {
   const { collapsed, toggleSidebar } = useSidebar()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [mobileAiOpen, setMobileAiOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
   useEffect(() => {
@@ -26,8 +33,8 @@ export function Topbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:gap-3 sm:px-4">
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      <header className="z-30 flex h-14 shrink-0 items-center gap-2 rounded-xl border border-border bg-background px-3 sm:gap-3 sm:px-4">
+        <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden">
               <Menu className="size-5" />
@@ -38,7 +45,7 @@ export function Topbar() {
             side="left"
             className="w-64 border-border bg-sidebar p-0 text-sidebar-foreground"
           >
-            <SidebarContent onNavigate={() => setMobileOpen(false)} />
+            <SidebarContent onNavigate={() => setMobileNavOpen(false)} />
           </SheetContent>
         </Sheet>
 
@@ -75,8 +82,25 @@ export function Topbar() {
             </kbd>
           </button>
         </div>
+
+        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <ThemeToggleButton className="hidden sm:inline-flex" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="hidden text-muted-foreground sm:inline-flex"
+            disabled
+            aria-label="Notifications"
+          >
+            <Bell className="size-4" />
+          </Button>
+          <TopbarUserMenu />
+          <AppAiSidebarToggle onMobileOpen={() => setMobileAiOpen(true)} />
+        </div>
       </header>
 
+      <AppAiSidebarMobile open={mobileAiOpen} onOpenChange={setMobileAiOpen} />
       <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   )

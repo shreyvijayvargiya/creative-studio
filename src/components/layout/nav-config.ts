@@ -43,6 +43,7 @@ export const navSections: NavSection[] = [
         children: [
           { label: 'Budget Planner', href: '/grid' },
           { label: 'Documents', href: '/documents' },
+          { label: 'Payees', href: '/payees' },
           { label: 'PDF Viewer', href: '/pdf' },
         ],
       },

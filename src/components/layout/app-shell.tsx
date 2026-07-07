@@ -5,11 +5,10 @@ import {
   AuthLoadingScreen,
   AuthRequiredScreen,
 } from '#/components/auth/auth-required-screen'
+import { AppAiSidebarDesktop } from '#/components/layout/app-ai-sidebar'
 import { DesktopSidebar } from '#/components/layout/sidebar'
-import { useSidebar } from '#/components/layout/sidebar-provider'
 import { Topbar } from '#/components/layout/topbar'
 import { requiresAuth } from '#/lib/routes/public-paths'
-import { cn } from '#/lib/utils'
 
 interface AppShellLayoutProps {
   children: React.ReactNode
@@ -18,7 +17,6 @@ interface AppShellLayoutProps {
 export function AppShellLayout({ children }: AppShellLayoutProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const { isAuthenticated, isLoading } = useAuth()
-  const { collapsed } = useSidebar()
 
   const mustAuthenticate = requiresAuth(pathname)
 
@@ -31,18 +29,17 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
   }
 
   return (
-    <div className="min-h-svh bg-background text-foreground">
+    <div className="flex h-svh gap-2 overflow-hidden bg-background p-2 text-foreground">
       <DesktopSidebar />
 
-      <div
-        className={cn(
-          'flex min-h-svh min-w-0 flex-col overflow-x-hidden transition-[margin] duration-300 ease-in-out',
-          collapsed ? 'lg:ml-0' : 'lg:ml-64',
-        )}
-      >
+      <div className="sticky top-2 flex h-[calc(100svh-1rem)] min-h-0 min-w-0 flex-1 flex-col gap-2">
         <Topbar />
-        <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto rounded-xl border border-border bg-background p-4 sm:p-6">
+          {children}
+        </main>
       </div>
+
+      <AppAiSidebarDesktop />
     </div>
   )
 }

@@ -4,6 +4,8 @@ import { SidebarUserFooter } from '#/components/layout/sidebar-user'
 import { SidebarWorkspaceSwitcher } from '#/components/layout/sidebar-workspace'
 import { cn } from '#/lib/utils'
 
+const PANEL_HEIGHT = 'h-[calc(100svh-1rem)]'
+
 interface SidebarContentProps {
   onNavigate?: () => void
 }
@@ -27,15 +29,23 @@ export function DesktopSidebar() {
   const { collapsed } = useSidebar()
 
   return (
-    <aside
+    <div
       className={cn(
-        'crm-sidebar fixed left-0 top-0 z-40 hidden h-svh flex-col border-r border-border bg-sidebar text-sidebar-foreground transition-[width,transform,opacity] duration-300 ease-in-out lg:flex',
-        collapsed
-          ? 'w-0 -translate-x-full overflow-hidden border-r-0 opacity-0'
-          : 'w-64 translate-x-0 opacity-100',
+        'hidden shrink-0 self-start transition-[width] duration-300 ease-in-out lg:block',
+        collapsed ? 'w-0 overflow-hidden' : 'w-64',
       )}
     >
-      <SidebarContent />
-    </aside>
+      <aside
+        className={cn(
+          'crm-sidebar sticky top-2 flex flex-col overflow-hidden rounded-xl border border-border bg-sidebar text-sidebar-foreground shadow-sm',
+          PANEL_HEIGHT,
+          collapsed ? 'pointer-events-none opacity-0' : 'w-64',
+        )}
+        aria-label="Main navigation"
+        aria-hidden={collapsed}
+      >
+        {!collapsed ? <SidebarContent /> : null}
+      </aside>
+    </div>
   )
 }

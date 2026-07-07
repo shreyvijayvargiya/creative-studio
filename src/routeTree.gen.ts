@@ -22,6 +22,7 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as StorageIndexRouteImport } from './routes/storage/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as PdfIndexRouteImport } from './routes/pdf/index'
+import { Route as PayeesIndexRouteImport } from './routes/payees/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
@@ -99,6 +100,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
 const PdfIndexRoute = PdfIndexRouteImport.update({
   id: '/pdf/',
   path: '/pdf/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayeesIndexRoute = PayeesIndexRouteImport.update({
+  id: '/payees/',
+  path: '/payees/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesIndexRoute = MessagesIndexRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/grid/': typeof GridIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/payees/': typeof PayeesIndexRoute
   '/pdf/': typeof PdfIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/grid': typeof GridIndexRoute
   '/invoices': typeof InvoicesIndexRoute
   '/messages': typeof MessagesIndexRoute
+  '/payees': typeof PayeesIndexRoute
   '/pdf': typeof PdfIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/grid/': typeof GridIndexRoute
   '/invoices/': typeof InvoicesIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/payees/': typeof PayeesIndexRoute
   '/pdf/': typeof PdfIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/grid/'
     | '/invoices/'
     | '/messages/'
+    | '/payees/'
     | '/pdf/'
     | '/settings/'
     | '/storage/'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/grid'
     | '/invoices'
     | '/messages'
+    | '/payees'
     | '/pdf'
     | '/settings'
     | '/storage'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/grid/'
     | '/invoices/'
     | '/messages/'
+    | '/payees/'
     | '/pdf/'
     | '/settings/'
     | '/storage/'
@@ -355,6 +367,7 @@ export interface RootRouteChildren {
   GridIndexRoute: typeof GridIndexRoute
   InvoicesIndexRoute: typeof InvoicesIndexRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
+  PayeesIndexRoute: typeof PayeesIndexRoute
   PdfIndexRoute: typeof PdfIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
@@ -455,6 +468,13 @@ declare module '@tanstack/react-router' {
       path: '/pdf'
       fullPath: '/pdf/'
       preLoaderRoute: typeof PdfIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payees/': {
+      id: '/payees/'
+      path: '/payees'
+      fullPath: '/payees/'
+      preLoaderRoute: typeof PayeesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages/': {
@@ -583,6 +603,7 @@ const rootRouteChildren: RootRouteChildren = {
   GridIndexRoute: GridIndexRoute,
   InvoicesIndexRoute: InvoicesIndexRoute,
   MessagesIndexRoute: MessagesIndexRoute,
+  PayeesIndexRoute: PayeesIndexRoute,
   PdfIndexRoute: PdfIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
