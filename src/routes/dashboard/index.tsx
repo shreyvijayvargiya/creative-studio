@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Eye, FileText, HardDrive, PenLine, Users } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
@@ -21,6 +22,10 @@ import { listDocuments } from '#/lib/server/list-documents'
 import type { DocumentListItem } from '#/types'
 
 export const Route = createFileRoute('/dashboard/')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    subscription:
+      typeof search.subscription === 'string' ? search.subscription : undefined,
+  }),
   component: DashboardPage,
 })
 
@@ -107,12 +112,31 @@ function RecentDocumentTableRow({ document }: { document: DocumentListItem }) {
 }
 
 function DashboardPage() {
+  const { subscription: subscriptionStatus } = Route.useSearch()
+  const navigate = useNavigate({ from: '/dashboard/' })
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { openLoginModal } = useLoginModal()
   const listDocumentsFn = useStableServerFn(listDocuments)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false)
   const hasLoadedDocumentsRef = useRef(false)
+  const subscriptionToastShownRef = useRef(false)
+
+  useEffect(() => {
+    if (!subscriptionStatus || subscriptionToastShownRef.current) {
+      return
+    }
+
+    subscriptionToastShownRef.current = true
+
+    if (subscriptionStatus === 'success') {
+      toast.success('Subscription updated! Your plan will reflect shortly.')
+    } else if (subscriptionStatus === 'canceled') {
+      toast.message('Checkout canceled — no changes were made.')
+    }
+
+    void navigate({ search: { subscription: undefined }, replace: true })
+  }, [navigate, subscriptionStatus])
 
   useEffect(() => {
     if (!isAuthenticated) {

@@ -2,6 +2,7 @@ import { SidebarNav } from '#/components/layout/sidebar-nav'
 import { useSidebar } from '#/components/layout/sidebar-provider'
 import { SidebarUserFooter } from '#/components/layout/sidebar-user'
 import { SidebarWorkspaceSwitcher } from '#/components/layout/sidebar-workspace'
+import { SidebarUpgradeButton } from '#/components/billing/sidebar-upgrade-button'
 import { cn } from '#/lib/utils'
 
 const PANEL_HEIGHT = 'h-[calc(100svh-1rem)]'
@@ -18,7 +19,8 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
         <SidebarNav onNavigate={onNavigate} />
       </div>
 
-      <div className="border-t border-border p-3">
+      <div className="border-t border-border p-3 space-y-3">
+        <SidebarUpgradeButton />
         <SidebarUserFooter />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react'
+import { LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react'
 
+import { useSubscribeModal } from '#/components/billing/subscribe-modal-provider'
 import { useAuth } from '#/components/auth/auth-provider'
 import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { useTheme } from '#/components/layout/theme-provider'
@@ -23,6 +24,7 @@ import {
 export function TopbarUserMenu() {
   const { user, profile, isAuthenticated, signOut } = useAuth()
   const { openLoginModal } = useLoginModal()
+  const { openSubscribeModal } = useSubscribeModal()
   const { theme, toggleTheme } = useTheme()
 
   if (!isAuthenticated || !user) {
@@ -69,6 +71,10 @@ export function TopbarUserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={openSubscribeModal}>
+          <Sparkles className="size-4" />
+          Upgrade plan
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/settings" className="flex items-center gap-2">
             <Settings className="size-4" />

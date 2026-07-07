@@ -36,6 +36,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -172,6 +173,11 @@ const DocumentsPdfIdRoute = DocumentsPdfIdRouteImport.update({
   path: '/documents/pdf/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe/webhook',
+  path: '/api/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
   '/pdf/view/$filename': typeof PdfViewFilenameRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/storage'
     | '/users'
+    | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
     | '/pdf/view/$filename'
@@ -372,6 +384,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   DocumentsPdfIdRoute: typeof DocumentsPdfIdRoute
   GridSignSubmissionIdRoute: typeof GridSignSubmissionIdRoute
   PdfViewFilenameRoute: typeof PdfViewFilenameRoute
@@ -568,6 +581,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsPdfIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe/webhook': {
+      id: '/api/stripe/webhook'
+      path: '/api/stripe/webhook'
+      fullPath: '/api/stripe/webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -608,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   DocumentsPdfIdRoute: DocumentsPdfIdRoute,
   GridSignSubmissionIdRoute: GridSignSubmissionIdRoute,
   PdfViewFilenameRoute: PdfViewFilenameRoute,
