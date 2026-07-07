@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { HardDrive, Loader2, Unplug } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Badge } from '#/components/ui/badge'
@@ -13,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
+import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import { disconnectGoogleDrive } from '#/lib/server/google-drive-disconnect'
 import { getGoogleDriveConnectUrl } from '#/lib/server/google-drive-get-connect-url'
 import { getGoogleDriveConnectionStatus } from '#/lib/server/google-drive-get-status'
@@ -39,16 +39,22 @@ function formatDate(value: string): string {
 }
 
 export function GoogleDriveConnectCard() {
-  const getStatusFn = useServerFn(getGoogleDriveConnectionStatus)
-  const getConnectUrlFn = useServerFn(getGoogleDriveConnectUrl)
-  const disconnectFn = useServerFn(disconnectGoogleDrive)
+  const getStatusFn = useStableServerFn(getGoogleDriveConnectionStatus)
+  const getConnectUrlFn = useStableServerFn(getGoogleDriveConnectUrl)
+  const disconnectFn = useStableServerFn(disconnectGoogleDrive)
 
   const [status, setStatus] = useState<DriveStatus | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isConnecting, setIsConnecting] = useState(false)
   const [isDisconnecting, setIsDisconnecting] = useState(false)
+  const hasLoadedStatusRef = useRef(false)
 
-  const loadStatus = useCallback(async () => {
+  const loadStatus = useCallback(async (force = false) => {
+    if (!force && hasLoadedStatusRef.current) {
+      return
+    }
+
+    hasLoadedStatusRef.current = true
     setIsLoading(true)
 
     try {
@@ -106,7 +112,8 @@ export function GoogleDriveConnectCard() {
     try {
       await disconnectFn()
       toast.success('Google Drive disconnected')
-      await loadStatus()
+      hasLoadedStatusRef.current = false
+      await loadStatus(true)
     } catch (error) {
       logGoogleDriveError('disconnect', error)
       const message =

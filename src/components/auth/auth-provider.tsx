@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import type { AuthChangeEvent, User } from '@supabase/supabase-js'
@@ -41,6 +42,13 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+const SIGNIFICANT_AUTH_EVENTS = new Set<AuthChangeEvent>([
+  'INITIAL_SESSION',
+  'SIGNED_IN',
+  'SIGNED_OUT',
+  'USER_UPDATED',
+])
+
 async function fetchProfile(userId: string): Promise<UserProfile | null> {
   const { data, error } = await supabase
     .from('profiles')
@@ -67,46 +75,90 @@ function shouldKeepCachedUser(event: AuthChangeEvent, sessionUser: User | null):
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resolveLoginEmailFn = useServerFn(resolveLoginEmail)
-  const initialAuth = getInitialAuthState()
-  const [user, setUser] = useState<User | null>(initialAuth.user)
+  const initialAuthRef = useRef(getInitialAuthState())
+  const [user, setUser] = useState<User | null>(() => initialAuthRef.current.user)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const loadProfile = useCallback(async (nextUser: User | null) => {
-    if (!nextUser) {
-      setProfile(null)
+  const currentUserIdRef = useRef<string | null>(initialAuthRef.current.user?.id ?? null)
+  const profileLoadedForUserIdRef = useRef<string | null>(null)
+  const profileLoadPromiseRef = useRef<Promise<void> | null>(null)
+
+  const loadProfile = useCallback(async (nextUser: User, force = false) => {
+    if (!force && profileLoadedForUserIdRef.current === nextUser.id) {
       return
     }
 
-    const nextProfile = await fetchProfile(nextUser.id)
-    setProfile(nextProfile)
+    if (!force && profileLoadPromiseRef.current) {
+      await profileLoadPromiseRef.current
+      if (profileLoadedForUserIdRef.current === nextUser.id) {
+        return
+      }
+    }
+
+    const loadPromise = (async () => {
+      const nextProfile = await fetchProfile(nextUser.id)
+      if (currentUserIdRef.current === nextUser.id) {
+        setProfile(nextProfile)
+        profileLoadedForUserIdRef.current = nextUser.id
+      }
+    })()
+
+    profileLoadPromiseRef.current = loadPromise
+
+    try {
+      await loadPromise
+    } catch (error) {
+      logAuthError('profile-load', error, { userId: nextUser.id })
+    } finally {
+      if (profileLoadPromiseRef.current === loadPromise) {
+        profileLoadPromiseRef.current = null
+      }
+    }
   }, [])
 
   const refreshProfile = useCallback(async () => {
-    if (!user) {
+    const userId = currentUserIdRef.current
+    if (!userId) {
       setProfile(null)
+      profileLoadedForUserIdRef.current = null
       return
     }
 
-    await loadProfile(user)
-  }, [loadProfile, user])
+    profileLoadedForUserIdRef.current = null
+    await loadProfile({ id: userId } as User, true)
+  }, [loadProfile])
 
   const applySessionUser = useCallback(
     (sessionUser: User | null) => {
-      setUser(sessionUser)
       setIsLoading(false)
 
       if (!sessionUser) {
+        currentUserIdRef.current = null
+        profileLoadedForUserIdRef.current = null
         clearAuthCookie()
+        setUser(null)
         setProfile(null)
         return
       }
 
+      const isSameUser = currentUserIdRef.current === sessionUser.id
+      currentUserIdRef.current = sessionUser.id
       setAuthCookie(sessionUser)
 
-      void loadProfile(sessionUser).catch((error) => {
-        logAuthError('profile-load', error, { userId: sessionUser.id })
+      setUser((previous) => {
+        if (previous?.id === sessionUser.id) {
+          return previous
+        }
+        return sessionUser
       })
+
+      if (!isSameUser) {
+        setProfile(null)
+        profileLoadedForUserIdRef.current = null
+      }
+
+      void loadProfile(sessionUser)
     },
     [loadProfile],
   )
@@ -118,10 +170,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
+      if (event === 'TOKEN_REFRESHED') {
+        if (sessionUser) {
+          setAuthCookie(sessionUser)
+        }
+        return
+      }
+
+      if (!SIGNIFICANT_AUTH_EVENTS.has(event)) {
+        return
+      }
+
+      if (
+        event === 'INITIAL_SESSION' &&
+        sessionUser?.id &&
+        sessionUser.id === currentUserIdRef.current &&
+        profileLoadedForUserIdRef.current === sessionUser.id
+      ) {
+        setIsLoading(false)
+        return
+      }
+
       applySessionUser(sessionUser)
     },
     [applySessionUser],
   )
+
+  const handleAuthStateChangeRef = useRef(handleAuthStateChange)
+  handleAuthStateChangeRef.current = handleAuthStateChange
 
   const syncSessionAfterOAuth = useCallback(
     async (serverUser?: User | null) => {
@@ -164,24 +240,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isMounted = true
+    const initialUser = initialAuthRef.current.user
 
-    if (initialAuth.user) {
-      setAuthCookie(initialAuth.user)
-      void loadProfile(initialAuth.user).catch((error) => {
-        logAuthError('profile-load', error, { userId: initialAuth.user?.id })
-      })
+    if (initialUser) {
+      setAuthCookie(initialUser)
+      void loadProfile(initialUser)
     }
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      // Never await Supabase calls here — it deadlocks getSession().
       window.setTimeout(() => {
         if (!isMounted) {
           return
         }
 
-        handleAuthStateChange(event, session?.user ?? null)
+        handleAuthStateChangeRef.current(event, session?.user ?? null)
       }, 0)
     })
 
@@ -189,7 +263,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isMounted = false
       subscription.unsubscribe()
     }
-  }, [handleAuthStateChange, initialAuth.user, loadProfile])
+  }, [loadProfile])
 
   const signInWithGoogle = useCallback(async () => {
     const redirectTo = `${window.location.origin}/auth/callback`

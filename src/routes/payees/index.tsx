@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { Mail, UserRound } from 'lucide-react'
 
 import { useAuth } from '#/components/auth/auth-provider'
@@ -17,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '#/components/ui/table'
+import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import { listPayees } from '#/lib/server/payees'
 import { cn } from '#/lib/utils'
 import type { Payee } from '#/types/payee'
@@ -40,17 +40,25 @@ function PayeesPage() {
   const { highlight } = Route.useSearch()
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { openLoginModal } = useLoginModal()
-  const listPayeesFn = useServerFn(listPayees)
+  const listPayeesFn = useStableServerFn(listPayees)
   const [payees, setPayees] = useState<Payee[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const highlightRef = useRef<HTMLTableRowElement>(null)
+  const hasLoadedPayeesRef = useRef(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
+      hasLoadedPayeesRef.current = false
       setPayees([])
+      setIsLoading(false)
       return
     }
 
+    if (hasLoadedPayeesRef.current) {
+      return
+    }
+
+    hasLoadedPayeesRef.current = true
     setIsLoading(true)
     void listPayeesFn()
       .then(setPayees)

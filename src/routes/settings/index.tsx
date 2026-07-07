@@ -38,7 +38,7 @@ function SettingsPage() {
   const { user, profile, isLoading, isAuthenticated, signOut } = useAuth()
   const { openLoginModal } = useLoginModal()
 
-  if (isLoading) {
+  if (isLoading && !user) {
     return (
       <p className="py-12 text-center text-sm text-muted-foreground">
         Loading account...

@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { ExternalLink, HardDrive } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Badge } from '#/components/ui/badge'
@@ -13,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
+import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import { listDocuments } from '#/lib/server/list-documents'
 import type { DocumentListItem } from '#/types'
 
@@ -21,11 +21,18 @@ export const Route = createFileRoute('/storage/')({
 })
 
 function StoragePage() {
-  const listDocumentsFn = useServerFn(listDocuments)
+  const listDocumentsFn = useStableServerFn(listDocuments)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const hasLoadedRef = useRef(false)
 
   useEffect(() => {
+    if (hasLoadedRef.current) {
+      return
+    }
+
+    hasLoadedRef.current = true
+
     void listDocumentsFn()
       .then((docs) => {
         setDocuments(docs.filter((doc) => doc.kind === 'pdf'))

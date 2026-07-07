@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   AlertTriangle,
@@ -25,6 +24,7 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { runAiAssistant } from '#/lib/server/ai-assistant'
 import { checkPayeesTable } from '#/lib/server/check-payees-table'
+import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import { cn } from '#/lib/utils'
 import type { AiAssistantToolTrace } from '#/types/ai'
 
@@ -128,8 +128,8 @@ export function DashboardAiAssistant({ variant = 'card' }: DashboardAiAssistantP
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const { openLoginModal } = useLoginModal()
-  const runAiAssistantFn = useServerFn(runAiAssistant)
-  const checkPayeesTableFn = useServerFn(checkPayeesTable)
+  const runAiAssistantFn = useStableServerFn(runAiAssistant)
+  const checkPayeesTableFn = useStableServerFn(checkPayeesTable)
 
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
@@ -139,14 +139,22 @@ export function DashboardAiAssistant({ variant = 'card' }: DashboardAiAssistantP
   >(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const payeesCheckDoneRef = useRef(false)
 
   const isPanel = variant === 'panel'
 
   useEffect(() => {
     if (!isAuthenticated) {
+      payeesCheckDoneRef.current = false
       setPayeesSetup(null)
       return
     }
+
+    if (payeesCheckDoneRef.current) {
+      return
+    }
+
+    payeesCheckDoneRef.current = true
 
     void checkPayeesTableFn()
       .then(setPayeesSetup)

@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 import { Eye, FileText, HardDrive, PenLine, Users } from 'lucide-react'
 
 import { useAuth } from '#/components/auth/auth-provider'
@@ -17,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '#/components/ui/table'
+import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import { listDocuments } from '#/lib/server/list-documents'
 import type { DocumentListItem } from '#/types'
 
@@ -109,16 +109,24 @@ function RecentDocumentTableRow({ document }: { document: DocumentListItem }) {
 function DashboardPage() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { openLoginModal } = useLoginModal()
-  const listDocumentsFn = useServerFn(listDocuments)
+  const listDocumentsFn = useStableServerFn(listDocuments)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false)
+  const hasLoadedDocumentsRef = useRef(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
+      hasLoadedDocumentsRef.current = false
       setDocuments([])
+      setIsLoadingDocuments(false)
       return
     }
 
+    if (hasLoadedDocumentsRef.current) {
+      return
+    }
+
+    hasLoadedDocumentsRef.current = true
     setIsLoadingDocuments(true)
 
     void listDocumentsFn()
