@@ -8,6 +8,8 @@ import {
   useState,
 } from 'react'
 
+import { SubscribePayPalProvider } from '#/components/billing/subscribe-paypal-provider'
+
 const SubscribeModal = lazy(() =>
   import('#/components/billing/subscribe-modal').then((module) => ({
     default: module.SubscribeModal,
@@ -39,12 +41,14 @@ export function SubscribeModalProvider({ children }: { children: React.ReactNode
 
   return (
     <SubscribeModalContext.Provider value={value}>
-      {children}
-      {open ? (
-        <Suspense fallback={null}>
-          <SubscribeModal open={open} onOpenChange={setOpen} />
-        </Suspense>
-      ) : null}
+      <SubscribePayPalProvider forceMount>
+        {children}
+        {open ? (
+          <Suspense fallback={null}>
+            <SubscribeModal open={open} onOpenChange={setOpen} />
+          </Suspense>
+        ) : null}
+      </SubscribePayPalProvider>
     </SubscribeModalContext.Provider>
   )
 }

@@ -278,6 +278,7 @@ create table if not exists public.user_subscriptions (
   stripe_customer_id text,
   stripe_subscription_id text,
   stripe_price_id text,
+  paypal_subscription_id text,
   current_period_start timestamptz,
   current_period_end timestamptz,
   cancel_at_period_end boolean not null default false,
@@ -288,6 +289,10 @@ create table if not exists public.user_subscriptions (
 
 create index if not exists user_subscriptions_stripe_customer_id_idx
   on public.user_subscriptions (stripe_customer_id);
+
+create unique index if not exists user_subscriptions_paypal_subscription_id_key
+  on public.user_subscriptions (paypal_subscription_id)
+  where paypal_subscription_id is not null;
 
 create or replace function public.set_user_subscriptions_updated_at()
 returns trigger

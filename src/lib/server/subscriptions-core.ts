@@ -15,6 +15,7 @@ interface SubscriptionRow {
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
   stripe_price_id: string | null
+  paypal_subscription_id: string | null
   current_period_start: string | null
   current_period_end: string | null
   cancel_at_period_end: boolean
@@ -32,6 +33,7 @@ export function mapSubscriptionRow(row: SubscriptionRow): UserSubscription {
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
     stripePriceId: row.stripe_price_id,
+    paypalSubscriptionId: row.paypal_subscription_id,
     currentPeriodStart: row.current_period_start,
     currentPeriodEnd: row.current_period_end,
     cancelAtPeriodEnd: row.cancel_at_period_end,
@@ -51,6 +53,7 @@ export function getDefaultSubscription(userId: string): UserSubscription {
     stripeCustomerId: null,
     stripeSubscriptionId: null,
     stripePriceId: null,
+    paypalSubscriptionId: null,
     currentPeriodStart: null,
     currentPeriodEnd: null,
     cancelAtPeriodEnd: false,
@@ -93,6 +96,7 @@ export interface UpsertSubscriptionInput {
   stripeCustomerId?: string | null
   stripeSubscriptionId?: string | null
   stripePriceId?: string | null
+  paypalSubscriptionId?: string | null
   currentPeriodStart?: string | null
   currentPeriodEnd?: string | null
   cancelAtPeriodEnd?: boolean
@@ -115,6 +119,7 @@ export async function upsertSubscriptionForUser(
         stripe_customer_id: input.stripeCustomerId ?? null,
         stripe_subscription_id: input.stripeSubscriptionId ?? null,
         stripe_price_id: input.stripePriceId ?? null,
+        paypal_subscription_id: input.paypalSubscriptionId ?? null,
         current_period_start: input.currentPeriodStart ?? null,
         current_period_end: input.currentPeriodEnd ?? null,
         cancel_at_period_end: input.cancelAtPeriodEnd ?? false,
@@ -140,6 +145,24 @@ export async function getSubscriptionByStripeSubscriptionId(
     .from('user_subscriptions')
     .select('*')
     .eq('stripe_subscription_id', stripeSubscriptionId)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error(`Failed to find subscription: ${error.message}`)
+  }
+
+  return data ? mapSubscriptionRow(data as SubscriptionRow) : null
+}
+
+export async function getSubscriptionByPayPalSubscriptionId(
+  paypalSubscriptionId: string,
+): Promise<UserSubscription | null> {
+  const supabase = getSupabaseAdmin()
+
+  const { data, error } = await supabase
+    .from('user_subscriptions')
+    .select('*')
+    .eq('paypal_subscription_id', paypalSubscriptionId)
     .maybeSingle()
 
   if (error) {

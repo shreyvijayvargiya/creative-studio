@@ -37,6 +37,7 @@ import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename
 import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
+import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -178,6 +179,11 @@ const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   path: '/api/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaypalWebhookRoute = ApiPaypalWebhookRouteImport.update({
+  id: '/api/paypal/webhook',
+  path: '/api/paypal/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
@@ -233,6 +240,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
   '/grid/sign/$submissionId': typeof GridSignSubmissionIdRoute
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/storage'
     | '/users'
+    | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
     | '/grid/sign/$submissionId'
@@ -384,6 +396,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   DocumentsPdfIdRoute: typeof DocumentsPdfIdRoute
   GridSignSubmissionIdRoute: typeof GridSignSubmissionIdRoute
@@ -588,6 +601,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/paypal/webhook': {
+      id: '/api/paypal/webhook'
+      path: '/api/paypal/webhook'
+      fullPath: '/api/paypal/webhook'
+      preLoaderRoute: typeof ApiPaypalWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -628,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   DocumentsPdfIdRoute: DocumentsPdfIdRoute,
   GridSignSubmissionIdRoute: GridSignSubmissionIdRoute,

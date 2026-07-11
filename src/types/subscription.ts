@@ -1,5 +1,6 @@
 export type SubscriptionPlanId = string
 export type BillingInterval = 'month' | 'year'
+export type PaymentProvider = 'stripe' | 'paypal'
 export type SubscriptionStatus =
   | 'active'
   | 'trialing'
@@ -13,10 +14,11 @@ export interface UserSubscription {
   planId: SubscriptionPlanId
   billingInterval: BillingInterval | null
   status: SubscriptionStatus
-  paymentProvider: 'stripe' | 'paypal'
+  paymentProvider: PaymentProvider
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
   stripePriceId: string | null
+  paypalSubscriptionId: string | null
   currentPeriodStart: string | null
   currentPeriodEnd: string | null
   cancelAtPeriodEnd: boolean
