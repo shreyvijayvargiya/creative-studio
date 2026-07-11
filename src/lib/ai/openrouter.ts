@@ -39,7 +39,7 @@ function getOpenRouterConfig() {
 
   return {
     apiKey,
-    model: process.env.OPENROUTER_MODEL?.trim() ?? 'google/gemini-2.5-flash-lite-preview-09-2025',
+    model: process.env.OPENROUTER_MODEL?.trim() ?? 'openai/gpt-oss-120b',
     siteUrl: process.env.APP_URL?.trim() ?? 'http://localhost:3000',
     siteName: 'Finance CRM',
   }

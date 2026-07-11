@@ -17,6 +17,10 @@ export function RootLayout({ children }: RootLayoutProps) {
     return <LandingLayout>{children}</LandingLayout>
   }
 
+  if (pathname.startsWith('/api/')) {
+    return <>{children}</>
+  }
+
   return (
     <SidebarProvider>
       <DashboardAiPanelProvider>
