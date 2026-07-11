@@ -3,10 +3,14 @@ import type Stripe from 'stripe'
 import { getYearlyTotal } from '#/lib/stripe/plans'
 import type { BillingInterval, SubscriptionPlanDefinition } from '#/types/subscription'
 
-const STRIPE_CURRENCY = 'aud'
+/**
+ * Stripe Checkout currency only — UI pricing copy stays AUD/display as-is.
+ * INR avoids India individual-account export blocks while testing.
+ */
+const STRIPE_CURRENCY = 'inr'
 
-export function audToStripeCents(amountAud: number): number {
-  return Math.round(amountAud * 100)
+function toStripeMinorUnits(amount: number): number {
+  return Math.round(amount * 100)
 }
 
 /** Build a Checkout line item from hardcoded plan prices — no Stripe Dashboard price IDs. */
@@ -29,7 +33,7 @@ export function buildCheckoutLineItem(
             planId: plan.id,
           },
         },
-        unit_amount: audToStripeCents(plan.monthlyPriceAud),
+        unit_amount: toStripeMinorUnits(plan.monthlyPriceAud),
         recurring: { interval: 'month' },
       },
       quantity: 1,
@@ -48,7 +52,7 @@ export function buildCheckoutLineItem(
           planId: plan.id,
         },
       },
-      unit_amount: audToStripeCents(yearlyAud),
+      unit_amount: toStripeMinorUnits(yearlyAud),
       recurring: { interval: 'year' },
     },
     quantity: 1,
