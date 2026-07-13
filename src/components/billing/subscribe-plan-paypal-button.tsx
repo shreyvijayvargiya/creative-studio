@@ -1,16 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { usePayPalSubscriptionPaymentSession } from '@paypal/react-paypal-js/sdk-v6'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
 import { useStableServerFn } from '#/hooks/use-stable-server-fn'
-import {
-  activatePayPalSubscription,
-  createPayPalSubscription,
-} from '#/lib/server/create-paypal-subscription'
+import { createPayPalSubscription } from '#/lib/server/create-paypal-subscription'
 import { getPlanById } from '#/lib/stripe/plans'
-import { cn } from '#/lib/utils'
 import type { BillingInterval } from '#/types/subscription'
 
 interface SubscribePlanPayPalButtonProps {
@@ -22,102 +17,59 @@ interface SubscribePlanPayPalButtonProps {
   onSessionActiveChange?: (active: boolean) => void
 }
 
+/**
+ * Uses PayPal's REST approve URL (full-page redirect) instead of the JS SDK
+ * subscription "cart ID" flow, which fails often with PaymentFlowError /
+ * invalid_client mismatches during local + live testing.
+ */
 export function SubscribePlanPayPalButton({
   planId,
   interval,
   featured = false,
   disabled = false,
-  onSuccess,
   onSessionActiveChange,
 }: SubscribePlanPayPalButtonProps) {
   const createPayPalSubscriptionFn = useStableServerFn(createPayPalSubscription)
-  const activatePayPalSubscriptionFn = useStableServerFn(activatePayPalSubscription)
-  const pendingSubscriptionIdRef = useRef<string | null>(null)
+  const [isStarting, setIsStarting] = useState(false)
+  const startedRef = useRef(false)
   const planName = getPlanById(planId)?.name ?? 'plan'
 
-  const createSubscription = useCallback(async () => {
-    const { subscriptionId } = await createPayPalSubscriptionFn({
-      data: { planId, interval },
-    })
-    pendingSubscriptionIdRef.current = subscriptionId
-    return { subscriptionId }
-  }, [createPayPalSubscriptionFn, interval, planId])
+  const startCheckout = async () => {
+    if (startedRef.current) {
+      return
+    }
 
-  const { handleClick, isPending, error } = usePayPalSubscriptionPaymentSession({
-    presentationMode: 'popup',
-    createSubscription,
-    onApprove: async (data) => {
-      onSessionActiveChange?.(false)
+    startedRef.current = true
+    setIsStarting(true)
+    onSessionActiveChange?.(true)
 
-      const subscriptionId =
-        pendingSubscriptionIdRef.current ??
-        ('subscriptionId' in data && typeof data.subscriptionId === 'string'
-          ? data.subscriptionId
-          : 'subscriptionID' in data && typeof data.subscriptionID === 'string'
-            ? data.subscriptionID
-            : null)
-
-      if (!subscriptionId) {
-        toast.error('PayPal did not return a subscription id.')
-        return
-      }
-
-      try {
-        await activatePayPalSubscriptionFn({ data: { subscriptionId } })
-        toast.success('Subscription activated with PayPal!')
-        onSuccess?.()
-      } catch (activateError) {
-        const message =
-          activateError instanceof Error ? activateError.message : 'Activation failed'
-        toast.error(message)
-      }
-    },
-    onCancel: () => {
-      onSessionActiveChange?.(false)
-      toast.message('PayPal checkout canceled.')
-    },
-    onError: (paypalError) => {
+    try {
+      const { approveUrl } = await createPayPalSubscriptionFn({
+        data: { planId, interval },
+      })
+      window.location.assign(approveUrl)
+    } catch (error) {
+      startedRef.current = false
+      setIsStarting(false)
       onSessionActiveChange?.(false)
       const message =
-        paypalError instanceof Error
-          ? paypalError.message
+        error instanceof Error
+          ? error.message
           : 'PayPal checkout failed. Please try again.'
       toast.error(message)
-    },
-  })
-
-  useEffect(() => {
-    onSessionActiveChange?.(isPending)
-  }, [isPending, onSessionActiveChange])
-
-  const startCheckout = () => {
-    onSessionActiveChange?.(true)
-    void handleClick()
-  }
-
-  if (error) {
-    return (
-      <p
-        className={cn(
-          'mt-5 text-center text-xs',
-          featured ? 'text-background/70' : 'text-muted-foreground',
-        )}
-      >
-        PayPal unavailable right now.
-      </p>
-    )
+    }
   }
 
   return (
     <Button
       type="button"
-      disabled={disabled || isPending}
+      disabled={disabled || isStarting}
       variant={featured ? 'pricingFeatured' : 'pricing'}
       size="pricing"
       className="mt-5"
-      onClick={startCheckout}
+      onClick={() => void startCheckout()}
     >
-      {isPending ? (
+      {isStarting ? (
         <>
           <Loader2 className="size-4 animate-spin" />
           Opening PayPal...

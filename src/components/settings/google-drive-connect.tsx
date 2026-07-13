@@ -3,6 +3,7 @@ import { HardDrive, Loader2, Unplug } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import { useAuth } from '#/components/auth/auth-provider'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
@@ -38,39 +39,64 @@ function formatDate(value: string): string {
   })
 }
 
+function isAuthSessionError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '')
+  return /auth session missing|must be signed in|not authenticated/i.test(
+    message,
+  )
+}
+
 export function GoogleDriveConnectCard() {
+  const { isAuthenticated } = useAuth()
   const getStatusFn = useStableServerFn(getGoogleDriveConnectionStatus)
   const getConnectUrlFn = useStableServerFn(getGoogleDriveConnectUrl)
   const disconnectFn = useStableServerFn(disconnectGoogleDrive)
 
   const [status, setStatus] = useState<DriveStatus | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [isDisconnecting, setIsDisconnecting] = useState(false)
-  const hasLoadedStatusRef = useRef(false)
+  const loadedForAuthRef = useRef(false)
 
-  const loadStatus = useCallback(async (force = false) => {
-    if (!force && hasLoadedStatusRef.current) {
-      return
-    }
+  const loadStatus = useCallback(
+    async (force = false) => {
+      if (!isAuthenticated) {
+        loadedForAuthRef.current = false
+        setStatus(null)
+        setIsLoading(false)
+        return
+      }
 
-    hasLoadedStatusRef.current = true
-    setIsLoading(true)
+      if (!force && loadedForAuthRef.current) {
+        return
+      }
 
-    try {
-      const nextStatus = await getStatusFn()
-      setStatus(nextStatus)
-    } catch (error) {
-      logGoogleDriveError('status', error)
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Failed to load Google Drive status'
-      toast.error(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [getStatusFn])
+      loadedForAuthRef.current = true
+      setIsLoading(true)
+
+      try {
+        const nextStatus = await getStatusFn()
+        setStatus(nextStatus)
+      } catch (error) {
+        loadedForAuthRef.current = false
+        logGoogleDriveError('status', error)
+
+        // Ghost / expired client auth should not spam a toast on Settings.
+        if (!isAuthSessionError(error)) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : 'Failed to load Google Drive status'
+          toast.error(message)
+        }
+
+        setStatus(null)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [getStatusFn, isAuthenticated],
+  )
 
   useEffect(() => {
     void loadStatus()
@@ -112,7 +138,7 @@ export function GoogleDriveConnectCard() {
     try {
       await disconnectFn()
       toast.success('Google Drive disconnected')
-      hasLoadedStatusRef.current = false
+      loadedForAuthRef.current = false
       await loadStatus(true)
     } catch (error) {
       logGoogleDriveError('disconnect', error)
@@ -139,13 +165,18 @@ export function GoogleDriveConnectCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading ? (
+        {!isAuthenticated ? (
+          <p className="text-sm text-muted-foreground">
+            Sign in to connect Google Drive.
+          </p>
+        ) : isLoading ? (
           <p className="text-sm text-muted-foreground">Loading Drive status...</p>
         ) : status?.oauthConfigured === false ? (
           <p className="text-sm text-muted-foreground">
             Google Drive OAuth is not configured on the server. Add{' '}
             <code className="text-xs">GOOGLE_CLIENT_ID</code> and{' '}
-            <code className="text-xs">GOOGLE_CLIENT_SECRET</code> to your environment.
+            <code className="text-xs">GOOGLE_CLIENT_SECRET</code> to your
+            environment.
           </p>
         ) : status?.connected ? (
           <>

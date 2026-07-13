@@ -14,7 +14,6 @@ import { toast } from 'sonner'
 import {
   clearAuthCookie,
   getInitialAuthState,
-  readAuthCookie,
   setAuthCookie,
 } from '#/lib/auth/auth-cookie'
 import { logAuthDebug, logAuthError } from '#/lib/auth/log-auth-error'
@@ -63,14 +62,6 @@ async function fetchProfile(userId: string): Promise<UserProfile | null> {
   }
 
   return mapProfileRow(data)
-}
-
-function shouldKeepCachedUser(event: AuthChangeEvent, sessionUser: User | null): boolean {
-  if (sessionUser || event !== 'INITIAL_SESSION') {
-    return false
-  }
-
-  return readAuthCookie() !== null
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -165,11 +156,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleAuthStateChange = useCallback(
     (event: AuthChangeEvent, sessionUser: User | null) => {
-      if (shouldKeepCachedUser(event, sessionUser)) {
-        setIsLoading(false)
-        return
-      }
-
       if (event === 'TOKEN_REFRESHED') {
         if (sessionUser) {
           setAuthCookie(sessionUser)
@@ -191,6 +177,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
+      // Trust Supabase's real session only. Keeping a stale finance-crm-auth
+      // cookie while INITIAL_SESSION is null made the UI look signed-in while
+      // server functions failed with "Auth session missing!".
       applySessionUser(sessionUser)
     },
     [applySessionUser],

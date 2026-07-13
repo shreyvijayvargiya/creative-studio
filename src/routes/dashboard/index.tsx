@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '#/components/ui/table'
 import { useStableServerFn } from '#/hooks/use-stable-server-fn'
+import { activatePayPalSubscription } from '#/lib/server/create-paypal-subscription'
 import { listDocuments } from '#/lib/server/list-documents'
 import type { DocumentListItem } from '#/types'
 
@@ -25,6 +26,10 @@ export const Route = createFileRoute('/dashboard/')({
   validateSearch: (search: Record<string, unknown>) => ({
     subscription:
       typeof search.subscription === 'string' ? search.subscription : undefined,
+    subscription_id:
+      typeof search.subscription_id === 'string'
+        ? search.subscription_id
+        : undefined,
   }),
   component: DashboardPage,
 })
@@ -112,31 +117,63 @@ function RecentDocumentTableRow({ document }: { document: DocumentListItem }) {
 }
 
 function DashboardPage() {
-  const { subscription: subscriptionStatus } = Route.useSearch()
+  const {
+    subscription: subscriptionStatus,
+    subscription_id: paypalSubscriptionId,
+  } = Route.useSearch()
   const navigate = useNavigate({ from: '/dashboard/' })
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { openLoginModal } = useLoginModal()
   const listDocumentsFn = useStableServerFn(listDocuments)
+  const activatePayPalSubscriptionFn = useStableServerFn(activatePayPalSubscription)
   const [documents, setDocuments] = useState<DocumentListItem[]>([])
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false)
   const hasLoadedDocumentsRef = useRef(false)
-  const subscriptionToastShownRef = useRef(false)
+  const canceledToastShownRef = useRef(false)
+  const paypalActivatedRef = useRef<string | null>(null)
 
+  // success opens the subscribe modal via SubscribeModalProvider (URL-derived).
   useEffect(() => {
-    if (!subscriptionStatus || subscriptionToastShownRef.current) {
+    if (subscriptionStatus !== 'canceled' || canceledToastShownRef.current) {
       return
     }
 
-    subscriptionToastShownRef.current = true
+    canceledToastShownRef.current = true
+    toast.message('Checkout canceled — no changes were made.')
+    void navigate({
+      search: { subscription: undefined, subscription_id: undefined },
+      replace: true,
+    })
+  }, [navigate, subscriptionStatus])
 
-    if (subscriptionStatus === 'success') {
-      toast.success('Subscription updated! Your plan will reflect shortly.')
-    } else if (subscriptionStatus === 'canceled') {
-      toast.message('Checkout canceled — no changes were made.')
+  // PayPal REST approve redirect returns subscription_id on the success URL.
+  useEffect(() => {
+    if (
+      !isAuthenticated ||
+      subscriptionStatus !== 'success' ||
+      !paypalSubscriptionId ||
+      paypalActivatedRef.current === paypalSubscriptionId
+    ) {
+      return
     }
 
-    void navigate({ search: { subscription: undefined }, replace: true })
-  }, [navigate, subscriptionStatus])
+    paypalActivatedRef.current = paypalSubscriptionId
+    void activatePayPalSubscriptionFn({
+      data: { subscriptionId: paypalSubscriptionId },
+    }).catch((error: unknown) => {
+      paypalActivatedRef.current = null
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to activate PayPal subscription'
+      toast.error(message)
+    })
+  }, [
+    activatePayPalSubscriptionFn,
+    isAuthenticated,
+    paypalSubscriptionId,
+    subscriptionStatus,
+  ])
 
   useEffect(() => {
     if (!isAuthenticated) {

@@ -50,6 +50,7 @@ export async function paypalRequest<T>(
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
+      Prefer: 'return=representation',
       'PayPal-Request-Id': crypto.randomUUID(),
       ...init?.headers,
     },

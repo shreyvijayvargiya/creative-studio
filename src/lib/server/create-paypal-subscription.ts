@@ -5,6 +5,7 @@ import { paypalRequest } from '#/lib/paypal/client'
 import { ensurePayPalBillingPlan } from '#/lib/paypal/billing-plans'
 import { syncPayPalSubscription } from '#/lib/paypal/subscription-sync'
 import { isPayPalConfigured } from '#/lib/paypal/config'
+import { getAppUrl } from '#/lib/stripe/config'
 import { getPlanById, isPaidPlanId } from '#/lib/stripe/plans'
 import { requireAuthUser } from '#/lib/server/require-auth-user'
 import { getSubscriptionForUser } from '#/lib/server/subscriptions-core'
@@ -13,6 +14,17 @@ const paypalCheckoutSchema = z.object({
   planId: z.string().refine(isPaidPlanId, 'Invalid subscription plan'),
   interval: z.enum(['month', 'year']),
 })
+
+interface PayPalLink {
+  rel: string
+  href: string
+}
+
+interface PayPalSubscriptionCreateResponse {
+  id: string
+  status?: string
+  links?: PayPalLink[]
+}
 
 export const createPayPalSubscription = createServerFn({ method: 'POST' })
   .validator((data: unknown) => paypalCheckoutSchema.parse(data))
@@ -37,23 +49,37 @@ export const createPayPalSubscription = createServerFn({ method: 'POST' })
       throw new Error(`You are already on the ${plan.name} plan.`)
     }
 
+    const appUrl = getAppUrl()
     const paypalPlanId = await ensurePayPalBillingPlan(data.planId, data.interval)
 
-    const subscription = await paypalRequest<{ id: string }>('/v1/billing/subscriptions', {
-      method: 'POST',
-      body: JSON.stringify({
-        plan_id: paypalPlanId,
-        custom_id: user.id,
-        application_context: {
-          brand_name: 'Finance CRM',
-          locale: 'en-AU',
-          shipping_preference: 'NO_SHIPPING',
-          user_action: 'SUBSCRIBE_NOW',
-        },
-      }),
-    })
+    const subscription = await paypalRequest<PayPalSubscriptionCreateResponse>(
+      '/v1/billing/subscriptions',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          plan_id: paypalPlanId,
+          custom_id: user.id,
+          application_context: {
+            brand_name: 'Finance CRM',
+            locale: 'en-AU',
+            shipping_preference: 'NO_SHIPPING',
+            user_action: 'SUBSCRIBE_NOW',
+            return_url: `${appUrl}/dashboard?subscription=success`,
+            cancel_url: `${appUrl}/dashboard?subscription=canceled`,
+          },
+        }),
+      },
+    )
 
-    return { subscriptionId: subscription.id }
+    const approveUrl = subscription.links?.find((link) => link.rel === 'approve')?.href
+    if (!approveUrl) {
+      throw new Error('PayPal did not return an approval URL for this subscription.')
+    }
+
+    return {
+      subscriptionId: subscription.id,
+      approveUrl,
+    }
   })
 
 const activateSchema = z.object({
