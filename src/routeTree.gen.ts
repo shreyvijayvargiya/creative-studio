@@ -38,6 +38,7 @@ import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$su
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
+import { Route as ApiEmailSendRouteImport } from './routes/api/email/send'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -184,6 +185,11 @@ const ApiPaypalWebhookRoute = ApiPaypalWebhookRouteImport.update({
   path: '/api/paypal/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEmailSendRoute = ApiEmailSendRouteImport.update({
+  id: '/api/email/send',
+  path: '/api/email/send',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/documents/pdf/$id': typeof DocumentsPdfIdRoute
@@ -305,6 +314,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/storage'
     | '/users'
+    | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
     | '/documents/pdf/$id'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  ApiEmailSendRoute: typeof ApiEmailSendRoute
   ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   DocumentsPdfIdRoute: typeof DocumentsPdfIdRoute
@@ -608,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPaypalWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/email/send': {
+      id: '/api/email/send'
+      path: '/api/email/send'
+      fullPath: '/api/email/send'
+      preLoaderRoute: typeof ApiEmailSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -648,6 +668,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  ApiEmailSendRoute: ApiEmailSendRoute,
   ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   DocumentsPdfIdRoute: DocumentsPdfIdRoute,

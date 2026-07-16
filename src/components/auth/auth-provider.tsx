@@ -19,6 +19,7 @@ import {
 import { logAuthDebug, logAuthError } from '#/lib/auth/log-auth-error'
 import { mapProfileRow } from '#/lib/auth/user'
 import { resolveLoginEmail } from '#/lib/server/resolve-login-email'
+import { notifyWelcomeEmail } from '#/lib/server/send-email'
 import { supabase } from '#/lib/supabase/client'
 import type {
   EmailSignInInput,
@@ -66,6 +67,7 @@ async function fetchProfile(userId: string): Promise<UserProfile | null> {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resolveLoginEmailFn = useServerFn(resolveLoginEmail)
+  const notifyWelcomeEmailFn = useServerFn(notifyWelcomeEmail)
   const initialAuthRef = useRef(getInitialAuthState())
   const [user, setUser] = useState<User | null>(() => initialAuthRef.current.user)
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -74,6 +76,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const currentUserIdRef = useRef<string | null>(initialAuthRef.current.user?.id ?? null)
   const profileLoadedForUserIdRef = useRef<string | null>(null)
   const profileLoadPromiseRef = useRef<Promise<void> | null>(null)
+  const welcomeEmailSentForUserIdRef = useRef<string | null>(null)
+
+  const maybeSendWelcomeEmail = useCallback(
+    async (sessionUser: User) => {
+      if (welcomeEmailSentForUserIdRef.current === sessionUser.id) {
+        return
+      }
+
+      welcomeEmailSentForUserIdRef.current = sessionUser.id
+
+      try {
+        await notifyWelcomeEmailFn({
+          data: { createdAt: sessionUser.created_at },
+        })
+      } catch (error) {
+        welcomeEmailSentForUserIdRef.current = null
+        logAuthError('welcome-email', error, { userId: sessionUser.id })
+      }
+    },
+    [notifyWelcomeEmailFn],
+  )
 
   const loadProfile = useCallback(async (nextUser: User, force = false) => {
     if (!force && profileLoadedForUserIdRef.current === nextUser.id) {
@@ -192,6 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (serverUser?: User | null) => {
       if (serverUser) {
         applySessionUser(serverUser)
+        void maybeSendWelcomeEmail(serverUser)
         return
       }
 
@@ -217,6 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (data.session?.user) {
           applySessionUser(data.session.user)
+          void maybeSendWelcomeEmail(data.session.user)
         }
       } catch (error) {
         logAuthError('session-init', error)
@@ -224,7 +249,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false)
       }
     },
-    [applySessionUser],
+    [applySessionUser, maybeSendWelcomeEmail],
   )
 
   useEffect(() => {
@@ -293,9 +318,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       applySessionUser(data.user)
+      void maybeSendWelcomeEmail(data.user)
       toast.success('Signed in successfully')
     },
-    [applySessionUser, resolveLoginEmailFn],
+    [applySessionUser, maybeSendWelcomeEmail, resolveLoginEmailFn],
   )
 
   const signUpWithEmail = useCallback(
@@ -323,13 +349,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.session?.user) {
         applySessionUser(data.session.user)
+        void maybeSendWelcomeEmail(data.session.user)
         toast.success('Account created')
         return
       }
 
       toast.success('Check your email to confirm your account')
     },
-    [applySessionUser],
+    [applySessionUser, maybeSendWelcomeEmail],
   )
 
   const signOut = useCallback(async () => {

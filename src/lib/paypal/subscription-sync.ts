@@ -1,5 +1,6 @@
 import { paypalRequest } from '#/lib/paypal/client'
 import { resolveAppPlanFromPayPalPlanId } from '#/lib/paypal/billing-plans'
+import { sendSubscriptionConfirmedEmailForUser } from '#/lib/email/send-transactional'
 import { upsertSubscriptionForUser } from '#/lib/server/subscriptions-core'
 import type { SubscriptionStatus } from '#/types/subscription'
 
@@ -36,6 +37,7 @@ function mapPayPalStatus(status: string): SubscriptionStatus {
 export async function syncPayPalSubscription(
   subscriptionId: string,
   fallbackUserId?: string,
+  options?: { sendConfirmationEmail?: boolean },
 ): Promise<void> {
   const subscription = await paypalRequest<PayPalSubscriptionResponse>(
     `/v1/billing/subscriptions/${subscriptionId}`,
@@ -56,7 +58,7 @@ export async function syncPayPalSubscription(
   const status = mapPayPalStatus(subscription.status)
   const isPaidActive = status === 'active' && mappedPlan !== null
 
-  await upsertSubscriptionForUser({
+  const saved = await upsertSubscriptionForUser({
     userId,
     planId: isPaidActive ? mappedPlan.planId : 'free',
     billingInterval: isPaidActive ? mappedPlan.interval : null,
@@ -70,4 +72,13 @@ export async function syncPayPalSubscription(
     currentPeriodEnd: subscription.billing_info?.next_billing_time ?? null,
     cancelAtPeriodEnd: subscription.status === 'CANCELLED',
   })
+
+  if (options?.sendConfirmationEmail && isPaidActive && saved.planId !== 'free') {
+    await sendSubscriptionConfirmedEmailForUser({
+      userId,
+      planId: saved.planId,
+      billingInterval: saved.billingInterval,
+      periodEnd: saved.currentPeriodEnd,
+    })
+  }
 }

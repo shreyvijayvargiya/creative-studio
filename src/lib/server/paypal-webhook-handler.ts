@@ -70,8 +70,13 @@ export async function handlePayPalWebhookEvent(
 
   switch (event.event_type) {
     case 'BILLING.SUBSCRIPTION.ACTIVATED':
-    case 'BILLING.SUBSCRIPTION.UPDATED':
     case 'BILLING.SUBSCRIPTION.RE-ACTIVATED':
+      await syncPayPalSubscription(subscriptionId, event.resource.custom_id, {
+        sendConfirmationEmail: true,
+      })
+      return
+
+    case 'BILLING.SUBSCRIPTION.UPDATED':
     case 'BILLING.SUBSCRIPTION.CANCELLED':
     case 'BILLING.SUBSCRIPTION.SUSPENDED':
     case 'BILLING.SUBSCRIPTION.EXPIRED':

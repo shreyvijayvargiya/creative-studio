@@ -19,6 +19,7 @@ describe('public-paths', () => {
     expect(isAuthExemptRoute('/auth/drive-callback')).toBe(true)
     expect(isAuthExemptRoute('/api/stripe/webhook')).toBe(true)
     expect(isAuthExemptRoute('/api/paypal/webhook')).toBe(true)
+    expect(isAuthExemptRoute('/api/email/send')).toBe(true)
     expect(isAuthExemptRoute('/pdf/view/report.pdf')).toBe(true)
   })
 

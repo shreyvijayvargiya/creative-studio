@@ -16,6 +16,7 @@ export const AUTH_EXEMPT_PATHS = [
   '/auth/drive-callback',
   '/api/stripe/webhook',
   '/api/paypal/webhook',
+  '/api/email/send',
 ] as const
 
 export type PublicPath = (typeof PUBLIC_PATHS)[number]

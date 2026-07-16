@@ -6,6 +6,7 @@ import {
   resolvePlanFromStripeSubscription,
   stripeTimestampToIso,
 } from '#/lib/stripe/subscription-utils'
+import { sendSubscriptionConfirmedEmailForUser } from '#/lib/email/send-transactional'
 import {
   getSubscriptionByStripeSubscriptionId,
   upsertSubscriptionForUser,
@@ -14,6 +15,7 @@ import {
 async function syncStripeSubscription(
   subscription: Stripe.Subscription,
   fallbackUserId?: string,
+  options?: { sendConfirmationEmail?: boolean },
 ): Promise<void> {
   const userId =
     subscription.metadata?.userId ??
@@ -29,7 +31,7 @@ async function syncStripeSubscription(
   const status = mapStripeSubscriptionStatus(subscription.status)
   const isPaidActive = status === 'active' || status === 'trialing'
 
-  await upsertSubscriptionForUser({
+  const saved = await upsertSubscriptionForUser({
     userId,
     planId: isPaidActive ? planId : 'free',
     billingInterval: isPaidActive ? billingInterval : null,
@@ -45,6 +47,15 @@ async function syncStripeSubscription(
     currentPeriodEnd: stripeTimestampToIso(subscription.current_period_end),
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
   })
+
+  if (options?.sendConfirmationEmail && isPaidActive && saved.planId !== 'free') {
+    await sendSubscriptionConfirmedEmailForUser({
+      userId,
+      planId: saved.planId,
+      billingInterval: saved.billingInterval,
+      periodEnd: saved.currentPeriodEnd,
+    })
+  }
 }
 
 export async function handleStripeWebhookEvent(event: Stripe.Event): Promise<void> {
@@ -61,7 +72,11 @@ export async function handleStripeWebhookEvent(event: Stripe.Event): Promise<voi
         String(session.subscription),
       )
 
-      await syncStripeSubscription(subscription, session.metadata?.userId ?? session.client_reference_id ?? undefined)
+      await syncStripeSubscription(
+        subscription,
+        session.metadata?.userId ?? session.client_reference_id ?? undefined,
+        { sendConfirmationEmail: true },
+      )
       return
     }
 

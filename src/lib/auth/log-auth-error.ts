@@ -7,6 +7,7 @@ type AuthLogContext =
   | 'oauth-exchange-server'
   | 'session-init'
   | 'profile-load'
+  | 'welcome-email'
 
 export function logAuthError(
   context: AuthLogContext,
