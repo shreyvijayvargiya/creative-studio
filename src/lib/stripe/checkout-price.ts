@@ -7,7 +7,7 @@ import type { BillingInterval, SubscriptionPlanDefinition } from '#/types/subscr
  * Stripe Checkout currency only — UI pricing copy stays AUD/display as-is.
  * INR avoids India individual-account export blocks while testing.
  */
-const STRIPE_CURRENCY = 'inr'
+const STRIPE_CURRENCY = 'AUD'
 
 function toStripeMinorUnits(amount: number): number {
   return Math.round(amount * 100)
