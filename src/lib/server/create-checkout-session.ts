@@ -38,6 +38,7 @@ export const createCheckoutSession = createServerFn({ method: 'POST' })
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
+      payment_method_types: ['card'],
       customer: existing.stripeCustomerId ?? undefined,
       customer_email: existing.stripeCustomerId ? undefined : (user.email ?? undefined),
       client_reference_id: user.id,
