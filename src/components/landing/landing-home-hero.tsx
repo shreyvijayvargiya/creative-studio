@@ -3,11 +3,11 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import {
   ArrowRight,
-  Calculator,
-  Cloud,
-  FileText,
-  PenLine,
+  ImageIcon,
+  Instagram,
+  ShoppingBag,
   Sparkles,
+  Store,
 } from 'lucide-react'
 
 import { HERO_HOME_STATS } from '#/components/landing/landing-content'
@@ -132,7 +132,7 @@ function HeroVisual() {
         {/* Back panel */}
         <HeroGlassFrame
           src="/hero-banner-2.png"
-          alt="Finance CRM budget planner dashboard"
+          alt="Creative Studio product creatives preview"
           className="absolute top-0 left-0 z-10 w-[92%] -rotate-2 sm:w-[88%]"
           floatDelay={0.6}
           entranceDelay={0.3}
@@ -141,37 +141,38 @@ function HeroVisual() {
         {/* Front panel */}
         <HeroGlassFrame
           src="/hero-banner.png"
-          alt="Finance CRM documents dashboard"
+          alt="Creative Studio marketplace assets"
           className="absolute right-0 bottom-0 z-20 w-[96%] rotate-1 sm:w-[92%]"
           floatDelay={0}
           entranceDelay={0.1}
         />
 
+        {/* DEMO: was Drive/ATO/E-sign/Budget floating cards */}
         <FloatingCard
-          icon={<Cloud className="size-5 text-sky-600 dark:text-sky-400" />}
-          title="Drive backup"
-          subtitle="Per-user OAuth"
+          icon={<Store className="size-5 text-orange-600 dark:text-orange-400" />}
+          title="Etsy listing"
+          subtitle="2000×2000 ready"
           className="-top-20 -left-4 z-30 sm:-left-8"
           delay={0.45}
         />
         <FloatingCard
-          icon={<FileText className="size-5 text-blue-600 dark:text-blue-400" />}
-          title="ATO PDF ready"
-          subtitle="Generated in minutes"
+          icon={<ShoppingBag className="size-5 text-emerald-600 dark:text-emerald-400" />}
+          title="Shopify banner"
+          subtitle="16:9 store hero"
           className="top-[28%] -left-6 z-30 sm:-left-10"
           delay={0}
         />
         <FloatingCard
-          icon={<PenLine className="size-5 text-emerald-600 dark:text-emerald-400" />}
-          title="E-sign collected"
-          subtitle="DocuSeal embedded"
+          icon={<Instagram className="size-5 text-pink-600 dark:text-pink-400" />}
+          title="Instagram post"
+          subtitle="4:5 feed ready"
           className="right-0 bottom-[32%] z-30 sm:-right-6"
           delay={0.15}
         />
         <FloatingCard
-          icon={<Calculator className="size-5 text-orange-600 dark:text-orange-400" />}
-          title="Budget synced"
-          subtitle="Client workspace"
+          icon={<ImageIcon className="size-5 text-blue-600 dark:text-blue-400" />}
+          title="AI styled"
+          subtitle="3–10 variants"
           className="-bottom-2 left-[12%] z-30 sm:left-[8%]"
           delay={0.3}
         />
@@ -213,7 +214,8 @@ export function LandingHomeHero() {
             className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-blue-100/80 bg-blue-50/50 px-3 py-1.5 text-xs text-zinc-700 sm:mb-6 sm:px-4 sm:text-sm dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300"
           >
             <Sparkles className="size-4 shrink-0" />
-            Built for accounting practices
+            {/* DEMO: was "Built for accounting practices" */}
+            AI creative studio for ecommerce brands
           </motion.div>
 
           <motion.h1
@@ -222,9 +224,10 @@ export function LandingHomeHero() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl lg:text-6xl lg:leading-[1.1]"
           >
-            The workspace for{' '}
-            <span className="text-blue-600 dark:text-blue-400">accounting</span>{' '}
-            <span className="text-muted-500 dark:text-blue-400">delivered.</span>
+            {/* DEMO: was accounting headline */}
+            One product photo.{' '}
+            <span className="text-blue-600 dark:text-blue-400">Marketplace</span>{' '}
+            creatives out.
           </motion.h1>
 
           <motion.p
@@ -233,10 +236,11 @@ export function LandingHomeHero() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="mt-4 text-sm leading-7 text-muted-foreground sm:mt-6 sm:text-base sm:leading-7 lg:text-lg"
           >
-            Plan client budgets, generate ATO-ready tax PDFs, collect e-signatures,
-            and store documents securely —{' '}
+            {/* DEMO: was ATO/budget copy */}
+            Generate Etsy, Shopify, Instagram, and Pinterest assets from a single
+            image — styles, colour palettes, and platform sizes built in.{' '}
             <span className="font-semibold text-foreground">
-              all in one calm workspace.
+              Built for ecommerce brands.
             </span>
           </motion.p>
 
@@ -251,13 +255,14 @@ export function LandingHomeHero() {
               size="lg"
               className="h-11 w-full rounded-full bg-blue-600 px-6 text-sm font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700 sm:h-12 sm:w-auto sm:text-base"
             >
-              <Link to="/dashboard">
-                Get started free
+              {/* DEMO: was Link to="/dashboard" Get started free */}
+              <Link to="/creative-studio">
+                Try Creative Studio
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
             <p className="text-center text-xs text-muted-foreground sm:text-left sm:text-sm">
-              Free to start · No credit card required
+              Live demo · Sign in to generate
             </p>
           </motion.div>
 

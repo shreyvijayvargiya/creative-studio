@@ -8,7 +8,8 @@ export function LandingLogo({ className }: { className?: string }) {
           <span className="text-xs font-semibold">▲</span>
         </span>
         <span className="text-sm font-semibold tracking-tight text-foreground max-[380px]:text-xs">
-          Finance CRM
+          {/* DEMO: was "Finance CRM" */}
+          Creative Studio
         </span>
       </span>
     </Link>

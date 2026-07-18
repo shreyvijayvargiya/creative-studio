@@ -1,9 +1,11 @@
-import { Link } from '@tanstack/react-router'
-import { LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react'
+import { Link, useRouterState } from '@tanstack/react-router'
+import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react'
+// DEMO: Sparkles unused while Upgrade is commented
+// import { LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react'
 
-import { useSubscribeModal } from '#/components/billing/subscribe-modal-provider'
 import { useAuth } from '#/components/auth/auth-provider'
-import { useLoginModal } from '#/components/auth/login-modal-provider'
+// DEMO: login modal unused on Creative Studio (Google OAuth direct)
+// import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { useTheme } from '#/components/layout/theme-provider'
 import {
   getUserAvatarUrl,
@@ -22,9 +24,13 @@ import {
 } from '#/components/ui/dropdown-menu'
 
 export function TopbarUserMenu() {
-  const { user, profile, isAuthenticated, signOut } = useAuth()
-  const { openLoginModal } = useLoginModal()
-  const { openSubscribeModal } = useSubscribeModal()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const isCreativeStudio =
+    pathname === '/creative-studio' || pathname.startsWith('/creative-studio/')
+  const { user, profile, isAuthenticated, signOut, signInWithGoogle } = useAuth()
+  // DEMO: subscribe modal unused while Upgrade is commented
+  // const { openSubscribeModal } = useSubscribeModal()
+  // const { openLoginModal } = useLoginModal()
   const { theme, toggleTheme } = useTheme()
 
   if (!isAuthenticated || !user) {
@@ -34,7 +40,15 @@ export function TopbarUserMenu() {
         variant="ghost"
         size="sm"
         className="hidden sm:inline-flex"
-        onClick={openLoginModal}
+        onClick={() => {
+          // DEMO: Creative Studio uses Google OAuth — no modal
+          if (isCreativeStudio) {
+            void signInWithGoogle()
+            return
+          }
+          // Non-demo routes still used login modal historically; keep Google for simplicity
+          void signInWithGoogle()
+        }}
       >
         <LogIn className="size-4" />
         Sign in
@@ -71,10 +85,12 @@ export function TopbarUserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {/* DEMO: hide Upgrade plan on Creative Studio demos — restore later
         <DropdownMenuItem onClick={openSubscribeModal}>
           <Sparkles className="size-4" />
           Upgrade plan
         </DropdownMenuItem>
+        */}
         <DropdownMenuItem asChild>
           <Link to="/settings" className="flex items-center gap-2">
             <Settings className="size-4" />

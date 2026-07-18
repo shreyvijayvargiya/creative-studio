@@ -9,9 +9,15 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
+/* DEMO: original nav
 export const LANDING_NAV_LINKS = [
   { label: 'Feature', href: '/features' },
   { label: 'Blog', href: '/blog' },
+  { label: 'Pricing', href: '/pricing' },
+] as const
+*/
+export const LANDING_NAV_LINKS = [
+  { label: 'Try demo', href: '/creative-studio' },
   { label: 'Pricing', href: '/pricing' },
 ] as const
 
@@ -20,10 +26,17 @@ export const LANDING_LEGAL_LINKS = [
   { label: 'Terms of service', href: '/terms-of-service' },
 ] as const
 
+/* DEMO: original stats
 export const HERO_HOME_STATS = [
   { value: 'Free', label: 'To get started' },
   { value: 'ATO', label: 'PDF templates' },
   { value: '100%', label: 'Secure storage' },
+] as const
+*/
+export const HERO_HOME_STATS = [
+  { value: '1 photo', label: 'In → multi-platform out' },
+  { value: 'Etsy+', label: 'Shopify · IG · Pinterest' },
+  { value: '3–10', label: 'Assets per run' },
 ] as const
 
 export const LANDING_STATS = [

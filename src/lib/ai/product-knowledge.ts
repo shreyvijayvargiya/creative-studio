@@ -24,6 +24,9 @@ Always link internal pages as markdown: [Label](/path) — users can click these
 - [Payees](/payees) — clients and vendors (create/list via AI tools or this page)
 - [PDF Viewer](/pdf) — browse and open PDF files in the app
 
+### Creative
+- [Creative Studio](/creative-studio) — upload a product photo and generate 3–10 marketplace creatives for Etsy, Shopify, Instagram, or Pinterest (style, format, dimensions, and colour palette driven)
+
 ### Document detail routes (replace {id} with actual document id when known)
 - Budget document: /documents/{id}
 - PDF document: /documents/pdf/{id}

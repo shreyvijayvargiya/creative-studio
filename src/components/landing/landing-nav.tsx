@@ -44,7 +44,7 @@ export function LandingNav({ className }: LandingNavProps) {
             asChild
             className="h-9 rounded-full bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
           >
-            <Link to="/dashboard">Get started</Link>
+            <Link to="/creative-studio">Try demo</Link>
           </Button>
         </div>
 
@@ -79,8 +79,9 @@ export function LandingNav({ className }: LandingNavProps) {
           </nav>
           <div className="mt-4">
             <Button asChild className="h-10 w-full rounded-full bg-blue-600 text-white hover:bg-blue-700">
-              <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                Get started
+              {/* DEMO: was /dashboard Get started */}
+              <Link to="/creative-studio" onClick={() => setMobileOpen(false)}>
+                Try demo
               </Link>
             </Button>
           </div>

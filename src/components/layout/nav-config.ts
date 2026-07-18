@@ -3,6 +3,7 @@ import {
   HardDrive,
   LayoutDashboard,
   Settings,
+  Sparkles,
   TableProperties,
   Users,
 } from 'lucide-react'
@@ -43,6 +44,11 @@ export const navSections: NavSection[] = [
           { label: 'Payees', href: '/payees' },
           { label: 'PDF Viewer', href: '/pdf' },
         ],
+      },
+      {
+        label: 'Creative Studio',
+        icon: Sparkles,
+        href: '/creative-studio',
       },
       {
         label: 'Workspace',

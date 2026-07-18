@@ -13,8 +13,9 @@ export function LandingFooter() {
           <div className="space-y-4">
             <LandingLogo />
             <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-              Modern accounting software for budget planning, ATO tax PDFs,
-              e-signing, and secure document management.
+              {/* DEMO: was Finance CRM accounting blurb */}
+              AI creative studio for ecommerce brands — turn one product photo into
+              Etsy, Shopify, Instagram, and Pinterest assets.
             </p>
           </div>
 
@@ -37,28 +38,21 @@ export function LandingFooter() {
             <div>
               <p className="landing-label mb-3 text-foreground">App</p>
               <ul className="space-y-2">
+                {/* DEMO: was Dashboard / Budget / Documents */}
                 <li>
                   <Link
-                    to="/dashboard"
+                    to="/creative-studio"
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    Dashboard
+                    Creative Studio
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/grid"
+                    to="/pricing"
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    Budget planner
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/documents"
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Documents
+                    Pricing
                   </Link>
                 </li>
               </ul>
@@ -82,7 +76,8 @@ export function LandingFooter() {
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:mt-10 sm:flex-row">
-          <p>© {year} Finance CRM. Built for accounting professionals.</p>
+          {/* DEMO: was Finance CRM copyright */}
+          <p>© {year} Creative Studio. AI assets for ecommerce brands.</p>
           <div className="flex items-center gap-4">
             {LANDING_LEGAL_LINKS.map((link) => (
               <Link

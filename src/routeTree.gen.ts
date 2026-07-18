@@ -28,6 +28,7 @@ import { Route as InvoicesIndexRouteImport } from './routes/invoices/index'
 import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as CreativeStudioIndexRouteImport } from './routes/creative-studio/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BankStatementsIndexRouteImport } from './routes/bank-statements/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
@@ -41,6 +42,7 @@ import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
 import { Route as ApiEmailSendRouteImport } from './routes/api/email/send'
+import { Route as ApiCreativeStudioGenerateRouteImport } from './routes/api/creative-studio/generate'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -137,6 +139,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreativeStudioIndexRoute = CreativeStudioIndexRouteImport.update({
+  id: '/creative-studio/',
+  path: '/creative-studio/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -202,6 +209,12 @@ const ApiEmailSendRoute = ApiEmailSendRouteImport.update({
   path: '/api/email/send',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCreativeStudioGenerateRoute =
+  ApiCreativeStudioGenerateRouteImport.update({
+    id: '/api/creative-studio/generate',
+    path: '/api/creative-studio/generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -220,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/creative-studio/': typeof CreativeStudioIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -230,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -253,6 +268,7 @@ export interface FileRoutesByTo {
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements': typeof BankStatementsIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/creative-studio': typeof CreativeStudioIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/documents': typeof DocumentsIndexRoute
   '/grid': typeof GridIndexRoute
@@ -263,6 +279,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
+  '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -288,6 +305,7 @@ export interface FileRoutesById {
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/creative-studio/': typeof CreativeStudioIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
   '/grid/': typeof GridIndexRoute
@@ -298,6 +316,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -324,6 +343,7 @@ export interface FileRouteTypes {
     | '/documents/$id'
     | '/bank-statements/'
     | '/blog/'
+    | '/creative-studio/'
     | '/dashboard/'
     | '/documents/'
     | '/grid/'
@@ -334,6 +354,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/creative-studio/generate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -357,6 +378,7 @@ export interface FileRouteTypes {
     | '/documents/$id'
     | '/bank-statements'
     | '/blog'
+    | '/creative-studio'
     | '/dashboard'
     | '/documents'
     | '/grid'
@@ -367,6 +389,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/storage'
     | '/users'
+    | '/api/creative-studio/generate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -391,6 +414,7 @@ export interface FileRouteTypes {
     | '/documents/$id'
     | '/bank-statements/'
     | '/blog/'
+    | '/creative-studio/'
     | '/dashboard/'
     | '/documents/'
     | '/grid/'
@@ -401,6 +425,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/storage/'
     | '/users/'
+    | '/api/creative-studio/generate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -424,6 +449,7 @@ export interface RootRouteChildren {
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
   BankStatementsIndexRoute: typeof BankStatementsIndexRoute
+  CreativeStudioIndexRoute: typeof CreativeStudioIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
@@ -434,6 +460,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  ApiCreativeStudioGenerateRoute: typeof ApiCreativeStudioGenerateRoute
   ApiEmailSendRoute: typeof ApiEmailSendRoute
   ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -577,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/creative-studio/': {
+      id: '/creative-studio/'
+      path: '/creative-studio'
+      fullPath: '/creative-studio/'
+      preLoaderRoute: typeof CreativeStudioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/'
@@ -668,6 +702,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEmailSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/creative-studio/generate': {
+      id: '/api/creative-studio/generate'
+      path: '/api/creative-studio/generate'
+      fullPath: '/api/creative-studio/generate'
+      preLoaderRoute: typeof ApiCreativeStudioGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -700,6 +741,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,
   BankStatementsIndexRoute: BankStatementsIndexRoute,
+  CreativeStudioIndexRoute: CreativeStudioIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,
@@ -710,6 +752,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  ApiCreativeStudioGenerateRoute: ApiCreativeStudioGenerateRoute,
   ApiEmailSendRoute: ApiEmailSendRoute,
   ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
