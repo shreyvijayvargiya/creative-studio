@@ -4,24 +4,26 @@ import {
   generateSchema,
   runCreativeGeneration,
 } from '#/lib/server/creative-studio'
-import { requireAuthUser } from '#/lib/server/require-auth-user'
+// DEMO: public generate endpoint — restore auth later
+// import { requireAuthUser } from '#/lib/server/require-auth-user'
 
 /**
  * HTTP endpoint for Creative Studio asset generation.
- * Accepts JSON (base64 image + options). Requires an authenticated session.
+ * DEMO: no auth required. Accepts JSON (base64 image + options).
  */
 export const Route = createFileRoute('/api/creative-studio/generate')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        try {
-          await requireAuthUser()
-        } catch {
-          return new Response(JSON.stringify({ error: 'You must be signed in' }), {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
+        // DEMO: auth gate commented out
+        // try {
+        //   await requireAuthUser()
+        // } catch {
+        //   return new Response(JSON.stringify({ error: 'You must be signed in' }), {
+        //     status: 401,
+        //     headers: { 'Content-Type': 'application/json' },
+        //   })
+        // }
 
         let body: unknown
         try {

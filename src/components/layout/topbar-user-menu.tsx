@@ -1,4 +1,4 @@
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react'
 // DEMO: Sparkles unused while Upgrade is commented
 // import { LogIn, LogOut, Moon, Settings, Sparkles, Sun } from 'lucide-react'
@@ -24,9 +24,6 @@ import {
 } from '#/components/ui/dropdown-menu'
 
 export function TopbarUserMenu() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const isCreativeStudio =
-    pathname === '/creative-studio' || pathname.startsWith('/creative-studio/')
   const { user, profile, isAuthenticated, signOut, signInWithGoogle } = useAuth()
   // DEMO: subscribe modal unused while Upgrade is commented
   // const { openSubscribeModal } = useSubscribeModal()
@@ -39,14 +36,9 @@ export function TopbarUserMenu() {
         type="button"
         variant="ghost"
         size="sm"
-        className="hidden sm:inline-flex"
+        className="inline-flex"
         onClick={() => {
-          // DEMO: Creative Studio uses Google OAuth — no modal
-          if (isCreativeStudio) {
-            void signInWithGoogle()
-            return
-          }
-          // Non-demo routes still used login modal historically; keep Google for simplicity
+          // DEMO: navbar Sign in uses Google OAuth — no modal
           void signInWithGoogle()
         }}
       >

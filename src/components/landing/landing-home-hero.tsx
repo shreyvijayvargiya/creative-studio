@@ -262,7 +262,7 @@ export function LandingHomeHero() {
               </Link>
             </Button>
             <p className="text-center text-xs text-muted-foreground sm:text-left sm:text-sm">
-              Live demo · Sign in to generate
+              Live demo · Free to try
             </p>
           </motion.div>
 

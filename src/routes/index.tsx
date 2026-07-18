@@ -59,7 +59,7 @@ function HomePage() {
         description="Upload a product photo, pick a marketplace format and style, and download Etsy-, Shopify-, and social-ready assets in minutes."
         primaryLabel="Open Creative Studio"
         primaryHref="/creative-studio"
-        footer="Demo · Sign in to generate · No credit card required"
+        footer="Live demo · Free to try · No credit card required"
         benefits={[
           {
             icon: Sparkles,

@@ -15,12 +15,11 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { useAuth } from '#/components/auth/auth-provider'
-// DEMO: login modal removed from Creative Studio sign-in
+// DEMO: generation is open — auth only via navbar Sign in
+// import { useAuth } from '#/components/auth/auth-provider'
 // import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { ColorPaletteDropdown } from '#/components/creative-studio/color-palette-dropdown'
 import { CompareSlider } from '#/components/creative-studio/compare-slider'
-import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
@@ -79,9 +78,6 @@ function downloadDataUrl(url: string, fileName: string) {
 }
 
 export function CreativeStudioDashboard() {
-  const { isAuthenticated, isLoading: isAuthLoading, signInWithGoogle } = useAuth()
-  // DEMO: direct Google sign-in — no login modal
-  // const { openLoginModal } = useLoginModal()
   const generateFn = useStableServerFn(generateCreatives)
 
   const [file, setFile] = useState<File | null>(null)
@@ -139,11 +135,6 @@ export function CreativeStudioDashboard() {
   const generateMutation = useMutation({
     mutationFn: async () => {
       if (!file) throw new Error('Upload a product photo first')
-      if (!isAuthenticated) {
-        // DEMO: Google OAuth instead of login modal
-        await signInWithGoogle()
-        throw new Error('Sign in to generate creatives')
-      }
 
       const imageBase64 = await fileToBase64(file)
       return generateFn({
@@ -166,9 +157,7 @@ export function CreativeStudioDashboard() {
     },
     onError: (error) => {
       const message = error instanceof Error ? error.message : 'Generation failed'
-      if (message !== 'Sign in to generate creatives') {
-        toast.error(message)
-      }
+      toast.error(message)
     },
   })
 
@@ -192,23 +181,6 @@ export function CreativeStudioDashboard() {
           description="One product photo in — Etsy, Shopify, Instagram, and Pinterest creatives out."
         />
       </div>
-
-      {!isAuthLoading && !isAuthenticated ? (
-        <Alert>
-          <AlertTitle>Sign in required</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center gap-3">
-            Sign in with Google to generate marketplace assets.
-            <Button
-              size="sm"
-              onClick={() => {
-                void signInWithGoogle()
-              }}
-            >
-              Sign in with Google
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[400px_1fr]">
         <div className="space-y-4">
@@ -399,7 +371,7 @@ export function CreativeStudioDashboard() {
 
               <Button
                 className="w-full"
-                disabled={!canGenerate || !isAuthenticated}
+                disabled={!canGenerate}
                 onClick={() => generateMutation.mutate()}
               >
                 {generateMutation.isPending ? (

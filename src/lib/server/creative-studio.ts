@@ -7,7 +7,8 @@ import {
   getFormat,
 } from '#/lib/creative-studio/config'
 import { generateCreativeAssets } from '#/lib/creative-studio/generate-assets'
-import { requireAuthUser } from '#/lib/server/require-auth-user'
+// DEMO: asset generation is public — no requireAuthUser
+// import { requireAuthUser } from '#/lib/server/require-auth-user'
 import type { GenerateCreativesResult } from '#/types/creative-studio'
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -91,7 +92,8 @@ export async function runCreativeGeneration(
 export const generateCreatives = createServerFn({ method: 'POST' })
   .validator((data: unknown) => generateSchema.parse(data))
   .handler(async ({ data }) => {
-    await requireAuthUser()
+    // DEMO: open generation — auth restored later with:
+    // await requireAuthUser()
     return runCreativeGeneration(data)
   })
 
