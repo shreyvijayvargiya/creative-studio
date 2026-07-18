@@ -29,10 +29,12 @@ import { Route as GridIndexRouteImport } from './routes/grid/index'
 import { Route as DocumentsIndexRouteImport } from './routes/documents/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as BankStatementsIndexRouteImport } from './routes/bank-statements/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as PdfViewFilenameRouteImport } from './routes/pdf/view.$filename'
 import { Route as GridSignSubmissionIdRouteImport } from './routes/grid/sign.$submissionId'
 import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
@@ -140,6 +142,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRouteRoute,
 } as any)
+const BankStatementsIndexRoute = BankStatementsIndexRouteImport.update({
+  id: '/bank-statements/',
+  path: '/bank-statements/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocumentsIdRoute = DocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
@@ -158,6 +165,11 @@ const AuthDriveCallbackRoute = AuthDriveCallbackRouteImport.update({
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PdfViewFilenameRoute = PdfViewFilenameRouteImport.update({
@@ -201,10 +213,12 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
@@ -232,10 +246,12 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/bank-statements': typeof BankStatementsIndexRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/documents': typeof DocumentsIndexRoute
@@ -265,10 +281,12 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/documents/$id': typeof DocumentsIdRoute
+  '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/documents/': typeof DocumentsIndexRoute
@@ -299,10 +317,12 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
     | '/documents/$id'
+    | '/bank-statements/'
     | '/blog/'
     | '/dashboard/'
     | '/documents/'
@@ -330,10 +350,12 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
     | '/documents/$id'
+    | '/bank-statements'
     | '/blog'
     | '/dashboard'
     | '/documents'
@@ -362,10 +384,12 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
     | '/documents/$id'
+    | '/bank-statements/'
     | '/blog/'
     | '/dashboard/'
     | '/documents/'
@@ -395,9 +419,11 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
+  ApiUploadRoute: typeof ApiUploadRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
+  BankStatementsIndexRoute: typeof BankStatementsIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DocumentsIndexRoute: typeof DocumentsIndexRoute
   GridIndexRoute: typeof GridIndexRoute
@@ -558,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRouteRoute
     }
+    '/bank-statements/': {
+      id: '/bank-statements/'
+      path: '/bank-statements'
+      fullPath: '/bank-statements/'
+      preLoaderRoute: typeof BankStatementsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/documents/$id': {
       id: '/documents/$id'
       path: '/documents/$id'
@@ -584,6 +617,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/callback'
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pdf/view/$filename': {
@@ -655,9 +695,11 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
+  ApiUploadRoute: ApiUploadRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
   DocumentsIdRoute: DocumentsIdRoute,
+  BankStatementsIndexRoute: BankStatementsIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DocumentsIndexRoute: DocumentsIndexRoute,
   GridIndexRoute: GridIndexRoute,

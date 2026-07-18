@@ -316,3 +316,8 @@ create policy "Users can view own subscription"
   on public.user_subscriptions for select
   using (auth.uid() = user_id);
 
+
+-- ---------------------------------------------------------------------------
+-- Bank statements (AI extract → local accounting store)
+-- ---------------------------------------------------------------------------
+-- See supabase/migrations/20250716_bank_statements.sql for full DDL + RLS.

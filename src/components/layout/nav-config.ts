@@ -1,11 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 import {
-  Eye,
-  FileText,
   HardDrive,
   LayoutDashboard,
-  MessageSquare,
-  Receipt,
   Settings,
   TableProperties,
   Users,
@@ -42,6 +38,7 @@ export const navSections: NavSection[] = [
         icon: TableProperties,
         children: [
           { label: 'Budget Planner', href: '/grid' },
+          { label: 'Bank Statements', href: '/bank-statements' },
           { label: 'Documents', href: '/documents' },
           { label: 'Payees', href: '/payees' },
           { label: 'PDF Viewer', href: '/pdf' },

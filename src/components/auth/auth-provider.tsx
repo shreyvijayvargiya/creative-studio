@@ -150,6 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!sessionUser) {
         currentUserIdRef.current = null
         profileLoadedForUserIdRef.current = null
+        welcomeEmailSentForUserIdRef.current = null
         clearAuthCookie()
         setUser(null)
         setProfile(null)
@@ -177,12 +178,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [loadProfile],
   )
 
+  /** Clear UI + local Supabase storage when there is no valid auth session. */
+  const signOutBecauseNoSession = useCallback(async () => {
+    logAuthDebug('sign-out', 'No auth session — clearing local state')
+    applySessionUser(null)
+
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch (error) {
+      logAuthError('sign-out', error)
+    }
+  }, [applySessionUser])
+
   const handleAuthStateChange = useCallback(
     (event: AuthChangeEvent, sessionUser: User | null) => {
       if (event === 'TOKEN_REFRESHED') {
         if (sessionUser) {
           setAuthCookie(sessionUser)
+          return
         }
+
+        // Refresh failed / session gone — treat as signed out.
+        void signOutBecauseNoSession()
         return
       }
 
@@ -190,9 +207,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
+      // No Supabase session (expired cookie, cleared storage, etc.)
+      if (!sessionUser) {
+        void signOutBecauseNoSession()
+        return
+      }
+
       if (
         event === 'INITIAL_SESSION' &&
-        sessionUser?.id &&
         sessionUser.id === currentUserIdRef.current &&
         profileLoadedForUserIdRef.current === sessionUser.id
       ) {
@@ -205,7 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // server functions failed with "Auth session missing!".
       applySessionUser(sessionUser)
     },
-    [applySessionUser],
+    [applySessionUser, signOutBecauseNoSession],
   )
 
   const handleAuthStateChangeRef = useRef(handleAuthStateChange)
@@ -229,6 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!result) {
           logAuthError('session-init', 'Timed out waiting for OAuth session')
+          await signOutBecauseNoSession()
           return
         }
 
@@ -236,20 +259,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (error) {
           logAuthError('session-init', error)
+          await signOutBecauseNoSession()
           return
         }
 
         if (data.session?.user) {
           applySessionUser(data.session.user)
           void maybeSendWelcomeEmail(data.session.user)
+          return
         }
+
+        await signOutBecauseNoSession()
       } catch (error) {
         logAuthError('session-init', error)
+        await signOutBecauseNoSession()
       } finally {
         setIsLoading(false)
       }
     },
-    [applySessionUser, maybeSendWelcomeEmail],
+    [applySessionUser, maybeSendWelcomeEmail, signOutBecauseNoSession],
   )
 
   useEffect(() => {
@@ -273,11 +301,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }, 0)
     })
 
+    // If we hydrated from a stale cookie but Supabase has no session, sign out.
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!isMounted) return
+
+      if (error || !data.session?.user) {
+        if (currentUserIdRef.current) {
+          void signOutBecauseNoSession()
+        }
+      }
+    })
+
     return () => {
       isMounted = false
       subscription.unsubscribe()
     }
-  }, [loadProfile])
+  }, [loadProfile, signOutBecauseNoSession])
 
   const signInWithGoogle = useCallback(async () => {
     const redirectTo = `${window.location.origin}/auth/callback`
@@ -360,15 +399,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut()
+    try {
+      const { error } = await supabase.auth.signOut()
 
-    if (error) {
-      toast.error(error.message)
-      return
+      // Always clear local UI/cookie even if Supabase already has no session.
+      applySessionUser(null)
+
+      if (error) {
+        const message = error.message.toLowerCase()
+        if (
+          message.includes('auth session missing') ||
+          message.includes('session missing') ||
+          message.includes('not authenticated')
+        ) {
+          toast.success('Signed out')
+          return
+        }
+
+        toast.error(error.message)
+        return
+      }
+
+      toast.success('Signed out')
+    } catch (error) {
+      applySessionUser(null)
+      logAuthError('sign-out', error)
+      toast.success('Signed out')
     }
-
-    applySessionUser(null)
-    toast.success('Signed out')
   }, [applySessionUser])
 
   const value = useMemo<AuthContextValue>(

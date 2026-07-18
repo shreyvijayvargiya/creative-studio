@@ -19,6 +19,7 @@ Always link internal pages as markdown: [Label](/path) — users can click these
 
 ### Finance — core workflow
 - [Budget Planner](/grid) — spreadsheet-style budget grid + ATO taxpayer form; generate PDFs and start e-signing from here
+- [Bank Statements](/bank-statements) — upload PDF bank statements, AI extracts transactions, review/edit, save, export CSV/Excel/PDF
 - [Documents](/documents) — library of all saved budget documents and PDFs
 - [Payees](/payees) — clients and vendors (create/list via AI tools or this page)
 - [PDF Viewer](/pdf) — browse and open PDF files in the app

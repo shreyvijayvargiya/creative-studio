@@ -17,6 +17,7 @@ export const AUTH_EXEMPT_PATHS = [
   '/api/stripe/webhook',
   '/api/paypal/webhook',
   '/api/email/send',
+  '/api/upload',
 ] as const
 
 export type PublicPath = (typeof PUBLIC_PATHS)[number]

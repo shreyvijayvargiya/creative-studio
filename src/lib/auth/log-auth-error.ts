@@ -8,6 +8,7 @@ type AuthLogContext =
   | 'session-init'
   | 'profile-load'
   | 'welcome-email'
+  | 'sign-out'
 
 export function logAuthError(
   context: AuthLogContext,
