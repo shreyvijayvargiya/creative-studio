@@ -8,8 +8,8 @@ import {
 export const Route = createFileRoute('/privacy-policy')({
   head: () =>
     legalPageHead(
-      'Privacy Policy | Finance CRM',
-      'How Finance CRM collects, uses, and protects your data when you use our accounting workspace.',
+      'Privacy Policy | Creative Studio',
+      'How Creative Studio collects, uses, and protects your data when you use our AI ecommerce creative tools.',
       '/privacy-policy',
     ),
   component: PrivacyPolicyPage,
@@ -19,16 +19,16 @@ function PrivacyPolicyPage() {
   return (
     <LegalPageContent
       title="Privacy Policy"
-      description="This policy explains what information we collect, how we use it, and the choices you have when using Finance CRM."
+      description="This policy explains what information we collect, how we use it, and the choices you have when using Creative Studio."
       lastUpdated="July 5, 2026"
       sections={[
         {
           title: '1. Who we are',
           content: (
             <p>
-              Finance CRM provides accounting workflow software for budget planning, ATO-oriented
-              PDF generation, e-signing, and document storage. This policy applies to our website,
-              application, and related services.
+              Creative Studio provides AI tools for ecommerce product creatives — turning
+              product photos into marketplace-ready assets for Etsy, Shopify, Instagram, and
+              Pinterest. This policy applies to our website, application, and related services.
             </p>
           ),
         },
@@ -50,9 +50,9 @@ function PrivacyPolicyPage() {
           title: '3. How we use your information',
           content: (
             <ul className="list-disc space-y-2 pl-5">
-              <li>To provide, operate, and improve the Finance CRM platform</li>
+              <li>To provide, operate, and improve the Creative Studio platform</li>
               <li>To authenticate users and secure accounts</li>
-              <li>To generate documents, store files, and enable e-signing workflows</li>
+              <li>To generate creatives, store uploads, and improve AI output quality</li>
               <li>To communicate product updates, support responses, and service notices</li>
               <li>To comply with legal obligations and prevent abuse</li>
             </ul>

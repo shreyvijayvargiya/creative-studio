@@ -12,6 +12,7 @@ import {
   LandingWorkflowSection,
   type WorkflowStepItem,
 } from '#/components/landing/landing-workflow-section'
+import { buildPageMetaTags } from '#/lib/blog/seo'
 import { cn } from '#/lib/utils'
 
 const WORKFLOW_STEPS: WorkflowStepItem[] = LANDING_STEPS.map((step, index) => ({
@@ -50,14 +51,13 @@ const AFTER_SIGNING = [
 
 export const Route = createFileRoute('/how-it-works')({
   head: () => ({
-    meta: [
-      { title: 'How It Works | Finance CRM Accounting Workflow' },
-      {
-        name: 'description',
-        content:
-          'Learn how Finance CRM takes you from budget planning to ATO tax PDF generation, e-signing, and Google Drive backup in four simple steps.',
-      },
-    ],
+    meta: buildPageMetaTags({
+      title: 'How It Works | Creative Studio AI Asset Workflow',
+      description:
+        'See how Creative Studio turns one product photo into Etsy, Shopify, Instagram, and Pinterest creatives in a few steps — upload, choose format, generate, download.',
+      path: '/how-it-works',
+      image: '/hero-banner.png',
+    }),
   }),
   component: HowItWorksPage,
 })
@@ -73,8 +73,8 @@ function HowItWorksPage() {
             <LandingGradientText>signed document</LandingGradientText>
           </>
         }
-        description="Finance CRM connects planning, PDF generation, e-signing, and storage in one continuous workflow — designed for accounting professionals and their clients."
-        primaryCta={{ label: 'Try it free', href: '/dashboard' }}
+        description="Creative Studio connects upload, style, marketplace formats, and download in one continuous workflow — designed for ecommerce brands and sellers."
+        primaryCta={{ label: 'Try the demo', href: '/creative-studio' }}
       />
 
       <LandingWorkflowSection

@@ -158,10 +158,11 @@ function ProfessionalHighlightCard({
 export const Route = createFileRoute('/features')({
   head: () => ({
     meta: buildPageMetaTags({
-      title: 'Features | Finance CRM Accounting Software',
+      title: 'Features | Creative Studio — AI Ecommerce Creatives',
       description:
-        'Budget planner, ATO tax PDF generation, DocuSeal e-signing, Google Drive backup, and PIN-protected document sharing for accounting teams.',
+        'Upload a product photo and generate marketplace-ready assets for Etsy, Shopify, Instagram, and Pinterest with styles, colour palettes, and platform sizes.',
       path: '/features',
+      image: '/hero-banner.png',
     }),
   }),
   component: FeaturesPage,

@@ -21,11 +21,14 @@ export function buildPageMetaTags({
   tags,
 }: PageSeoInput) {
   const url = absoluteUrl(path)
-  const imageUrl = image ?? absoluteUrl('/manifest.json')
+  const imageUrl = image ?? absoluteUrl('/hero-banner.png')
 
   const meta: Array<Record<string, string>> = [
     { title },
     { name: 'description', content: description },
+    { name: 'application-name', content: 'Creative Studio' },
+    { name: 'author', content: 'Creative Studio' },
+    { property: 'og:site_name', content: 'Creative Studio' },
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:type', content: type },
@@ -52,7 +55,7 @@ export function buildPageMetaTags({
 
 export function buildBlogPostMeta(post: BlogPostMeta) {
   return buildPageMetaTags({
-    title: `${post.title} | Finance CRM Blog`,
+    title: `${post.title} | Creative Studio Blog`,
     description: post.description,
     path: `/blog/${post.slug}`,
     image: post.image,

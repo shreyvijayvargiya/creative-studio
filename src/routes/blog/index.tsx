@@ -9,10 +9,11 @@ export const Route = createFileRoute('/blog/')({
   loader: async () => listBlogPosts(),
   head: () => ({
     meta: buildPageMetaTags({
-      title: 'Blog | Finance CRM — Accounting Practice Insights',
+      title: 'Blog | Creative Studio — Ecommerce Creative Insights',
       description:
-        'Articles on accounting workflows, ATO PDF preparation, e-signing, and modern practice operations.',
+        'Articles on AI product photography, marketplace creatives, Etsy and Shopify assets, and ecommerce brand workflows.',
       path: '/blog',
+      image: '/hero-banner.png',
     }),
   }),
   component: BlogPage,
@@ -29,10 +30,10 @@ function BlogPage() {
             Blog
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-            Insights on accounting workflows, ATO PDFs, e-signing, and product
+            Insights on AI product creatives, marketplace assets, and product
             updates from{' '}
             <span className="font-semibold text-blue-600 dark:text-blue-400">
-              Finance CRM
+              Creative Studio
             </span>
             .
           </p>

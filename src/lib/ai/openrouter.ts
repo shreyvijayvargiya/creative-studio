@@ -41,7 +41,7 @@ function getOpenRouterConfig() {
     apiKey,
     model: process.env.OPENROUTER_MODEL?.trim() ?? 'openai/gpt-oss-120b',
     siteUrl: process.env.APP_URL?.trim() ?? 'http://localhost:3000',
-    siteName: 'Finance CRM',
+    siteName: 'Creative Studio',
   }
 }
 

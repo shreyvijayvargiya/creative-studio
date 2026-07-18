@@ -10,6 +10,7 @@ import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
+import { buildPageMetaTags } from '#/lib/blog/seo'
 
 const INFRA_ITEMS = [
   { icon: Layers, label: 'TanStack Start for a fast, full-stack React experience' },
@@ -23,14 +24,13 @@ const INFRA_ITEMS = [
 
 export const Route = createFileRoute('/about')({
   head: () => ({
-    meta: [
-      { title: 'About | Finance CRM — Accounting Software for Modern Practices' },
-      {
-        name: 'description',
-        content:
-          'Finance CRM helps accounting professionals plan budgets, prepare tax PDFs, collect e-signatures, and manage client documents in one secure workspace.',
-      },
-    ],
+    meta: buildPageMetaTags({
+      title: 'About | Creative Studio — AI Creatives for Ecommerce',
+      description:
+        'Creative Studio helps ecommerce brands turn one product photo into marketplace-ready assets for Etsy, Shopify, Instagram, and Pinterest.',
+      path: '/about',
+      image: '/hero-banner.png',
+    }),
   }),
   component: AboutPage,
 })
@@ -42,12 +42,12 @@ function AboutPage() {
         eyebrow="About"
         title={
           <>
-            Accounting software that{' '}
-            <LandingGradientText>respects your attention</LandingGradientText>
+            AI creatives that{' '}
+            <LandingGradientText>sell your products</LandingGradientText>
           </>
         }
-        description="We built Finance CRM for practitioners who want fewer tabs, clearer workflows, and documents that stay organized from first draft to final signature."
-        primaryCta={{ label: 'Open workspace', href: '/dashboard' }}
+        description="We built Creative Studio for ecommerce brands who want marketplace-ready assets from a single product photo — without a design team on every listing."
+        primaryCta={{ label: 'Try Creative Studio', href: '/creative-studio' }}
       />
 
       <section className="bg-background py-12 sm:py-20 lg:py-24">
@@ -63,14 +63,13 @@ function AboutPage() {
                     <LandingGradientText>built this</LandingGradientText>
                   </>
                 }
-                description="Small practices often stitch together spreadsheets, PDF tools, e-sign platforms, and cloud drives. Finance CRM brings those steps into one calm, monochrome interface."
+                description="Sellers often juggle Canva, freelancers, and platform size guides. Creative Studio brings upload, style, formats, and download into one calm workflow."
                 className="mb-6"
               />
               <p className="text-sm leading-7 text-muted-foreground">
-                The product focuses on Australian accounting use cases — budget
-                planning, ATO-oriented PDF output, and secure sharing — without
-                the noise of a generic enterprise CRM. Every screen is designed
-                for speed, legibility, and understated credibility.
+                The product focuses on ecommerce use cases — Etsy listings, Shopify
+                banners, Instagram posts, and Pinterest pins — without the noise of a
+                generic design suite. Every screen is designed for speed and clear output.
               </p>
             </div>
 
@@ -168,7 +167,7 @@ function AboutPage() {
             </span>
           </>
         }
-        description="Create a free workspace and see how Finance CRM fits your client document workflow."
+        description="Create a free demo and see how Creative Studio fits your product listing workflow."
         benefits={[]}
       />
     </>

@@ -18,11 +18,11 @@ import {
 export const Route = createFileRoute('/')({
   head: () => ({
     meta: buildPageMetaTags({
-      // DEMO: was Finance CRM meta
       title: 'Creative Studio | AI Product Photos for Etsy, Shopify & Social',
       description:
         'Turn one product photo into Etsy, Shopify, Instagram, and Pinterest creatives. AI design assets for ecommerce brands — try the live demo.',
       path: '/',
+      image: '/hero-banner.png',
     }),
   }),
   component: HomePage,

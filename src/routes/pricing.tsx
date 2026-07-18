@@ -13,10 +13,11 @@ import { buildPageMetaTags } from '#/lib/blog/seo'
 export const Route = createFileRoute('/pricing')({
   head: () => ({
     meta: buildPageMetaTags({
-      title: 'Pricing | Finance CRM — Free & Pro Plans',
+      title: 'Pricing | Creative Studio — Plans for Ecommerce Brands',
       description:
-        'Simple pricing for accounting teams. Start free with budget planning and PDF signing. Pro and Team plans with Google Drive sync coming soon.',
+        'Simple pricing for AI product creatives. Start with the live demo, then scale with per-image or full-app plans for Etsy, Shopify, and social assets.',
       path: '/pricing',
+      image: '/hero-banner.png',
     }),
   }),
   component: PricingPage,

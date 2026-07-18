@@ -8,8 +8,8 @@ import {
 export const Route = createFileRoute('/terms-of-service')({
   head: () =>
     legalPageHead(
-      'Terms of Service | Finance CRM',
-      'Terms governing your use of Finance CRM accounting software, documents, and workspace features.',
+      'Terms of Service | Creative Studio',
+      'Terms governing your use of Creative Studio AI ecommerce creative tools and generated assets.',
       '/terms-of-service',
     ),
   component: TermsOfServicePage,
@@ -19,14 +19,14 @@ function TermsOfServicePage() {
   return (
     <LegalPageContent
       title="Terms of Service"
-      description="By using Finance CRM, you agree to these terms. Please read them carefully before using the platform."
+      description="By using Creative Studio, you agree to these terms. Please read them carefully before using the platform."
       lastUpdated="July 5, 2026"
       sections={[
         {
           title: '1. Acceptance of terms',
           content: (
             <p>
-              By creating an account or using Finance CRM, you agree to be bound by these Terms
+              By creating an account or using Creative Studio, you agree to be bound by these Terms
               of Service and our Privacy Policy. If you do not agree, do not use the service.
             </p>
           ),
@@ -35,9 +35,9 @@ function TermsOfServicePage() {
           title: '2. The service',
           content: (
             <p>
-              Finance CRM provides tools for budget planning, ATO-oriented PDF generation,
-              embedded e-signing, and document management for accounting professionals and
-              their clients. Features may change over time as we improve the product.
+              Creative Studio provides tools for AI product photography and marketplace asset
+              generation for ecommerce brands and sellers. Features may change over time as we
+              improve the product.
             </p>
           ),
         },
@@ -88,7 +88,7 @@ function TermsOfServicePage() {
           title: '7. Disclaimers',
           content: (
             <p>
-              Finance CRM is provided &quot;as is&quot; without warranties of any kind. We do not
+              Creative Studio is provided &quot;as is&quot; without warranties of any kind. We do not
               provide tax, legal, or accounting advice. You are responsible for verifying that
               outputs meet your professional and regulatory requirements before filing or
               sharing with clients.
@@ -99,7 +99,7 @@ function TermsOfServicePage() {
           title: '8. Limitation of liability',
           content: (
             <p>
-              To the maximum extent permitted by law, Finance CRM and its operators shall not be
+              To the maximum extent permitted by law, Creative Studio and its operators shall not be
               liable for indirect, incidental, special, or consequential damages arising from your
               use of the service.
             </p>
