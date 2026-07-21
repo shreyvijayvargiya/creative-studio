@@ -42,6 +42,7 @@ import { Route as DocumentsPdfIdRouteImport } from './routes/documents/pdf.$id'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
 import { Route as ApiEmailSendRouteImport } from './routes/api/email/send'
+import { Route as ApiCreativeStudioRegenerateRouteImport } from './routes/api/creative-studio/regenerate'
 import { Route as ApiCreativeStudioGenerateRouteImport } from './routes/api/creative-studio/generate'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
@@ -209,6 +210,12 @@ const ApiEmailSendRoute = ApiEmailSendRouteImport.update({
   path: '/api/email/send',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCreativeStudioRegenerateRoute =
+  ApiCreativeStudioRegenerateRouteImport.update({
+    id: '/api/creative-studio/regenerate',
+    path: '/api/creative-studio/regenerate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCreativeStudioGenerateRoute =
   ApiCreativeStudioGenerateRouteImport.update({
     id: '/api/creative-studio/generate',
@@ -245,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -280,6 +288,7 @@ export interface FileRoutesByTo {
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -317,6 +326,7 @@ export interface FileRoutesById {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -390,6 +401,7 @@ export interface FileRouteTypes {
     | '/storage'
     | '/users'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -426,6 +438,7 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
     | '/api/stripe/webhook'
@@ -461,6 +474,7 @@ export interface RootRouteChildren {
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ApiCreativeStudioGenerateRoute: typeof ApiCreativeStudioGenerateRoute
+  ApiCreativeStudioRegenerateRoute: typeof ApiCreativeStudioRegenerateRoute
   ApiEmailSendRoute: typeof ApiEmailSendRoute
   ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -702,6 +716,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEmailSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/creative-studio/regenerate': {
+      id: '/api/creative-studio/regenerate'
+      path: '/api/creative-studio/regenerate'
+      fullPath: '/api/creative-studio/regenerate'
+      preLoaderRoute: typeof ApiCreativeStudioRegenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/creative-studio/generate': {
       id: '/api/creative-studio/generate'
       path: '/api/creative-studio/generate'
@@ -753,6 +774,7 @@ const rootRouteChildren: RootRouteChildren = {
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ApiCreativeStudioGenerateRoute: ApiCreativeStudioGenerateRoute,
+  ApiCreativeStudioRegenerateRoute: ApiCreativeStudioRegenerateRoute,
   ApiEmailSendRoute: ApiEmailSendRoute,
   ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,

@@ -14,6 +14,8 @@ export interface BuildCreativePromptInput {
   count: number
   variantIndex: number
   productNotes?: string
+  /** Extra edit instructions when regenerating a single image. */
+  editPrompt?: string
 }
 
 /**
@@ -57,7 +59,15 @@ Scene accents (guide props/background; do not recolour the product itself): ${pa
 ## Variation control
 This is variant ${input.variantIndex + 1} of ${input.count}.
 Vary camera angle, prop arrangement, or subtle background styling across variants while keeping the same product and style family.
-Each variant must still be commercially usable on its own.`
+Each variant must still be commercially usable on its own.${
+    input.editPrompt?.trim()
+      ? `
+
+## Edit request (highest priority for this regenerate)
+Apply these changes to the creative while still preserving product identity:
+${input.editPrompt.trim()}`
+      : ''
+  }`
 }
 
 export function buildCreativeUserPrompt(input: BuildCreativePromptInput): string {
@@ -66,6 +76,7 @@ export function buildCreativeUserPrompt(input: BuildCreativePromptInput): string
   const style = getStyle(input.styleId)
   const palette = getPalette(input.paletteId)
   const notes = input.productNotes?.trim()
+  const edit = input.editPrompt?.trim()
 
   return [
     `Edit the attached product photo into a ${format.label} creative.`,
@@ -74,6 +85,7 @@ export function buildCreativeUserPrompt(input: BuildCreativePromptInput): string
     `Palette "${palette.label}": ${palette.colors.join(', ')}.`,
     `Commercial quality, high detail, natural materials, ready for ${platform.label}.`,
     notes ? `Seller notes: ${notes}` : null,
+    edit ? `Additional edit instructions: ${edit}` : null,
     `Variant ${input.variantIndex + 1}/${input.count}: introduce a distinct but on-brief composition.`,
   ]
     .filter(Boolean)

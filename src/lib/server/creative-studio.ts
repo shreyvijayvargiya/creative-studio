@@ -6,19 +6,20 @@ import {
   MIN_ASSET_COUNT,
   getFormat,
 } from '#/lib/creative-studio/config'
-import { generateCreativeAssets } from '#/lib/creative-studio/generate-assets'
+import {
+  generateCreativeAssets,
+  regenerateCreativeAsset,
+} from '#/lib/creative-studio/generate-assets'
 // DEMO: asset generation is public — no requireAuthUser
 // import { requireAuthUser } from '#/lib/server/require-auth-user'
-import type { GenerateCreativesResult } from '#/types/creative-studio'
+import type {
+  CreativeVariant,
+  GenerateCreativesResult,
+} from '#/types/creative-studio'
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
-const generateSchema = z.object({
-  fileName: z.string().min(1).max(255),
-  imageBase64: z.string().min(1),
-  mimeType: z
-    .string()
-    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+const platformFormatFields = {
   platformId: z.enum(['etsy', 'shopify', 'instagram', 'pinterest']),
   formatId: z.enum([
     'etsy-listing',
@@ -42,8 +43,31 @@ const generateSchema = z.object({
     'lavender-mist',
     'monochrome',
   ]),
+} as const
+
+const generateSchema = z.object({
+  fileName: z.string().min(1).max(255),
+  imageBase64: z.string().min(1),
+  mimeType: z
+    .string()
+    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+  ...platformFormatFields,
   count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
   productNotes: z.string().max(500).optional(),
+})
+
+const regenerateSchema = z.object({
+  fileName: z.string().min(1).max(255),
+  imageBase64: z.string().min(1),
+  mimeType: z
+    .string()
+    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+  ...platformFormatFields,
+  count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
+  variantIndex: z.number().int().min(0).max(MAX_ASSET_COUNT - 1),
+  productNotes: z.string().max(500).optional(),
+  editPrompt: z.string().trim().min(1).max(500),
+  previousVariantUrl: z.string().max(12_000_000).optional(),
 })
 
 function decodeImageBase64(imageBase64: string): Buffer {
@@ -58,6 +82,10 @@ function decodeImageBase64(imageBase64: string): Buffer {
   return buffer
 }
 
+function normalizeMime(mimeType: string): string {
+  return mimeType.toLowerCase() === 'image/jpg' ? 'image/jpeg' : mimeType
+}
+
 export async function runCreativeGeneration(
   data: z.infer<typeof generateSchema>,
 ): Promise<GenerateCreativesResult> {
@@ -70,7 +98,7 @@ export async function runCreativeGeneration(
 
   const { variants, model } = await generateCreativeAssets({
     imageBase64: data.imageBase64,
-    mimeType: data.mimeType.toLowerCase() === 'image/jpg' ? 'image/jpeg' : data.mimeType,
+    mimeType: normalizeMime(data.mimeType),
     platformId: data.platformId,
     formatId: data.formatId,
     styleId: data.styleId,
@@ -89,6 +117,35 @@ export async function runCreativeGeneration(
   }
 }
 
+export async function runCreativeRegeneration(
+  data: z.infer<typeof regenerateSchema>,
+): Promise<{ variant: CreativeVariant; model: string }> {
+  const format = getFormat(data.formatId)
+  if (format.platformId !== data.platformId) {
+    throw new Error('Selected format does not belong to the chosen platform')
+  }
+
+  if (data.variantIndex >= data.count) {
+    throw new Error('variantIndex must be less than count')
+  }
+
+  decodeImageBase64(data.imageBase64)
+
+  return regenerateCreativeAsset({
+    imageBase64: data.imageBase64,
+    mimeType: normalizeMime(data.mimeType),
+    platformId: data.platformId,
+    formatId: data.formatId,
+    styleId: data.styleId,
+    paletteId: data.paletteId,
+    count: data.count,
+    variantIndex: data.variantIndex,
+    productNotes: data.productNotes,
+    editPrompt: data.editPrompt,
+    previousVariantUrl: data.previousVariantUrl,
+  })
+}
+
 export const generateCreatives = createServerFn({ method: 'POST' })
   .validator((data: unknown) => generateSchema.parse(data))
   .handler(async ({ data }) => {
@@ -97,4 +154,12 @@ export const generateCreatives = createServerFn({ method: 'POST' })
     return runCreativeGeneration(data)
   })
 
-export { generateSchema }
+export const regenerateCreative = createServerFn({ method: 'POST' })
+  .validator((data: unknown) => regenerateSchema.parse(data))
+  .handler(async ({ data }) => {
+    // DEMO: open regenerate — auth restored later with:
+    // await requireAuthUser()
+    return runCreativeRegeneration(data)
+  })
+
+export { generateSchema, regenerateSchema }

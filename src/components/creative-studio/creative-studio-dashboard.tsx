@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import {
-  Download,
   ImageIcon,
   Instagram,
   Loader2,
@@ -19,7 +18,7 @@ import { toast } from 'sonner'
 // import { useAuth } from '#/components/auth/auth-provider'
 // import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { ColorPaletteDropdown } from '#/components/creative-studio/color-palette-dropdown'
-import { CompareSlider } from '#/components/creative-studio/compare-slider'
+import { CreativeVariantCard } from '#/components/creative-studio/creative-variant-card'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
@@ -68,13 +67,6 @@ async function fileToBase64(file: File): Promise<string> {
     binary += String.fromCharCode(bytes[i]!)
   }
   return btoa(binary)
-}
-
-function downloadDataUrl(url: string, fileName: string) {
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = fileName
-  anchor.click()
 }
 
 export function CreativeStudioDashboard() {
@@ -172,6 +164,12 @@ export function CreativeStudioDashboard() {
     count >= MIN_ASSET_COUNT &&
     count <= MAX_ASSET_COUNT &&
     !generateMutation.isPending
+
+  const handleVariantUpdated = useCallback((next: CreativeVariant) => {
+    setResults((prev) =>
+      prev.map((item) => (item.index === next.index ? next : item)),
+    )
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -411,7 +409,7 @@ export function CreativeStudioDashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Results</CardTitle>
             <CardDescription>
-              Drag the slider to compare original vs generated. Download each asset individually.
+              Compare original vs generated, apply quick effects, or AI-edit one image at a time.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -444,32 +442,23 @@ export function CreativeStudioDashboard() {
               </div>
             ) : null}
 
-            {results.length > 0 && previewUrl && !generateMutation.isPending ? (
+            {results.length > 0 && previewUrl && file && !generateMutation.isPending ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {results.map((variant) => (
-                  <div key={`${variant.formatId}-${variant.index}`} className="space-y-2">
-                    <CompareSlider before={previewUrl} after={variant.url} />
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        Variant {variant.index + 1}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 gap-1 px-2 text-xs"
-                        onClick={() =>
-                          downloadDataUrl(
-                            variant.url,
-                            `${platformId}-${formatId}-${variant.index + 1}.png`,
-                          )
-                        }
-                      >
-                        <Download className="size-3.5" />
-                        Download
-                      </Button>
-                    </div>
-                  </div>
+                  <CreativeVariantCard
+                    key={`${variant.formatId}-${variant.index}-${variant.url.slice(-24)}`}
+                    variant={variant}
+                    beforeUrl={previewUrl}
+                    file={file}
+                    platformId={platformId}
+                    formatId={formatId}
+                    styleId={styleId}
+                    paletteId={paletteId}
+                    count={count}
+                    productNotes={productNotes}
+                    disabled={generateMutation.isPending}
+                    onVariantUpdated={handleVariantUpdated}
+                  />
                 ))}
                 <Button
                   type="button"
@@ -479,7 +468,7 @@ export function CreativeStudioDashboard() {
                   disabled={!canGenerate}
                 >
                   <RefreshCcw className="size-3.5" />
-                  Regenerate
+                  Regenerate all
                 </Button>
               </div>
             ) : null}

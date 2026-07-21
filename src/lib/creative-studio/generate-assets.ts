@@ -55,6 +55,9 @@ async function generateOneVariant(input: {
   count: number
   variantIndex: number
   productNotes?: string
+  editPrompt?: string
+  /** Prefer the current generated image as the edit reference when regenerating. */
+  previousVariantUrl?: string
 }): Promise<CreativeVariant> {
   const prompt = buildCreativeImagePrompt({
     platformId: input.platformId,
@@ -64,7 +67,25 @@ async function generateOneVariant(input: {
     count: input.count,
     variantIndex: input.variantIndex,
     productNotes: input.productNotes,
+    editPrompt: input.editPrompt,
   })
+
+  const references = [
+    {
+      type: 'image_url' as const,
+      image_url: { url: input.referenceUrl },
+    },
+  ]
+
+  if (
+    input.previousVariantUrl &&
+    input.previousVariantUrl !== input.referenceUrl
+  ) {
+    references.push({
+      type: 'image_url',
+      image_url: { url: input.previousVariantUrl },
+    })
+  }
 
   const response = await fetch(OPENROUTER_IMAGES_URL, {
     method: 'POST',
@@ -80,12 +101,7 @@ async function generateOneVariant(input: {
       n: 1,
       aspect_ratio: input.aspectRatio,
       output_format: 'png',
-      input_references: [
-        {
-          type: 'image_url',
-          image_url: { url: input.referenceUrl },
-        },
-      ],
+      input_references: references,
     }),
   })
 
@@ -174,4 +190,44 @@ export async function generateCreativeAssets(
   }
 
   return { variants, model: config.model }
+}
+
+export interface RegenerateCreativeAssetInput {
+  imageBase64: string
+  mimeType: string
+  platformId: CreativePlatformId
+  formatId: CreativeFormatId
+  styleId: CreativeStyleId
+  paletteId: CreativePaletteId
+  count: number
+  variantIndex: number
+  productNotes?: string
+  editPrompt: string
+  previousVariantUrl?: string
+}
+
+/** Regenerates a single creative with an edit prompt. */
+export async function regenerateCreativeAsset(
+  input: RegenerateCreativeAssetInput,
+): Promise<{ variant: CreativeVariant; model: string }> {
+  const config = getImageModelConfig()
+  const format = getFormat(input.formatId)
+  const referenceUrl = toDataUrl(input.imageBase64, input.mimeType)
+
+  const variant = await generateOneVariant({
+    config,
+    referenceUrl,
+    aspectRatio: format.aspectRatio,
+    platformId: input.platformId,
+    formatId: input.formatId,
+    styleId: input.styleId,
+    paletteId: input.paletteId,
+    count: input.count,
+    variantIndex: input.variantIndex,
+    productNotes: input.productNotes,
+    editPrompt: input.editPrompt,
+    previousVariantUrl: input.previousVariantUrl,
+  })
+
+  return { variant, model: config.model }
 }
