@@ -28,6 +28,16 @@ export type CreativeFormatId =
   | 'instagram-story'
   | 'pinterest-pin'
 
+export type CreativeDimensionId =
+  | 'thumbnail'
+  | 'logo'
+  | 'poster'
+  | 'magazine'
+  | 'banner'
+  | 'reel'
+  | 'short'
+  | 'custom'
+
 export interface CreativeFormatMeta {
   id: CreativeFormatId
   platformId: CreativePlatformId
@@ -37,6 +47,16 @@ export interface CreativeFormatMeta {
   widthPx: number
   heightPx: number
   description: string
+  useCase: string
+}
+
+export interface CreativeDimensionMeta {
+  id: CreativeDimensionId
+  label: string
+  description: string
+  widthPx: number
+  heightPx: number
+  aspectRatio: string
   useCase: string
 }
 
@@ -68,6 +88,9 @@ export interface CreativePlatformMeta {
 export interface CreativeVariant {
   index: number
   formatId: CreativeFormatId
+  dimensionId: CreativeDimensionId
+  widthPx: number
+  heightPx: number
   url: string
   mediaType: string
 }
@@ -78,5 +101,8 @@ export interface GenerateCreativesResult {
   platformId: CreativePlatformId
   styleId: CreativeStyleId
   formatId: CreativeFormatId
+  dimensionId: CreativeDimensionId
+  widthPx: number
+  heightPx: number
   count: number
 }

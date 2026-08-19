@@ -1,6 +1,5 @@
-import { getFormat, getPalette, getPlatform, getStyle } from '#/lib/creative-studio/config'
+import { getPalette, getPlatform, getStyle } from '#/lib/creative-studio/config'
 import type {
-  CreativeFormatId,
   CreativePaletteId,
   CreativePlatformId,
   CreativeStyleId,
@@ -8,7 +7,6 @@ import type {
 
 export interface BuildCreativePromptInput {
   platformId: CreativePlatformId
-  formatId: CreativeFormatId
   styleId: CreativeStyleId
   paletteId: CreativePaletteId
   count: number
@@ -16,6 +14,11 @@ export interface BuildCreativePromptInput {
   productNotes?: string
   /** Extra edit instructions when regenerating a single image. */
   editPrompt?: string
+  dimensionLabel: string
+  dimensionUseCase: string
+  widthPx: number
+  heightPx: number
+  aspectRatio: string
 }
 
 /**
@@ -24,7 +27,6 @@ export interface BuildCreativePromptInput {
  */
 export function buildCreativeSystemPrompt(input: BuildCreativePromptInput): string {
   const platform = getPlatform(input.platformId)
-  const format = getFormat(input.formatId)
   const style = getStyle(input.styleId)
   const palette = getPalette(input.paletteId)
 
@@ -37,14 +39,16 @@ Your job: transform the uploaded product photo into a polished marketplace creat
 - Do not invent text, watermarks, UI chrome, or fake brand marks on the product.
 - Output a single photorealistic image — no collage, no split screens, no mock browser frames.
 - Keep the product sharp and clearly the hero; avoid cropping critical edges.
-- Respect the target canvas: ${format.widthPx}×${format.heightPx}px (${format.aspectRatio}).
-- Leave clean negative space where the format needs overlay room (especially banners and stories).
+- STRICT CANVAS: the image MUST be exactly ${input.widthPx}×${input.heightPx} pixels (${input.aspectRatio}). No other size is allowed.
+- Fill the entire ${input.widthPx}×${input.heightPx} frame. Do not add letterboxing, black bars, white padding, or extra border around the scene.
+- Leave clean negative space where the format needs overlay room (especially banners, reels, and shorts).
 
 ## Platform brief — ${platform.label}
 ${platform.description}
-Format: ${format.label} (${format.ratio})
-Use case: ${format.useCase}
-Format notes: ${format.description}
+
+## Dimension brief — ${input.dimensionLabel}
+${input.dimensionUseCase}
+Exact output size: ${input.widthPx}×${input.heightPx}px (${input.aspectRatio}).
 
 ## Style brief — ${style.label}
 ${style.description}
@@ -65,22 +69,23 @@ Each variant must still be commercially usable on its own.${
 
 ## Edit request (highest priority for this regenerate)
 Apply these changes to the creative while still preserving product identity:
-${input.editPrompt.trim()}`
+${input.editPrompt.trim()}
+Keep the canvas at exactly ${input.widthPx}×${input.heightPx}px.`
       : ''
   }`
 }
 
 export function buildCreativeUserPrompt(input: BuildCreativePromptInput): string {
   const platform = getPlatform(input.platformId)
-  const format = getFormat(input.formatId)
   const style = getStyle(input.styleId)
   const palette = getPalette(input.paletteId)
   const notes = input.productNotes?.trim()
   const edit = input.editPrompt?.trim()
 
   return [
-    `Edit the attached product photo into a ${format.label} creative.`,
-    `Target dimensions: ${format.widthPx}x${format.heightPx} pixels at ${format.aspectRatio} aspect ratio.`,
+    `Edit the attached product photo into a ${input.dimensionLabel} creative.`,
+    `STRICT TARGET DIMENSIONS: ${input.widthPx}x${input.heightPx} pixels at ${input.aspectRatio} aspect ratio. Output this exact size only.`,
+    `Use case: ${input.dimensionUseCase}.`,
     `Apply the "${style.label}" scene: ${style.lighting}; background ${style.backgroundNotes}.`,
     `Palette "${palette.label}": ${palette.colors.join(', ')}.`,
     `Commercial quality, high detail, natural materials, ready for ${platform.label}.`,

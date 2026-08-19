@@ -1,4 +1,6 @@
 import type {
+  CreativeDimensionId,
+  CreativeDimensionMeta,
   CreativeFormatId,
   CreativeFormatMeta,
   CreativePaletteId,
@@ -14,6 +16,25 @@ export const MAX_ASSET_COUNT = 10
 export const DEFAULT_ASSET_COUNT = 3
 export const COST_PER_IMAGE_INR = 2.5
 export const DEFAULT_PALETTE_ID: CreativePaletteId = 'studio-neutral'
+export const DEFAULT_DIMENSION_ID: CreativeDimensionId = 'thumbnail'
+export const MIN_DIMENSION_PX = 256
+export const MAX_DIMENSION_PX = 4096
+
+/** Aspect ratios the OpenRouter Images API commonly accepts. */
+export const OPENROUTER_ASPECT_RATIOS = [
+  '1:1',
+  '16:9',
+  '9:16',
+  '4:3',
+  '3:4',
+  '3:2',
+  '2:3',
+  '4:5',
+  '5:4',
+  '21:9',
+  '1:2',
+  '2:1',
+] as const
 
 /** Ten searchable colour palettes for Creative Studio */
 export const COLOR_PALETTES: CreativePaletteMeta[] = [
@@ -134,6 +155,81 @@ export const CREATIVE_STYLES: CreativeStyleMeta[] = [
     lighting: 'even overhead softbox, minimal harsh shadows',
     mood: 'editorial, organized, aspirational',
     backgroundNotes: 'styled props around the product, generous negative space for text overlays',
+  },
+]
+
+export const CREATIVE_DIMENSIONS: CreativeDimensionMeta[] = [
+  {
+    id: 'thumbnail',
+    label: 'Thumbnail',
+    description: 'Square product card and search thumb',
+    widthPx: 1080,
+    heightPx: 1080,
+    aspectRatio: '1:1',
+    useCase: 'Marketplace search grids, collection cards, catalogue thumbs',
+  },
+  {
+    id: 'logo',
+    label: 'Logo',
+    description: 'Square brand mark for headers and badges',
+    widthPx: 1024,
+    heightPx: 1024,
+    aspectRatio: '1:1',
+    useCase: 'Store logo, profile avatar, favicon-ready square',
+  },
+  {
+    id: 'poster',
+    label: 'Poster',
+    description: 'Tall print-style portrait',
+    widthPx: 1200,
+    heightPx: 1800,
+    aspectRatio: '2:3',
+    useCase: 'Print poster, wall art, Pinterest-style portrait',
+  },
+  {
+    id: 'magazine',
+    label: 'Magazine',
+    description: 'Editorial full-page portrait',
+    widthPx: 1080,
+    heightPx: 1440,
+    aspectRatio: '3:4',
+    useCase: 'Lookbook page, editorial spread, catalogue sheet',
+  },
+  {
+    id: 'banner',
+    label: 'Banner',
+    description: 'Wide website and storefront hero',
+    widthPx: 1920,
+    heightPx: 1080,
+    aspectRatio: '16:9',
+    useCase: 'Homepage hero, collection banner, YouTube cover still',
+  },
+  {
+    id: 'reel',
+    label: 'Reel',
+    description: 'Vertical Instagram Reels still',
+    widthPx: 1080,
+    heightPx: 1920,
+    aspectRatio: '9:16',
+    useCase: 'Instagram Reels cover with safe margins from UI chrome',
+  },
+  {
+    id: 'short',
+    label: 'Short',
+    description: 'Vertical YouTube Shorts / TikTok still',
+    widthPx: 1080,
+    heightPx: 1920,
+    aspectRatio: '9:16',
+    useCase: 'YouTube Shorts or TikTok frame, product-first vertical crop',
+  },
+  {
+    id: 'custom',
+    label: 'Custom',
+    description: 'Set your own width and height',
+    widthPx: 1080,
+    heightPx: 1080,
+    aspectRatio: '1:1',
+    useCase: 'Exact pixel canvas you specify',
   },
 ]
 
@@ -270,4 +366,108 @@ export function getPlatform(id: CreativePlatformId): CreativePlatformMeta {
 
 export function formatsForPlatform(platformId: CreativePlatformId): CreativeFormatMeta[] {
   return CREATIVE_FORMATS.filter((f) => f.platformId === platformId)
+}
+
+export function gcd(a: number, b: number): number {
+  let x = Math.abs(Math.round(a))
+  let y = Math.abs(Math.round(b))
+  while (y) {
+    const next = x % y
+    x = y
+    y = next
+  }
+  return x || 1
+}
+
+export function toAspectRatio(widthPx: number, heightPx: number): string {
+  const divisor = gcd(widthPx, heightPx)
+  return `${widthPx / divisor}:${heightPx / divisor}`
+}
+
+export function getDimension(id: CreativeDimensionId): CreativeDimensionMeta {
+  const dimension = CREATIVE_DIMENSIONS.find((item) => item.id === id)
+  if (!dimension) throw new Error(`Unknown dimension: ${id}`)
+  return dimension
+}
+
+export interface ResolvedCreativeDimension {
+  id: CreativeDimensionId
+  label: string
+  description: string
+  useCase: string
+  widthPx: number
+  heightPx: number
+  aspectRatio: string
+}
+
+function assertDimensionSize(widthPx: number, heightPx: number) {
+  if (
+    !Number.isInteger(widthPx) ||
+    !Number.isInteger(heightPx) ||
+    widthPx < MIN_DIMENSION_PX ||
+    heightPx < MIN_DIMENSION_PX ||
+    widthPx > MAX_DIMENSION_PX ||
+    heightPx > MAX_DIMENSION_PX
+  ) {
+    throw new Error(
+      `Custom size must be between ${MIN_DIMENSION_PX} and ${MAX_DIMENSION_PX} px`,
+    )
+  }
+}
+
+export function resolveCreativeDimension(
+  id: CreativeDimensionId,
+  customWidthPx?: number,
+  customHeightPx?: number,
+): ResolvedCreativeDimension {
+  const preset = getDimension(id)
+
+  if (id !== 'custom') {
+    return {
+      id: preset.id,
+      label: preset.label,
+      description: preset.description,
+      useCase: preset.useCase,
+      widthPx: preset.widthPx,
+      heightPx: preset.heightPx,
+      aspectRatio: preset.aspectRatio,
+    }
+  }
+
+  const widthPx = customWidthPx ?? preset.widthPx
+  const heightPx = customHeightPx ?? preset.heightPx
+  assertDimensionSize(widthPx, heightPx)
+
+  return {
+    id: 'custom',
+    label: 'Custom',
+    description: preset.description,
+    useCase: `${widthPx}×${heightPx}px custom canvas`,
+    widthPx,
+    heightPx,
+    aspectRatio: toAspectRatio(widthPx, heightPx),
+  }
+}
+
+export function openRouterAspectRatio(widthPx: number, heightPx: number): string {
+  const exact = toAspectRatio(widthPx, heightPx)
+  if ((OPENROUTER_ASPECT_RATIOS as readonly string[]).includes(exact)) {
+    return exact
+  }
+
+  const target = widthPx / heightPx
+  let best: (typeof OPENROUTER_ASPECT_RATIOS)[number] = '1:1'
+  let bestDelta = Number.POSITIVE_INFINITY
+
+  for (const ratio of OPENROUTER_ASPECT_RATIOS) {
+    const [w, h] = ratio.split(':').map(Number)
+    if (!w || !h) continue
+    const delta = Math.abs(w / h - target)
+    if (delta < bestDelta) {
+      best = ratio
+      bestDelta = delta
+    }
+  }
+
+  return best
 }

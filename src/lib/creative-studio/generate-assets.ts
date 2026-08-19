@@ -1,6 +1,10 @@
 import { buildCreativeImagePrompt } from '#/lib/creative-studio/build-prompt'
-import { getFormat } from '#/lib/creative-studio/config'
+import {
+  openRouterAspectRatio,
+  resolveCreativeDimension,
+} from '#/lib/creative-studio/config'
 import type {
+  CreativeDimensionId,
   CreativeFormatId,
   CreativePaletteId,
   CreativePlatformId,
@@ -47,7 +51,12 @@ function toDataUrl(imageBase64: string, mimeType: string): string {
 async function generateOneVariant(input: {
   config: ReturnType<typeof getImageModelConfig>
   referenceUrl: string
+  widthPx: number
+  heightPx: number
   aspectRatio: string
+  dimensionId: CreativeDimensionId
+  dimensionLabel: string
+  dimensionUseCase: string
   platformId: CreativePlatformId
   formatId: CreativeFormatId
   styleId: CreativeStyleId
@@ -61,13 +70,17 @@ async function generateOneVariant(input: {
 }): Promise<CreativeVariant> {
   const prompt = buildCreativeImagePrompt({
     platformId: input.platformId,
-    formatId: input.formatId,
     styleId: input.styleId,
     paletteId: input.paletteId,
     count: input.count,
     variantIndex: input.variantIndex,
     productNotes: input.productNotes,
     editPrompt: input.editPrompt,
+    dimensionLabel: input.dimensionLabel,
+    dimensionUseCase: input.dimensionUseCase,
+    widthPx: input.widthPx,
+    heightPx: input.heightPx,
+    aspectRatio: input.aspectRatio,
   })
 
   const references = [
@@ -87,23 +100,42 @@ async function generateOneVariant(input: {
     })
   }
 
-  const response = await fetch(OPENROUTER_IMAGES_URL, {
+  const size = `${input.widthPx}x${input.heightPx}`
+  const aspectRatio = openRouterAspectRatio(input.widthPx, input.heightPx)
+  const requestHeaders = {
+    Authorization: `Bearer ${input.config.apiKey}`,
+    'Content-Type': 'application/json',
+    'HTTP-Referer': input.config.siteUrl,
+    'X-Title': input.config.siteName,
+  }
+  const baseBody = {
+    model: input.config.model,
+    prompt,
+    n: 1,
+    output_format: 'png',
+    input_references: references,
+  }
+
+  let response = await fetch(OPENROUTER_IMAGES_URL, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${input.config.apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': input.config.siteUrl,
-      'X-Title': input.config.siteName,
-    },
+    headers: requestHeaders,
     body: JSON.stringify({
-      model: input.config.model,
-      prompt,
-      n: 1,
-      aspect_ratio: input.aspectRatio,
-      output_format: 'png',
-      input_references: references,
+      ...baseBody,
+      size,
+      aspect_ratio: aspectRatio,
     }),
   })
+
+  if (response.status === 400) {
+    response = await fetch(OPENROUTER_IMAGES_URL, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: JSON.stringify({
+        ...baseBody,
+        aspect_ratio: aspectRatio,
+      }),
+    })
+  }
 
   if (!response.ok) {
     const errorText = await response.text()
@@ -137,6 +169,9 @@ async function generateOneVariant(input: {
   return {
     index: input.variantIndex,
     formatId: input.formatId,
+    dimensionId: input.dimensionId,
+    widthPx: input.widthPx,
+    heightPx: input.heightPx,
     url,
     mediaType,
   }
@@ -147,10 +182,46 @@ export interface GenerateCreativeAssetsInput {
   mimeType: string
   platformId: CreativePlatformId
   formatId: CreativeFormatId
+  dimensionId: CreativeDimensionId
+  widthPx?: number
+  heightPx?: number
   styleId: CreativeStyleId
   paletteId: CreativePaletteId
   count: number
   productNotes?: string
+}
+
+function dimensionFields(input: {
+  dimensionId: CreativeDimensionId
+  widthPx?: number
+  heightPx?: number
+  platformId: CreativePlatformId
+  formatId: CreativeFormatId
+  styleId: CreativeStyleId
+  paletteId: CreativePaletteId
+  count: number
+  productNotes?: string
+}) {
+  const dimension = resolveCreativeDimension(
+    input.dimensionId,
+    input.widthPx,
+    input.heightPx,
+  )
+
+  return {
+    widthPx: dimension.widthPx,
+    heightPx: dimension.heightPx,
+    aspectRatio: dimension.aspectRatio,
+    dimensionId: dimension.id,
+    dimensionLabel: dimension.label,
+    dimensionUseCase: dimension.useCase,
+    platformId: input.platformId,
+    formatId: input.formatId,
+    styleId: input.styleId,
+    paletteId: input.paletteId,
+    count: input.count,
+    productNotes: input.productNotes,
+  }
 }
 
 /**
@@ -161,8 +232,8 @@ export async function generateCreativeAssets(
   input: GenerateCreativeAssetsInput,
 ): Promise<{ variants: CreativeVariant[]; model: string }> {
   const config = getImageModelConfig()
-  const format = getFormat(input.formatId)
   const referenceUrl = toDataUrl(input.imageBase64, input.mimeType)
+  const shared = dimensionFields(input)
 
   const indices = Array.from({ length: input.count }, (_, i) => i)
   const variants: CreativeVariant[] = []
@@ -175,14 +246,8 @@ export async function generateCreativeAssets(
         generateOneVariant({
           config,
           referenceUrl,
-          aspectRatio: format.aspectRatio,
-          platformId: input.platformId,
-          formatId: input.formatId,
-          styleId: input.styleId,
-          paletteId: input.paletteId,
-          count: input.count,
+          ...shared,
           variantIndex,
-          productNotes: input.productNotes,
         }),
       ),
     )
@@ -197,6 +262,9 @@ export interface RegenerateCreativeAssetInput {
   mimeType: string
   platformId: CreativePlatformId
   formatId: CreativeFormatId
+  dimensionId: CreativeDimensionId
+  widthPx?: number
+  heightPx?: number
   styleId: CreativeStyleId
   paletteId: CreativePaletteId
   count: number
@@ -211,20 +279,14 @@ export async function regenerateCreativeAsset(
   input: RegenerateCreativeAssetInput,
 ): Promise<{ variant: CreativeVariant; model: string }> {
   const config = getImageModelConfig()
-  const format = getFormat(input.formatId)
   const referenceUrl = toDataUrl(input.imageBase64, input.mimeType)
+  const shared = dimensionFields(input)
 
   const variant = await generateOneVariant({
     config,
     referenceUrl,
-    aspectRatio: format.aspectRatio,
-    platformId: input.platformId,
-    formatId: input.formatId,
-    styleId: input.styleId,
-    paletteId: input.paletteId,
-    count: input.count,
+    ...shared,
     variantIndex: input.variantIndex,
-    productNotes: input.productNotes,
     editPrompt: input.editPrompt,
     previousVariantUrl: input.previousVariantUrl,
   })

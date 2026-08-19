@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import {
   ImageIcon,
@@ -19,7 +19,6 @@ import { toast } from 'sonner'
 // import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { ColorPaletteDropdown } from '#/components/creative-studio/color-palette-dropdown'
 import { CreativeVariantCard } from '#/components/creative-studio/creative-variant-card'
-import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -36,16 +35,22 @@ import { Skeleton } from '#/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import {
+  CREATIVE_DIMENSIONS,
   CREATIVE_PLATFORMS,
   DEFAULT_ASSET_COUNT,
+  DEFAULT_DIMENSION_ID,
   DEFAULT_PALETTE_ID,
   MAX_ASSET_COUNT,
+  MAX_DIMENSION_PX,
   MIN_ASSET_COUNT,
+  MIN_DIMENSION_PX,
   formatsForPlatform,
+  resolveCreativeDimension,
 } from '#/lib/creative-studio/config'
 import { generateCreatives } from '#/lib/server/creative-studio'
 import { cn } from '#/lib/utils'
 import type {
+  CreativeDimensionId,
   CreativeFormatId,
   CreativePaletteId,
   CreativePlatformId,
@@ -59,6 +64,21 @@ const PLATFORM_ICONS = {
   pinterest: Pin,
 } as const
 
+function RatioPreview({ widthPx, heightPx }: { widthPx: number; heightPx: number }) {
+  const max = 28
+  const ratio = widthPx / heightPx
+  const boxWidth = ratio >= 1 ? max : Math.max(10, max * ratio)
+  const boxHeight = ratio >= 1 ? Math.max(10, max / ratio) : max
+
+  return (
+    <span
+      className="shrink-0 rounded-[3px] border border-foreground/20 bg-muted"
+      style={{ width: boxWidth, height: boxHeight }}
+      aria-hidden
+    />
+  )
+}
+
 async function fileToBase64(file: File): Promise<string> {
   const buffer = await file.arrayBuffer()
   const bytes = new Uint8Array(buffer)
@@ -69,33 +89,6 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary)
 }
 
-function triggerDownload(href: string, fileName: string) {
-  const anchor = document.createElement('a')
-  anchor.href = href
-  anchor.download = fileName
-  document.body.appendChild(anchor)
-  anchor.click()
-  anchor.remove()
-}
-
-async function downloadImage(url: string, fileName: string) {
-  try {
-    if (url.startsWith('data:') || url.startsWith('blob:')) {
-      triggerDownload(url, fileName)
-      return
-    }
-
-    const response = await fetch(url)
-    if (!response.ok) throw new Error('Download failed')
-    const blob = await response.blob()
-    const objectUrl = URL.createObjectURL(blob)
-    triggerDownload(objectUrl, fileName)
-    URL.revokeObjectURL(objectUrl)
-  } catch {
-    triggerDownload(url, fileName)
-  }
-}
-
 export function CreativeStudioDashboard() {
   const generateFn = useStableServerFn(generateCreatives)
 
@@ -104,6 +97,9 @@ export function CreativeStudioDashboard() {
   const [dragActive, setDragActive] = useState(false)
   const [platformId, setPlatformId] = useState<CreativePlatformId>('etsy')
   const [formatId, setFormatId] = useState<CreativeFormatId>('etsy-listing')
+  const [dimensionId, setDimensionId] = useState<CreativeDimensionId>(DEFAULT_DIMENSION_ID)
+  const [customWidth, setCustomWidth] = useState(1080)
+  const [customHeight, setCustomHeight] = useState(1080)
   // Scene style fixed for demo UI (palette dropdown is the visible control)
   const styleId = 'studio' as const
   const [paletteId, setPaletteId] = useState<CreativePaletteId>(DEFAULT_PALETTE_ID)
@@ -112,7 +108,17 @@ export function CreativeStudioDashboard() {
   const [results, setResults] = useState<CreativeVariant[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const platformFormats = formatsForPlatform(platformId)
+  const resolvedDimension = useMemo(() => {
+    try {
+      return resolveCreativeDimension(
+        dimensionId,
+        dimensionId === 'custom' ? customWidth : undefined,
+        dimensionId === 'custom' ? customHeight : undefined,
+      )
+    } catch {
+      return null
+    }
+  }, [customHeight, customWidth, dimensionId])
 
   useEffect(() => {
     return () => {
@@ -154,6 +160,7 @@ export function CreativeStudioDashboard() {
   const generateMutation = useMutation({
     mutationFn: async () => {
       if (!file) throw new Error('Upload a product photo first')
+      if (!resolvedDimension) throw new Error('Choose a valid dimension')
 
       const imageBase64 = await fileToBase64(file)
       return generateFn({
@@ -163,6 +170,9 @@ export function CreativeStudioDashboard() {
           mimeType: file.type || 'image/jpeg',
           platformId,
           formatId,
+          dimensionId,
+          widthPx: resolvedDimension.widthPx,
+          heightPx: resolvedDimension.heightPx,
           styleId,
           paletteId,
           count,
@@ -188,6 +198,7 @@ export function CreativeStudioDashboard() {
 
   const canGenerate =
     Boolean(file) &&
+    Boolean(resolvedDimension) &&
     count >= MIN_ASSET_COUNT &&
     count <= MAX_ASSET_COUNT &&
     !generateMutation.isPending
@@ -267,9 +278,9 @@ export function CreativeStudioDashboard() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Platform & format</CardTitle>
+              <CardTitle className="text-base">Platform</CardTitle>
               <CardDescription>
-                Pick a channel, then the exact asset size for that marketplace.
+                Marketplace context for the prompt — size is chosen separately below.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -291,50 +302,101 @@ export function CreativeStudioDashboard() {
                 </TabsList>
 
                 {CREATIVE_PLATFORMS.map((platform) => (
-                  <TabsContent key={platform.id} value={platform.id} className="space-y-2">
+                  <TabsContent key={platform.id} value={platform.id}>
                     <p className="text-xs text-muted-foreground">{platform.description}</p>
-                    <div className="space-y-2">
-                      {formatsForPlatform(platform.id).map((format) => {
-                        const active = formatId === format.id
-                        return (
-                          <button
-                            key={format.id}
-                            type="button"
-                            onClick={() => {
-                              setFormatId(format.id)
-                              setResults([])
-                            }}
-                            className={cn(
-                              'flex w-full items-start justify-between gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors',
-                              active
-                                ? 'border-primary bg-primary/5'
-                                : 'border-border bg-background hover:border-muted-foreground/30',
-                            )}
-                          >
-                            <span className="flex items-start gap-2">
-                              <Checkbox
-                                checked={active}
-                                className="mt-0.5"
-                                tabIndex={-1}
-                                aria-hidden
-                              />
-                              <span>
-                                <span className="font-medium">{format.label}</span>
-                                <span className="mt-0.5 block text-xs text-muted-foreground">
-                                  {format.widthPx}×{format.heightPx}px · {format.useCase}
-                                </span>
-                              </span>
-                            </span>
-                            <Badge variant="outline" className="shrink-0 font-mono text-[10px]">
-                              {format.ratio}
-                            </Badge>
-                          </button>
-                        )
-                      })}
-                    </div>
                   </TabsContent>
                 ))}
               </Tabs>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Dimension</CardTitle>
+              <CardDescription>
+                The API generates this exact pixel size. Pick a preset or enter a custom canvas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                {CREATIVE_DIMENSIONS.map((dimension) => {
+                  const active = dimensionId === dimension.id
+                  const preview =
+                    dimension.id === 'custom' && resolvedDimension
+                      ? resolvedDimension
+                      : dimension
+                  return (
+                    <button
+                      key={dimension.id}
+                      type="button"
+                      onClick={() => {
+                        setDimensionId(dimension.id)
+                        setResults([])
+                      }}
+                      className={cn(
+                        'flex items-start gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors',
+                        active
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border bg-background hover:border-muted-foreground/30',
+                      )}
+                    >
+                      <Checkbox
+                        checked={active}
+                        className="mt-0.5"
+                        tabIndex={-1}
+                        aria-hidden
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="font-medium">{dimension.label}</span>
+                          <RatioPreview widthPx={preview.widthPx} heightPx={preview.heightPx} />
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                          {dimension.id === 'custom'
+                            ? 'Any width × height'
+                            : `${dimension.widthPx}×${dimension.heightPx}px`}
+                        </span>
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {dimensionId === 'custom' ? (
+                <div className="grid grid-cols-2 gap-3 rounded-lg border bg-muted/30 p-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="custom-width">Width (px)</Label>
+                    <Input
+                      id="custom-width"
+                      type="number"
+                      min={MIN_DIMENSION_PX}
+                      max={MAX_DIMENSION_PX}
+                      value={customWidth}
+                      onChange={(e) => {
+                        setCustomWidth(Number.parseInt(e.target.value, 10) || 0)
+                        setResults([])
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="custom-height">Height (px)</Label>
+                    <Input
+                      id="custom-height"
+                      type="number"
+                      min={MIN_DIMENSION_PX}
+                      max={MAX_DIMENSION_PX}
+                      value={customHeight}
+                      onChange={(e) => {
+                        setCustomHeight(Number.parseInt(e.target.value, 10) || 0)
+                        setResults([])
+                      }}
+                    />
+                  </div>
+                  <p className="col-span-2 text-[11px] text-muted-foreground">
+                    {MIN_DIMENSION_PX}–{MAX_DIMENSION_PX}px. Output is forced to this canvas.
+                  </p>
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -421,12 +483,13 @@ export function CreativeStudioDashboard() {
               ) : null}
 
               <p className="text-[11px] text-muted-foreground">
-                Active format:{' '}
+                Active canvas:{' '}
                 <span className="font-medium text-foreground">
-                  {platformFormats.find((f) => f.id === formatId)?.label}
-                </span>{' '}
-                · {platformFormats.find((f) => f.id === formatId)?.widthPx}×
-                {platformFormats.find((f) => f.id === formatId)?.heightPx}px
+                  {resolvedDimension?.label ?? 'Invalid size'}
+                </span>
+                {resolvedDimension
+                  ? ` · ${resolvedDimension.widthPx}×${resolvedDimension.heightPx}px · ${resolvedDimension.aspectRatio}`
+                  : ` · enter ${MIN_DIMENSION_PX}–${MAX_DIMENSION_PX}px`}
               </p>
             </CardContent>
           </Card>
@@ -436,7 +499,7 @@ export function CreativeStudioDashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Results</CardTitle>
             <CardDescription>
-              Compare original vs generated, apply quick effects, or AI-edit one image at a time.
+              Compare original vs generated, apply effects, then download as PNG, JPEG, GIF, or SVG.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -458,7 +521,14 @@ export function CreativeStudioDashboard() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {Array.from({ length: count }, (_, i) => (
                     <div key={`loader-${i}`} className="space-y-2">
-                      <Skeleton className="aspect-square w-full rounded-xl" />
+                      <Skeleton
+                        className="w-full rounded-xl"
+                        style={{
+                          aspectRatio: resolvedDimension
+                            ? `${resolvedDimension.widthPx} / ${resolvedDimension.heightPx}`
+                            : '1 / 1',
+                        }}
+                      />
                       <div className="flex items-center justify-between gap-2">
                         <Skeleton className="h-3 w-20" />
                         <Skeleton className="h-7 w-20" />
@@ -471,40 +541,25 @@ export function CreativeStudioDashboard() {
 
             {results.length > 0 && previewUrl && file && !generateMutation.isPending ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {results.map((variant) => {
-                  const fileName = `${platformId}-${formatId}-${variant.index + 1}.png`
-                  const handleDownload = () => {
-                    void downloadImage(variant.url, fileName).then(
-                      () => toast.success('Image downloaded'),
-                      () => toast.error('Could not download image'),
-                    )
-                  }
-
-                  return (
-                    <div key={`${variant.formatId}-${variant.index}`} className="space-y-2">
-                      <CompareSlider
-                        before={previewUrl}
-                        after={variant.url}
-                        onDownload={handleDownload}
-                      />
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-medium text-muted-foreground">
-                          Variant {variant.index + 1}
-                        </span>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="h-8 gap-1 px-2 text-xs"
-                          onClick={handleDownload}
-                        >
-                          <Download className="size-3.5" />
-                          Download image
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                })}
+                {results.map((variant) => (
+                  <CreativeVariantCard
+                    key={`${variant.formatId}-${variant.index}`}
+                    variant={variant}
+                    beforeUrl={previewUrl}
+                    file={file}
+                    platformId={platformId}
+                    formatId={formatId}
+                    dimensionId={dimensionId}
+                    widthPx={variant.widthPx || resolvedDimension?.widthPx || 1080}
+                    heightPx={variant.heightPx || resolvedDimension?.heightPx || 1080}
+                    styleId={styleId}
+                    paletteId={paletteId}
+                    count={count}
+                    productNotes={productNotes}
+                    disabled={generateMutation.isPending}
+                    onVariantUpdated={handleVariantUpdated}
+                  />
+                ))}
                 <Button
                   type="button"
                   variant="outline"

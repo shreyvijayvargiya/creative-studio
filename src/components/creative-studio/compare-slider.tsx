@@ -1,31 +1,33 @@
 import { useState } from 'react'
-import { Download, MoveHorizontal } from 'lucide-react'
+import { MoveHorizontal } from 'lucide-react'
 
 import { Badge } from '#/components/ui/badge'
-import { Button } from '#/components/ui/button'
 import { cn } from '#/lib/utils'
 
 interface CompareSliderProps {
   before: string
   after: string
   className?: string
-  onDownload?: () => void
+  widthPx?: number
+  heightPx?: number
 }
 
 export function CompareSlider({
   before,
   after,
   className,
-  onDownload,
+  widthPx = 1,
+  heightPx = 1,
 }: CompareSliderProps) {
   const [pos, setPos] = useState(50)
 
   return (
     <div
       className={cn(
-        'relative aspect-square w-full select-none overflow-hidden rounded-xl bg-muted',
+        'relative w-full select-none overflow-hidden rounded-xl bg-muted',
         className,
       )}
+      style={{ aspectRatio: `${widthPx} / ${heightPx}` }}
     >
       <img
         src={after}
@@ -72,20 +74,6 @@ export function CompareSlider({
       <Badge className="pointer-events-none absolute right-2 top-2 z-10 text-[10px]">
         generated
       </Badge>
-      {onDownload ? (
-        <Button
-          type="button"
-          size="sm"
-          className="absolute bottom-2 right-2 z-20 h-8 gap-1.5 px-2.5 shadow-md"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation()
-            onDownload()
-          }}
-        >
-          <Download className="size-3.5" />
-          Download
-        </Button>
-      ) : null}
     </div>
   )
+}

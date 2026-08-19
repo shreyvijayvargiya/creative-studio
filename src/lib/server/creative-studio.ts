@@ -3,8 +3,11 @@ import { z } from 'zod'
 
 import {
   MAX_ASSET_COUNT,
+  MAX_DIMENSION_PX,
   MIN_ASSET_COUNT,
+  MIN_DIMENSION_PX,
   getFormat,
+  resolveCreativeDimension,
 } from '#/lib/creative-studio/config'
 import {
   generateCreativeAssets,
@@ -30,6 +33,18 @@ const platformFormatFields = {
     'instagram-story',
     'pinterest-pin',
   ]),
+  dimensionId: z.enum([
+    'thumbnail',
+    'logo',
+    'poster',
+    'magazine',
+    'banner',
+    'reel',
+    'short',
+    'custom',
+  ]),
+  widthPx: z.number().int().min(MIN_DIMENSION_PX).max(MAX_DIMENSION_PX).optional(),
+  heightPx: z.number().int().min(MIN_DIMENSION_PX).max(MAX_DIMENSION_PX).optional(),
   styleId: z.enum(['studio', 'cozy', 'festive', 'outdoor', 'flatlay']),
   paletteId: z.enum([
     'studio-neutral',
@@ -45,30 +60,50 @@ const platformFormatFields = {
   ]),
 } as const
 
-const generateSchema = z.object({
-  fileName: z.string().min(1).max(255),
-  imageBase64: z.string().min(1),
-  mimeType: z
-    .string()
-    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
-  ...platformFormatFields,
-  count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
-  productNotes: z.string().max(500).optional(),
-})
+const generateSchema = z
+  .object({
+    fileName: z.string().min(1).max(255),
+    imageBase64: z.string().min(1),
+    mimeType: z
+      .string()
+      .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+    ...platformFormatFields,
+    count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
+    productNotes: z.string().max(500).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.dimensionId === 'custom' && (data.widthPx == null || data.heightPx == null)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Custom dimension requires width and height',
+        path: ['widthPx'],
+      })
+    }
+  })
 
-const regenerateSchema = z.object({
-  fileName: z.string().min(1).max(255),
-  imageBase64: z.string().min(1),
-  mimeType: z
-    .string()
-    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
-  ...platformFormatFields,
-  count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
-  variantIndex: z.number().int().min(0).max(MAX_ASSET_COUNT - 1),
-  productNotes: z.string().max(500).optional(),
-  editPrompt: z.string().trim().min(1).max(500),
-  previousVariantUrl: z.string().max(12_000_000).optional(),
-})
+const regenerateSchema = z
+  .object({
+    fileName: z.string().min(1).max(255),
+    imageBase64: z.string().min(1),
+    mimeType: z
+      .string()
+      .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+    ...platformFormatFields,
+    count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
+    variantIndex: z.number().int().min(0).max(MAX_ASSET_COUNT - 1),
+    productNotes: z.string().max(500).optional(),
+    editPrompt: z.string().trim().min(1).max(500),
+    previousVariantUrl: z.string().max(12_000_000).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.dimensionId === 'custom' && (data.widthPx == null || data.heightPx == null)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Custom dimension requires width and height',
+        path: ['widthPx'],
+      })
+    }
+  })
 
 function decodeImageBase64(imageBase64: string): Buffer {
   const cleaned = imageBase64.replace(/^data:[^;]+;base64,/i, '')
@@ -94,6 +129,8 @@ export async function runCreativeGeneration(
     throw new Error('Selected format does not belong to the chosen platform')
   }
 
+  const dimension = resolveCreativeDimension(data.dimensionId, data.widthPx, data.heightPx)
+
   decodeImageBase64(data.imageBase64)
 
   const { variants, model } = await generateCreativeAssets({
@@ -101,6 +138,9 @@ export async function runCreativeGeneration(
     mimeType: normalizeMime(data.mimeType),
     platformId: data.platformId,
     formatId: data.formatId,
+    dimensionId: dimension.id,
+    widthPx: dimension.widthPx,
+    heightPx: dimension.heightPx,
     styleId: data.styleId,
     paletteId: data.paletteId,
     count: data.count,
@@ -113,6 +153,9 @@ export async function runCreativeGeneration(
     platformId: data.platformId,
     styleId: data.styleId,
     formatId: data.formatId,
+    dimensionId: dimension.id,
+    widthPx: dimension.widthPx,
+    heightPx: dimension.heightPx,
     count: variants.length,
   }
 }
@@ -131,11 +174,16 @@ export async function runCreativeRegeneration(
 
   decodeImageBase64(data.imageBase64)
 
+  const dimension = resolveCreativeDimension(data.dimensionId, data.widthPx, data.heightPx)
+
   return regenerateCreativeAsset({
     imageBase64: data.imageBase64,
     mimeType: normalizeMime(data.mimeType),
     platformId: data.platformId,
     formatId: data.formatId,
+    dimensionId: dimension.id,
+    widthPx: dimension.widthPx,
+    heightPx: dimension.heightPx,
     styleId: data.styleId,
     paletteId: data.paletteId,
     count: data.count,
