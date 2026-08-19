@@ -4,8 +4,11 @@ import { z } from 'zod'
 import {
   MAX_ASSET_COUNT,
   MAX_DIMENSION_PX,
+  MAX_PROMPT_CHARS,
+  MAX_REFERENCE_IMAGES,
   MIN_ASSET_COUNT,
   MIN_DIMENSION_PX,
+  MIN_REFERENCE_IMAGES,
   getFormat,
   resolveCreativeDimension,
 } from '#/lib/creative-studio/config'
@@ -60,16 +63,20 @@ const platformFormatFields = {
   ]),
 } as const
 
+const referenceImageSchema = z.object({
+  fileName: z.string().min(1).max(255),
+  imageBase64: z.string().min(1),
+  mimeType: z
+    .string()
+    .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+})
+
 const generateSchema = z
   .object({
-    fileName: z.string().min(1).max(255),
-    imageBase64: z.string().min(1),
-    mimeType: z
-      .string()
-      .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+    images: z.array(referenceImageSchema).min(MIN_REFERENCE_IMAGES).max(MAX_REFERENCE_IMAGES),
     ...platformFormatFields,
     count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
-    productNotes: z.string().max(500).optional(),
+    productNotes: z.string().max(MAX_PROMPT_CHARS).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.dimensionId === 'custom' && (data.widthPx == null || data.heightPx == null)) {
@@ -83,16 +90,12 @@ const generateSchema = z
 
 const regenerateSchema = z
   .object({
-    fileName: z.string().min(1).max(255),
-    imageBase64: z.string().min(1),
-    mimeType: z
-      .string()
-      .regex(/^image\/(jpeg|jpg|png|webp)$/i, 'Only JPEG, PNG, or WebP images are supported'),
+    images: z.array(referenceImageSchema).min(MIN_REFERENCE_IMAGES).max(MAX_REFERENCE_IMAGES),
     ...platformFormatFields,
     count: z.number().int().min(MIN_ASSET_COUNT).max(MAX_ASSET_COUNT),
     variantIndex: z.number().int().min(0).max(MAX_ASSET_COUNT - 1),
-    productNotes: z.string().max(500).optional(),
-    editPrompt: z.string().trim().min(1).max(500),
+    productNotes: z.string().max(MAX_PROMPT_CHARS).optional(),
+    editPrompt: z.string().trim().min(1).max(MAX_PROMPT_CHARS),
     previousVariantUrl: z.string().max(12_000_000).optional(),
   })
   .superRefine((data, ctx) => {
@@ -131,11 +134,14 @@ export async function runCreativeGeneration(
 
   const dimension = resolveCreativeDimension(data.dimensionId, data.widthPx, data.heightPx)
 
-  decodeImageBase64(data.imageBase64)
+  data.images.forEach((image) => decodeImageBase64(image.imageBase64))
 
   const { variants, model } = await generateCreativeAssets({
-    imageBase64: data.imageBase64,
-    mimeType: normalizeMime(data.mimeType),
+    images: data.images.map((image) => ({
+      imageBase64: image.imageBase64,
+      mimeType: normalizeMime(image.mimeType),
+      fileName: image.fileName,
+    })),
     platformId: data.platformId,
     formatId: data.formatId,
     dimensionId: dimension.id,
@@ -172,13 +178,16 @@ export async function runCreativeRegeneration(
     throw new Error('variantIndex must be less than count')
   }
 
-  decodeImageBase64(data.imageBase64)
+  data.images.forEach((image) => decodeImageBase64(image.imageBase64))
 
   const dimension = resolveCreativeDimension(data.dimensionId, data.widthPx, data.heightPx)
 
   return regenerateCreativeAsset({
-    imageBase64: data.imageBase64,
-    mimeType: normalizeMime(data.mimeType),
+    images: data.images.map((image) => ({
+      imageBase64: image.imageBase64,
+      mimeType: normalizeMime(image.mimeType),
+      fileName: image.fileName,
+    })),
     platformId: data.platformId,
     formatId: data.formatId,
     dimensionId: dimension.id,

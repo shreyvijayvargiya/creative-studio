@@ -14,6 +14,9 @@ import type {
 export const MIN_ASSET_COUNT = 3
 export const MAX_ASSET_COUNT = 10
 export const DEFAULT_ASSET_COUNT = 3
+export const MIN_REFERENCE_IMAGES = 1
+export const MAX_REFERENCE_IMAGES = 3
+export const MAX_PROMPT_CHARS = 2000
 export const COST_PER_IMAGE_INR = 2.5
 export const DEFAULT_PALETTE_ID: CreativePaletteId = 'studio-neutral'
 export const DEFAULT_DIMENSION_ID: CreativeDimensionId = 'thumbnail'

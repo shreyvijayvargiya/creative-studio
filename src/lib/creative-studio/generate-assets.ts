@@ -50,7 +50,7 @@ function toDataUrl(imageBase64: string, mimeType: string): string {
 
 async function generateOneVariant(input: {
   config: ReturnType<typeof getImageModelConfig>
-  referenceUrl: string
+  referenceUrls: string[]
   widthPx: number
   heightPx: number
   aspectRatio: string
@@ -76,6 +76,7 @@ async function generateOneVariant(input: {
     variantIndex: input.variantIndex,
     productNotes: input.productNotes,
     editPrompt: input.editPrompt,
+    referenceCount: input.referenceUrls.length,
     dimensionLabel: input.dimensionLabel,
     dimensionUseCase: input.dimensionUseCase,
     widthPx: input.widthPx,
@@ -83,16 +84,14 @@ async function generateOneVariant(input: {
     aspectRatio: input.aspectRatio,
   })
 
-  const references = [
-    {
-      type: 'image_url' as const,
-      image_url: { url: input.referenceUrl },
-    },
-  ]
+  const references = input.referenceUrls.map((url) => ({
+    type: 'image_url' as const,
+    image_url: { url },
+  }))
 
   if (
     input.previousVariantUrl &&
-    input.previousVariantUrl !== input.referenceUrl
+    !input.referenceUrls.includes(input.previousVariantUrl)
   ) {
     references.push({
       type: 'image_url',
@@ -177,9 +176,14 @@ async function generateOneVariant(input: {
   }
 }
 
-export interface GenerateCreativeAssetsInput {
+export interface CreativeReferenceImage {
   imageBase64: string
   mimeType: string
+  fileName?: string
+}
+
+export interface GenerateCreativeAssetsInput {
+  images: CreativeReferenceImage[]
   platformId: CreativePlatformId
   formatId: CreativeFormatId
   dimensionId: CreativeDimensionId
@@ -231,8 +235,13 @@ function dimensionFields(input: {
 export async function generateCreativeAssets(
   input: GenerateCreativeAssetsInput,
 ): Promise<{ variants: CreativeVariant[]; model: string }> {
+  if (input.images.length === 0) {
+    throw new Error('Upload at least one product photo')
+  }
   const config = getImageModelConfig()
-  const referenceUrl = toDataUrl(input.imageBase64, input.mimeType)
+  const referenceUrls = input.images.map((image) =>
+    toDataUrl(image.imageBase64, image.mimeType),
+  )
   const shared = dimensionFields(input)
 
   const indices = Array.from({ length: input.count }, (_, i) => i)
@@ -245,7 +254,7 @@ export async function generateCreativeAssets(
       batch.map((variantIndex) =>
         generateOneVariant({
           config,
-          referenceUrl,
+          referenceUrls,
           ...shared,
           variantIndex,
         }),
@@ -258,8 +267,7 @@ export async function generateCreativeAssets(
 }
 
 export interface RegenerateCreativeAssetInput {
-  imageBase64: string
-  mimeType: string
+  images: CreativeReferenceImage[]
   platformId: CreativePlatformId
   formatId: CreativeFormatId
   dimensionId: CreativeDimensionId
@@ -279,12 +287,14 @@ export async function regenerateCreativeAsset(
   input: RegenerateCreativeAssetInput,
 ): Promise<{ variant: CreativeVariant; model: string }> {
   const config = getImageModelConfig()
-  const referenceUrl = toDataUrl(input.imageBase64, input.mimeType)
+  const referenceUrls = input.images.map((image) =>
+    toDataUrl(image.imageBase64, image.mimeType),
+  )
   const shared = dimensionFields(input)
 
   const variant = await generateOneVariant({
     config,
-    referenceUrl,
+    referenceUrls,
     ...shared,
     variantIndex: input.variantIndex,
     editPrompt: input.editPrompt,

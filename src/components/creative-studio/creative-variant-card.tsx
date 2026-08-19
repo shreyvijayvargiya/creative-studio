@@ -40,7 +40,7 @@ import type {
 interface CreativeVariantCardProps {
   variant: CreativeVariant
   beforeUrl: string
-  file: File
+  files: File[]
   platformId: CreativePlatformId
   formatId: CreativeFormatId
   dimensionId: CreativeDimensionId
@@ -57,7 +57,7 @@ interface CreativeVariantCardProps {
 export function CreativeVariantCard({
   variant,
   beforeUrl,
-  file,
+  files,
   platformId,
   formatId,
   dimensionId,
@@ -108,18 +108,25 @@ export function CreativeVariantCard({
 
   const regenerateMutation = useMutation({
     mutationFn: async () => {
-      const buffer = await file.arrayBuffer()
-      const bytes = new Uint8Array(buffer)
-      let binary = ''
-      for (let i = 0; i < bytes.length; i += 1) {
-        binary += String.fromCharCode(bytes[i]!)
-      }
+      const images = await Promise.all(
+        files.map(async (item) => {
+          const buffer = await item.arrayBuffer()
+          const bytes = new Uint8Array(buffer)
+          let binary = ''
+          for (let i = 0; i < bytes.length; i += 1) {
+            binary += String.fromCharCode(bytes[i]!)
+          }
+          return {
+            fileName: item.name,
+            imageBase64: btoa(binary),
+            mimeType: item.type || 'image/jpeg',
+          }
+        }),
+      )
 
       return regenerateFn({
         data: {
-          fileName: file.name,
-          imageBase64: btoa(binary),
-          mimeType: file.type || 'image/jpeg',
+          images,
           platformId,
           formatId,
           dimensionId,
@@ -296,7 +303,7 @@ export function CreativeVariantCard({
             value={editPrompt}
             onChange={(e) => setEditPrompt(e.target.value)}
             placeholder="e.g. warmer light, add soft linen backdrop, tighter crop"
-            maxLength={500}
+            maxLength={2000}
             disabled={regenerateMutation.isPending}
           />
           <Button

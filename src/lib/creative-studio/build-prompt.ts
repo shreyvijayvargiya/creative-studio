@@ -12,6 +12,7 @@ export interface BuildCreativePromptInput {
   count: number
   variantIndex: number
   productNotes?: string
+  referenceCount?: number
   /** Extra edit instructions when regenerating a single image. */
   editPrompt?: string
   dimensionLabel: string
@@ -29,13 +30,16 @@ export function buildCreativeSystemPrompt(input: BuildCreativePromptInput): stri
   const platform = getPlatform(input.platformId)
   const style = getStyle(input.styleId)
   const palette = getPalette(input.paletteId)
+  const referenceCount = Math.max(1, input.referenceCount ?? 1)
 
   return `You are an expert ecommerce product photographer and commercial retoucher.
 
-Your job: transform the uploaded product photo into a polished marketplace creative for ${platform.label}.
+Your job: transform the uploaded product photo${referenceCount > 1 ? 's' : ''} into one polished marketplace creative for ${platform.label}.
 
 ## Hard rules
-- Preserve the exact product identity from the reference image (shape, materials, labels, colours, logos).
+- You are given ${referenceCount} reference image${referenceCount > 1 ? 's' : ''}. Image 1 is the primary product; extra images are additional angles, details, styling cues, or companion pieces.
+- Combine all references into a SINGLE cohesive photograph — not a collage, split screen, or side-by-side of the source files.
+- Preserve exact product identity from the references (shape, materials, labels, colours, logos).
 - Do not invent text, watermarks, UI chrome, or fake brand marks on the product.
 - Output a single photorealistic image — no collage, no split screens, no mock browser frames.
 - Keep the product sharp and clearly the hero; avoid cropping critical edges.
@@ -59,7 +63,14 @@ Background: ${style.backgroundNotes}
 ## Colour palette — ${palette.label}
 ${palette.description}
 Scene accents (guide props/background; do not recolour the product itself): ${palette.colors.join(', ')}
-
+${
+    input.productNotes?.trim()
+      ? `
+## Seller prompt (follow closely)
+${input.productNotes.trim()}
+`
+      : ''
+  }
 ## Variation control
 This is variant ${input.variantIndex + 1} of ${input.count}.
 Vary camera angle, prop arrangement, or subtle background styling across variants while keeping the same product and style family.
@@ -81,15 +92,18 @@ export function buildCreativeUserPrompt(input: BuildCreativePromptInput): string
   const palette = getPalette(input.paletteId)
   const notes = input.productNotes?.trim()
   const edit = input.editPrompt?.trim()
+  const referenceCount = Math.max(1, input.referenceCount ?? 1)
 
   return [
-    `Edit the attached product photo into a ${input.dimensionLabel} creative.`,
+    referenceCount > 1
+      ? `Combine the ${referenceCount} attached reference photos into one ${input.dimensionLabel} creative.`
+      : `Edit the attached product photo into a ${input.dimensionLabel} creative.`,
     `STRICT TARGET DIMENSIONS: ${input.widthPx}x${input.heightPx} pixels at ${input.aspectRatio} aspect ratio. Output this exact size only.`,
     `Use case: ${input.dimensionUseCase}.`,
     `Apply the "${style.label}" scene: ${style.lighting}; background ${style.backgroundNotes}.`,
     `Palette "${palette.label}": ${palette.colors.join(', ')}.`,
     `Commercial quality, high detail, natural materials, ready for ${platform.label}.`,
-    notes ? `Seller notes: ${notes}` : null,
+    notes ? `Seller prompt: ${notes}` : null,
     edit ? `Additional edit instructions: ${edit}` : null,
     `Variant ${input.variantIndex + 1}/${input.count}: introduce a distinct but on-brief composition.`,
   ]

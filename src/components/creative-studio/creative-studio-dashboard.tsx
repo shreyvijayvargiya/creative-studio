@@ -5,6 +5,7 @@ import {
   Instagram,
   Loader2,
   Pin,
+  Plus,
   RefreshCcw,
   ShoppingBag,
   Sparkles,
@@ -33,6 +34,7 @@ import { Label } from '#/components/ui/label'
 import { PageHeader } from '#/components/ui/page-header'
 import { Skeleton } from '#/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
+import { Textarea } from '#/components/ui/textarea'
 import { useStableServerFn } from '#/hooks/use-stable-server-fn'
 import {
   CREATIVE_DIMENSIONS,
@@ -42,6 +44,8 @@ import {
   DEFAULT_PALETTE_ID,
   MAX_ASSET_COUNT,
   MAX_DIMENSION_PX,
+  MAX_PROMPT_CHARS,
+  MAX_REFERENCE_IMAGES,
   MIN_ASSET_COUNT,
   MIN_DIMENSION_PX,
   formatsForPlatform,
@@ -89,11 +93,16 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary)
 }
 
+interface UploadItem {
+  id: string
+  file: File
+  previewUrl: string
+}
+
 export function CreativeStudioDashboard() {
   const generateFn = useStableServerFn(generateCreatives)
 
-  const [file, setFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploads, setUploads] = useState<UploadItem[]>([])
   const [dragActive, setDragActive] = useState(false)
   const [platformId, setPlatformId] = useState<CreativePlatformId>('etsy')
   const [formatId, setFormatId] = useState<CreativeFormatId>('etsy-listing')
@@ -107,6 +116,10 @@ export function CreativeStudioDashboard() {
   const [productNotes, setProductNotes] = useState('')
   const [results, setResults] = useState<CreativeVariant[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+  const uploadsRef = useRef(uploads)
+  uploadsRef.current = uploads
+  const primaryPreview = uploads[0]?.previewUrl ?? null
+  const files = uploads.map((item) => item.file)
 
   const resolvedDimension = useMemo(() => {
     try {
@@ -122,30 +135,49 @@ export function CreativeStudioDashboard() {
 
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      uploadsRef.current.forEach((item) => URL.revokeObjectURL(item.previewUrl))
     }
-  }, [previewUrl])
-
-  const handleFile = useCallback((next: File | undefined) => {
-    if (!next || !next.type.startsWith('image/')) {
-      toast.error('Please upload a PNG, JPG, or WebP image')
-      return
-    }
-    setFile(next)
-    setResults([])
-    setPreviewUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev)
-      return URL.createObjectURL(next)
-    })
   }, [])
 
-  const clearFile = () => {
-    setFile(null)
+  const addFiles = useCallback((incoming: FileList | File[] | undefined) => {
+    const candidates = [...(incoming ?? [])].filter((item) =>
+      item.type.startsWith('image/'),
+    )
+    if (candidates.length === 0) {
+      toast.error('Please upload PNG, JPG, or WebP images')
+      return
+    }
+
+    const room = MAX_REFERENCE_IMAGES - uploads.length
+    if (room <= 0) {
+      toast.error(`You can upload up to ${MAX_REFERENCE_IMAGES} images`)
+      return
+    }
+
+    const accepted = candidates.slice(0, room)
+    if (candidates.length > room) {
+      toast.error(`Only ${MAX_REFERENCE_IMAGES} images are allowed — extra files were skipped`)
+    }
+
+    setUploads((prev) => [
+      ...prev,
+      ...accepted.map((file) => ({
+        id: `${file.name}-${file.size}-${file.lastModified}-${crypto.randomUUID()}`,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      })),
+    ])
     setResults([])
-    setPreviewUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev)
-      return null
+  }, [uploads.length])
+
+  const removeUpload = (id: string) => {
+    setUploads((prev) => {
+      const next = prev.filter((item) => item.id !== id)
+      const removed = prev.find((item) => item.id === id)
+      if (removed) URL.revokeObjectURL(removed.previewUrl)
+      return next
     })
+    setResults([])
   }
 
   const onPlatformChange = (next: string) => {
@@ -159,15 +191,20 @@ export function CreativeStudioDashboard() {
 
   const generateMutation = useMutation({
     mutationFn: async () => {
-      if (!file) throw new Error('Upload a product photo first')
+      if (uploads.length === 0) throw new Error('Upload at least one product photo')
       if (!resolvedDimension) throw new Error('Choose a valid dimension')
 
-      const imageBase64 = await fileToBase64(file)
+      const images = await Promise.all(
+        uploads.map(async (item) => ({
+          fileName: item.file.name,
+          imageBase64: await fileToBase64(item.file),
+          mimeType: item.file.type || 'image/jpeg',
+        })),
+      )
+
       return generateFn({
         data: {
-          fileName: file.name,
-          imageBase64,
-          mimeType: file.type || 'image/jpeg',
+          images,
           platformId,
           formatId,
           dimensionId,
@@ -193,11 +230,11 @@ export function CreativeStudioDashboard() {
   const onDrop = (e: DragEvent) => {
     e.preventDefault()
     setDragActive(false)
-    handleFile(e.dataTransfer.files?.[0])
+    addFiles(e.dataTransfer.files)
   }
 
   const canGenerate =
-    Boolean(file) &&
+    uploads.length > 0 &&
     Boolean(resolvedDimension) &&
     count >= MIN_ASSET_COUNT &&
     count <= MAX_ASSET_COUNT &&
@@ -214,7 +251,7 @@ export function CreativeStudioDashboard() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
           title="Creative Studio"
-          description="One product photo in — Etsy, Shopify, Instagram, and Pinterest creatives out."
+          description="Upload 1–3 product photos, write a prompt, and generate marketplace creatives."
         />
       </div>
 
@@ -222,11 +259,63 @@ export function CreativeStudioDashboard() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Product photo</CardTitle>
-              <CardDescription>PNG, JPG, or WebP — max 8MB</CardDescription>
+              <CardTitle className="text-base">Product photos</CardTitle>
+              <CardDescription>
+                Upload 1–{MAX_REFERENCE_IMAGES} PNG, JPG, or WebP images (max 8MB each). The AI
+                combines them into one creative.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              {!previewUrl ? (
+            <CardContent className="space-y-3">
+              {uploads.length > 0 ? (
+                <div className="grid grid-cols-3 gap-2">
+                  {uploads.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="relative overflow-hidden rounded-xl border bg-muted"
+                    >
+                      <img
+                        src={item.previewUrl}
+                        alt={item.file.name}
+                        className="h-24 w-full object-cover"
+                      />
+                      <span className="absolute left-1.5 top-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                        {index === 0 ? 'Primary' : `Ref ${index + 1}`}
+                      </span>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="secondary"
+                        className="absolute right-1.5 top-1.5 size-7 rounded-full bg-black/60 text-white hover:bg-black/80"
+                        onClick={() => removeUpload(item.id)}
+                        aria-label={`Remove ${item.file.name}`}
+                      >
+                        <X className="size-3.5" />
+                      </Button>
+                    </div>
+                  ))}
+                  {uploads.length < MAX_REFERENCE_IMAGES ? (
+                    <button
+                      type="button"
+                      onDragOver={(e) => {
+                        e.preventDefault()
+                        setDragActive(true)
+                      }}
+                      onDragLeave={() => setDragActive(false)}
+                      onDrop={onDrop}
+                      onClick={() => inputRef.current?.click()}
+                      className={cn(
+                        'flex h-24 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed text-center transition-colors',
+                        dragActive
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted-foreground/25 bg-muted/30 hover:border-muted-foreground/40',
+                      )}
+                    >
+                      <Plus className="mb-1 size-4 text-muted-foreground" />
+                      <span className="text-[11px] text-muted-foreground">Add image</span>
+                    </button>
+                  ) : null}
+                </div>
+              ) : (
                 <button
                   type="button"
                   onDragOver={(e) => {
@@ -244,35 +333,54 @@ export function CreativeStudioDashboard() {
                   )}
                 >
                   <UploadCloud className="mb-2 size-7 text-muted-foreground" />
-                  <p className="text-sm font-medium">Drop an image, or click to upload</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Clear product shot works best</p>
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    className="hidden"
-                    onChange={(e) => handleFile(e.target.files?.[0])}
-                  />
+                  <p className="text-sm font-medium">Drop 1–3 images, or click to upload</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Extra angles or companion shots help the AI
+                  </p>
                 </button>
-              ) : (
-                <div className="relative overflow-hidden rounded-xl border">
-                  <img
-                    src={previewUrl}
-                    alt="Uploaded product"
-                    className="h-48 w-full object-cover"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="secondary"
-                    className="absolute right-2 top-2 size-8 rounded-full bg-black/60 text-white hover:bg-black/80"
-                    onClick={clearFile}
-                    aria-label="Remove image"
-                  >
-                    <X className="size-3.5" />
-                  </Button>
-                </div>
               )}
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  addFiles(e.target.files ?? undefined)
+                  e.target.value = ''
+                }}
+              />
+              {uploads.length > 0 ? (
+                <p className="text-[11px] text-muted-foreground">
+                  {uploads.length}/{MAX_REFERENCE_IMAGES} images · first photo is the primary
+                  product
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Prompt</CardTitle>
+              <CardDescription>
+                Tell the AI how to combine the photos — scene, lighting, props, and what to keep.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Label htmlFor="product-prompt" className="sr-only">
+                Detailed prompt
+              </Label>
+              <Textarea
+                id="product-prompt"
+                value={productNotes}
+                onChange={(e) => setProductNotes(e.target.value)}
+                placeholder="e.g. Place the mug from photo 1 on a linen table using the wood texture from photo 2. Soft morning light, keep the blue glaze, gift-ready, extra space on the left for a headline."
+                maxLength={MAX_PROMPT_CHARS}
+                rows={6}
+              />
+              <p className="text-right text-[11px] text-muted-foreground">
+                {productNotes.length}/{MAX_PROMPT_CHARS}
+              </p>
             </CardContent>
           </Card>
 
@@ -445,17 +553,6 @@ export function CreativeStudioDashboard() {
                 ))}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="product-notes">Seller notes (optional)</Label>
-                <Input
-                  id="product-notes"
-                  value={productNotes}
-                  onChange={(e) => setProductNotes(e.target.value)}
-                  placeholder="e.g. ceramic mug, keep blue glaze, gift-ready"
-                  maxLength={500}
-                />
-              </div>
-
               <Button
                 className="w-full"
                 disabled={!canGenerate}
@@ -539,14 +636,14 @@ export function CreativeStudioDashboard() {
               </div>
             ) : null}
 
-            {results.length > 0 && previewUrl && file && !generateMutation.isPending ? (
+            {results.length > 0 && primaryPreview && files.length > 0 && !generateMutation.isPending ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {results.map((variant) => (
                   <CreativeVariantCard
                     key={`${variant.formatId}-${variant.index}`}
                     variant={variant}
-                    beforeUrl={previewUrl}
-                    file={file}
+                    beforeUrl={primaryPreview}
+                    files={files}
                     platformId={platformId}
                     formatId={formatId}
                     dimensionId={dimensionId}
