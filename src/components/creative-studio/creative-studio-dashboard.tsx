@@ -69,6 +69,33 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary)
 }
 
+function triggerDownload(href: string, fileName: string) {
+  const anchor = document.createElement('a')
+  anchor.href = href
+  anchor.download = fileName
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+}
+
+async function downloadImage(url: string, fileName: string) {
+  try {
+    if (url.startsWith('data:') || url.startsWith('blob:')) {
+      triggerDownload(url, fileName)
+      return
+    }
+
+    const response = await fetch(url)
+    if (!response.ok) throw new Error('Download failed')
+    const blob = await response.blob()
+    const objectUrl = URL.createObjectURL(blob)
+    triggerDownload(objectUrl, fileName)
+    URL.revokeObjectURL(objectUrl)
+  } catch {
+    triggerDownload(url, fileName)
+  }
+}
+
 export function CreativeStudioDashboard() {
   const generateFn = useStableServerFn(generateCreatives)
 
@@ -444,22 +471,40 @@ export function CreativeStudioDashboard() {
 
             {results.length > 0 && previewUrl && file && !generateMutation.isPending ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {results.map((variant) => (
-                  <CreativeVariantCard
-                    key={`${variant.formatId}-${variant.index}-${variant.url.slice(-24)}`}
-                    variant={variant}
-                    beforeUrl={previewUrl}
-                    file={file}
-                    platformId={platformId}
-                    formatId={formatId}
-                    styleId={styleId}
-                    paletteId={paletteId}
-                    count={count}
-                    productNotes={productNotes}
-                    disabled={generateMutation.isPending}
-                    onVariantUpdated={handleVariantUpdated}
-                  />
-                ))}
+                {results.map((variant) => {
+                  const fileName = `${platformId}-${formatId}-${variant.index + 1}.png`
+                  const handleDownload = () => {
+                    void downloadImage(variant.url, fileName).then(
+                      () => toast.success('Image downloaded'),
+                      () => toast.error('Could not download image'),
+                    )
+                  }
+
+                  return (
+                    <div key={`${variant.formatId}-${variant.index}`} className="space-y-2">
+                      <CompareSlider
+                        before={previewUrl}
+                        after={variant.url}
+                        onDownload={handleDownload}
+                      />
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Variant {variant.index + 1}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 gap-1 px-2 text-xs"
+                          onClick={handleDownload}
+                        >
+                          <Download className="size-3.5" />
+                          Download image
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                })}
                 <Button
                   type="button"
                   variant="outline"

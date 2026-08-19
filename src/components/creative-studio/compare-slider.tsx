@@ -1,16 +1,23 @@
 import { useState } from 'react'
-import { MoveHorizontal } from 'lucide-react'
+import { Download, MoveHorizontal } from 'lucide-react'
 
 import { Badge } from '#/components/ui/badge'
+import { Button } from '#/components/ui/button'
 import { cn } from '#/lib/utils'
 
 interface CompareSliderProps {
   before: string
   after: string
   className?: string
+  onDownload?: () => void
 }
 
-export function CompareSlider({ before, after, className }: CompareSliderProps) {
+export function CompareSlider({
+  before,
+  after,
+  className,
+  onDownload,
+}: CompareSliderProps) {
   const [pos, setPos] = useState(50)
 
   return (
@@ -53,16 +60,32 @@ export function CompareSlider({ before, after, className }: CompareSliderProps) 
         max={100}
         value={pos}
         onChange={(e) => setPos(Number(e.target.value))}
-        className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
+        className="absolute inset-0 z-[1] h-full w-full cursor-ew-resize opacity-0"
         aria-label="Compare original and generated image"
       />
       <Badge
         variant="secondary"
-        className="absolute left-2 top-2 bg-black/60 text-[10px] text-white hover:bg-black/60"
+        className="pointer-events-none absolute left-2 top-2 z-10 bg-black/60 text-[10px] text-white hover:bg-black/60"
       >
         original
       </Badge>
-      <Badge className="absolute right-2 top-2 text-[10px]">generated</Badge>
+      <Badge className="pointer-events-none absolute right-2 top-2 z-10 text-[10px]">
+        generated
+      </Badge>
+      {onDownload ? (
+        <Button
+          type="button"
+          size="sm"
+          className="absolute bottom-2 right-2 z-20 h-8 gap-1.5 px-2.5 shadow-md"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation()
+            onDownload()
+          }}
+        >
+          <Download className="size-3.5" />
+          Download
+        </Button>
+      ) : null}
     </div>
   )
-}
