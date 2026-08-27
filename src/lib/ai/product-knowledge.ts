@@ -25,6 +25,7 @@ Always link internal pages as markdown: [Label](/path) — users can click these
 - [PDF Viewer](/pdf) — browse and open PDF files in the app
 
 ### Creative — Kixi
+- [AI Landing Page Creator](/ai-landing-page-creator) — themed React + Tailwind landing pages
 - [AI Image Designer](/ai-image-designer) — upload product photos and generate marketplace stills
 - [AI Product Video Generator](/ai-product-video-generator) — short product clips from stills
 - [AI Logo Designer](/ai-logo-designer) — original SVG logos in 24 styles

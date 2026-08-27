@@ -49,6 +49,7 @@ export const navSections: NavSection[] = [
         label: 'Kixi',
         icon: Sparkles,
         children: [
+          { label: 'Landing', href: '/ai-landing-page-creator' },
           { label: 'Images', href: '/ai-image-designer' },
           { label: 'Video', href: '/ai-product-video-generator' },
           { label: 'Logo', href: '/ai-logo-designer' },

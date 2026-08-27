@@ -106,7 +106,7 @@ function FeaturesPage() {
             <LandingGradientText>designers</LandingGradientText>
           </>
         }
-        description={`${APP_NAME} combines an AI logo designer, an AI product video generator, and an AI image generator so you can ship files — not a pile of prompts.`}
+        description={`${APP_NAME} combines an AI landing page creator, an AI logo designer, an AI product video generator, and an AI image generator so you can ship files — not a pile of prompts.`}
         primaryCta={{ label: `Open ${APP_NAME}`, href: '/ai-image-designer' }}
       />
 
@@ -120,7 +120,7 @@ function FeaturesPage() {
                 <LandingGradientText>{APP_NAME}</LandingGradientText>
               </>
             }
-            description="Three generation studios plus the controls designers actually use: palettes, canvases, variants, and downloads."
+            description="Four generation studios plus the controls designers actually use: themes, palettes, canvases, variants, and downloads."
           />
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,7 +154,7 @@ function FeaturesPage() {
                 <LandingGradientText>ship files</LandingGradientText>
               </>
             }
-            description="Same theme and layout across logo, video, and image — so you stay in flow."
+            description="Same theme and layout across landing pages, logo, video, and image — so you stay in flow."
           />
 
           <div className="grid gap-5 md:grid-cols-3">
@@ -180,7 +180,7 @@ function FeaturesPage() {
             <span className="text-blue-600 dark:text-blue-400">{APP_NAME}</span>
           </>
         }
-        description="Open the live demo and generate a logo, a product clip, or marketplace stills."
+        description="Open the live demo and generate a landing page, a logo, a product clip, or marketplace stills."
         benefits={[]}
         primaryLabel={`Open ${APP_NAME}`}
         primaryHref="/ai-image-designer"

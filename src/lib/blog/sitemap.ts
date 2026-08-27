@@ -5,6 +5,7 @@ import { escapeXml } from '#/lib/blog/xml'
 const STATIC_PAGES = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/features', priority: '0.9', changefreq: 'weekly' },
+  { path: '/ai-landing-page-creator', priority: '0.9', changefreq: 'weekly' },
   { path: '/ai-logo-designer', priority: '0.9', changefreq: 'weekly' },
   { path: '/ai-product-video-generator', priority: '0.9', changefreq: 'weekly' },
   { path: '/ai-image-designer', priority: '0.9', changefreq: 'weekly' },

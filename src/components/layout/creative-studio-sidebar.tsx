@@ -1,5 +1,12 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Clapperboard, Hexagon, ImageIcon, PanelLeft, PanelLeftClose } from 'lucide-react'
+import {
+  Clapperboard,
+  Hexagon,
+  ImageIcon,
+  LayoutTemplate,
+  PanelLeft,
+  PanelLeftClose,
+} from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 import { useSidebar } from '#/components/layout/sidebar-provider'
@@ -16,6 +23,7 @@ const STUDIO_NAV: Array<{
   href: StudioToolPath
   icon: LucideIcon
 }> = [
+  { label: 'Landing', href: STUDIO_PATHS.landing, icon: LayoutTemplate },
   { label: 'Images', href: STUDIO_PATHS.image, icon: ImageIcon },
   { label: 'Video', href: STUDIO_PATHS.video, icon: Clapperboard },
   { label: 'Logo', href: STUDIO_PATHS.logo, icon: Hexagon },

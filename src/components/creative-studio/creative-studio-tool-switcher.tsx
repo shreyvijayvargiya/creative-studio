@@ -1,10 +1,11 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Clapperboard, Hexagon, ImageIcon } from 'lucide-react'
+import { Clapperboard, Hexagon, ImageIcon, LayoutTemplate } from 'lucide-react'
 
 import { STUDIO_PATHS } from '#/lib/marketing/tools'
 import { cn } from '#/lib/utils'
 
 const TOOLS = [
+  { id: 'landing', label: 'Landing', href: STUDIO_PATHS.landing, icon: LayoutTemplate },
   { id: 'images', label: 'Images', href: STUDIO_PATHS.image, icon: ImageIcon },
   { id: 'video', label: 'Video', href: STUDIO_PATHS.video, icon: Clapperboard },
   { id: 'logo', label: 'Logo', href: STUDIO_PATHS.logo, icon: Hexagon },

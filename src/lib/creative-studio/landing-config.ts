@@ -1,0 +1,8 @@
+export const MIN_LANDING_VARIANTS = 3
+export const MAX_LANDING_VARIANTS = 10
+export const DEFAULT_LANDING_VARIANTS = 3
+export const MIN_LANDING_IMAGES = 0
+export const MAX_LANDING_IMAGES = 10
+export const MAX_LANDING_PROMPT_CHARS = 4000
+export const LANDING_PARALLELISM = 3
+export const DEFAULT_LANDING_THEME_ID = 'saas'

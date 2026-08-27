@@ -2,6 +2,7 @@ import {
   Clapperboard,
   Hexagon,
   ImageIcon,
+  LayoutTemplate,
   Palette,
   Sparkles,
   WandSparkles,
@@ -12,12 +13,14 @@ export type StudioToolPath =
   | '/ai-logo-designer'
   | '/ai-image-designer'
   | '/ai-product-video-generator'
+  | '/ai-landing-page-creator'
 
 export const STUDIO_PATHS = {
   logo: '/ai-logo-designer',
   image: '/ai-image-designer',
   video: '/ai-product-video-generator',
-} as const satisfies Record<'logo' | 'image' | 'video', StudioToolPath>
+  landing: '/ai-landing-page-creator',
+} as const satisfies Record<'logo' | 'image' | 'video' | 'landing', StudioToolPath>
 
 export function isStudioRoute(pathname: string): boolean {
   const normalized = pathname.replace(/\/$/, '') || '/'
@@ -25,7 +28,7 @@ export function isStudioRoute(pathname: string): boolean {
 }
 
 export interface MarketingTool {
-  id: 'logo' | 'video' | 'image'
+  id: 'logo' | 'video' | 'image' | 'landing'
   name: string
   shortName: string
   eyebrow: string
@@ -41,6 +44,26 @@ export interface MarketingTool {
 }
 
 export const MARKETING_TOOLS: MarketingTool[] = [
+  {
+    id: 'landing',
+    name: 'AI Landing Page Creator',
+    shortName: 'Landing',
+    eyebrow: 'React pages in 24 themes',
+    headline: 'One brief into themed landing pages you can ship',
+    description:
+      'Write a prompt, optionally drop in photos, and pick a design theme. Kixi injects the theme system into the generator and returns multiple React + Tailwind + Lucide variants — download as a Vite or Next.js repo, or as HTML.',
+    path: STUDIO_PATHS.landing,
+    ctaLabel: 'Create a landing page',
+    icon: LayoutTemplate,
+    iconBg: 'bg-emerald-100 dark:bg-emerald-950/50',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    cardHoverBg: 'hover:bg-emerald-50 dark:hover:bg-emerald-950/30',
+    highlights: [
+      '24 design themes from markdown prompts',
+      '3–10 layout variants per brief',
+      'Download Vite, Next.js, or HTML + Tailwind',
+    ],
+  },
   {
     id: 'logo',
     name: 'AI Logo Designer',
@@ -118,9 +141,9 @@ export const MARKETING_CAPABILITIES: Array<{
 }> = [
   {
     icon: Sparkles,
-    title: 'Three studios, one workspace',
+    title: 'Four studios, one workspace',
     description:
-      'Jump between logo, video, and image tools without leaving Kixi. Same theme, same downloads, same brief.',
+      'Jump between landing pages, logo, video, and image tools without leaving Kixi. Same theme, same downloads, same brief.',
   },
   {
     icon: Palette,
@@ -132,6 +155,6 @@ export const MARKETING_CAPABILITIES: Array<{
     icon: WandSparkles,
     title: 'Files you can ship',
     description:
-      'Vector logos, marketplace stills, and short product clips download in the formats designers already use.',
+      'Landing page repos, vector logos, marketplace stills, and short product clips download in the formats designers already use.',
   },
 ]

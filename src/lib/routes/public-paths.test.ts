@@ -12,6 +12,7 @@ describe('public-paths', () => {
     expect(isPublicRoute('/features')).toBe(true)
     expect(isPublicRoute('/blog')).toBe(true)
     expect(isPublicRoute('/pricing')).toBe(true)
+    expect(isPublicRoute('/ai-landing-page-creator')).toBe(false)
     expect(isPublicRoute('/ai-logo-designer')).toBe(false)
     expect(isPublicRoute('/ai-product-video-generator')).toBe(false)
     expect(isPublicRoute('/ai-image-designer')).toBe(false)

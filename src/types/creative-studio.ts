@@ -161,3 +161,37 @@ export interface GenerateCreativeLogosResult {
   model: string
   count: number
 }
+
+export interface LandingThemeMeta {
+  id: string
+  name: string
+  tagline: string
+  previewColors: string[]
+  fileName: string
+}
+
+export interface LandingLayoutMeta {
+  id: string
+  label: string
+  tagline: string
+  aiPrompt: string
+}
+
+export interface GeneratedLandingVariant {
+  index: number
+  layoutId: string
+  label: string
+  title?: string
+  reactCode?: string
+  htmlCode?: string
+  error?: string
+}
+
+export interface GenerateLandingPagesResult {
+  variants: GeneratedLandingVariant[]
+  model: string
+  themeId: string
+  themeName: string
+  count: number
+  imagePaths: string[]
+}

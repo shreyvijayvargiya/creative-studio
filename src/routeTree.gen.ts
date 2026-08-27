@@ -21,6 +21,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as AiProductVideoGeneratorRouteImport } from './routes/ai-product-video-generator'
 import { Route as AiLogoDesignerRouteImport } from './routes/ai-logo-designer'
+import { Route as AiLandingPageCreatorRouteImport } from './routes/ai-landing-page-creator'
 import { Route as AiImageGeneratorRouteImport } from './routes/ai-image-generator'
 import { Route as AiImageDesignerRouteImport } from './routes/ai-image-designer'
 import { Route as AboutRouteImport } from './routes/about'
@@ -42,6 +43,7 @@ import { Route as BankStatementsIndexRouteImport } from './routes/bank-statement
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
 import { Route as CreativeStudioVideoRouteImport } from './routes/creative-studio/video'
 import { Route as CreativeStudioLogoRouteImport } from './routes/creative-studio/logo'
+import { Route as CreativeStudioLandingRouteImport } from './routes/creative-studio/landing'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
@@ -55,6 +57,7 @@ import { Route as ApiEmailSendRouteImport } from './routes/api/email/send'
 import { Route as ApiCreativeStudioRegenerateRouteImport } from './routes/api/creative-studio/regenerate'
 import { Route as ApiCreativeStudioGenerateVideoRouteImport } from './routes/api/creative-studio/generate-video'
 import { Route as ApiCreativeStudioGenerateLogosRouteImport } from './routes/api/creative-studio/generate-logos'
+import { Route as ApiCreativeStudioGenerateLandingRouteImport } from './routes/api/creative-studio/generate-landing'
 import { Route as ApiCreativeStudioGenerateRouteImport } from './routes/api/creative-studio/generate'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
@@ -115,6 +118,11 @@ const AiProductVideoGeneratorRoute = AiProductVideoGeneratorRouteImport.update({
 const AiLogoDesignerRoute = AiLogoDesignerRouteImport.update({
   id: '/ai-logo-designer',
   path: '/ai-logo-designer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiLandingPageCreatorRoute = AiLandingPageCreatorRouteImport.update({
+  id: '/ai-landing-page-creator',
+  path: '/ai-landing-page-creator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiImageGeneratorRoute = AiImageGeneratorRouteImport.update({
@@ -222,6 +230,11 @@ const CreativeStudioLogoRoute = CreativeStudioLogoRouteImport.update({
   path: '/creative-studio/logo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreativeStudioLandingRoute = CreativeStudioLandingRouteImport.update({
+  id: '/creative-studio/landing',
+  path: '/creative-studio/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -290,6 +303,12 @@ const ApiCreativeStudioGenerateLogosRoute =
     path: '/api/creative-studio/generate-logos',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCreativeStudioGenerateLandingRoute =
+  ApiCreativeStudioGenerateLandingRouteImport.update({
+    id: '/api/creative-studio/generate-landing',
+    path: '/api/creative-studio/generate-landing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCreativeStudioGenerateRoute =
   ApiCreativeStudioGenerateRouteImport.update({
     id: '/api/creative-studio/generate',
@@ -303,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/ai-image-designer': typeof AiImageDesignerRoute
   '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-landing-page-creator': typeof AiLandingPageCreatorRoute
   '/ai-logo-designer': typeof AiLogoDesignerRoute
   '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
@@ -319,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/landing': typeof CreativeStudioLandingRoute
   '/creative-studio/logo': typeof CreativeStudioLogoRoute
   '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
@@ -336,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-landing': typeof ApiCreativeStudioGenerateLandingRoute
   '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
   '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
@@ -351,6 +373,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/ai-image-designer': typeof AiImageDesignerRoute
   '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-landing-page-creator': typeof AiLandingPageCreatorRoute
   '/ai-logo-designer': typeof AiLogoDesignerRoute
   '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
@@ -367,6 +390,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/landing': typeof CreativeStudioLandingRoute
   '/creative-studio/logo': typeof CreativeStudioLogoRoute
   '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
@@ -384,6 +408,7 @@ export interface FileRoutesByTo {
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-landing': typeof ApiCreativeStudioGenerateLandingRoute
   '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
   '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
@@ -401,6 +426,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/ai-image-designer': typeof AiImageDesignerRoute
   '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-landing-page-creator': typeof AiLandingPageCreatorRoute
   '/ai-logo-designer': typeof AiLogoDesignerRoute
   '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
@@ -417,6 +443,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/landing': typeof CreativeStudioLandingRoute
   '/creative-studio/logo': typeof CreativeStudioLogoRoute
   '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
@@ -434,6 +461,7 @@ export interface FileRoutesById {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-landing': typeof ApiCreativeStudioGenerateLandingRoute
   '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
   '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
@@ -452,6 +480,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-image-designer'
     | '/ai-image-generator'
+    | '/ai-landing-page-creator'
     | '/ai-logo-designer'
     | '/ai-product-video-generator'
     | '/features'
@@ -468,6 +497,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/landing'
     | '/creative-studio/logo'
     | '/creative-studio/video'
     | '/documents/$id'
@@ -485,6 +515,7 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-landing'
     | '/api/creative-studio/generate-logos'
     | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
@@ -500,6 +531,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-image-designer'
     | '/ai-image-generator'
+    | '/ai-landing-page-creator'
     | '/ai-logo-designer'
     | '/ai-product-video-generator'
     | '/features'
@@ -516,6 +548,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/landing'
     | '/creative-studio/logo'
     | '/creative-studio/video'
     | '/documents/$id'
@@ -533,6 +566,7 @@ export interface FileRouteTypes {
     | '/storage'
     | '/users'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-landing'
     | '/api/creative-studio/generate-logos'
     | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
@@ -549,6 +583,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ai-image-designer'
     | '/ai-image-generator'
+    | '/ai-landing-page-creator'
     | '/ai-logo-designer'
     | '/ai-product-video-generator'
     | '/features'
@@ -565,6 +600,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/landing'
     | '/creative-studio/logo'
     | '/creative-studio/video'
     | '/documents/$id'
@@ -582,6 +618,7 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-landing'
     | '/api/creative-studio/generate-logos'
     | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
@@ -599,6 +636,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AiImageDesignerRoute: typeof AiImageDesignerRoute
   AiImageGeneratorRoute: typeof AiImageGeneratorRoute
+  AiLandingPageCreatorRoute: typeof AiLandingPageCreatorRoute
   AiLogoDesignerRoute: typeof AiLogoDesignerRoute
   AiProductVideoGeneratorRoute: typeof AiProductVideoGeneratorRoute
   FeaturesRoute: typeof FeaturesRoute
@@ -614,6 +652,7 @@ export interface RootRouteChildren {
   ApiUploadRoute: typeof ApiUploadRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
+  CreativeStudioLandingRoute: typeof CreativeStudioLandingRoute
   CreativeStudioLogoRoute: typeof CreativeStudioLogoRoute
   CreativeStudioVideoRoute: typeof CreativeStudioVideoRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
@@ -630,6 +669,7 @@ export interface RootRouteChildren {
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ApiCreativeStudioGenerateRoute: typeof ApiCreativeStudioGenerateRoute
+  ApiCreativeStudioGenerateLandingRoute: typeof ApiCreativeStudioGenerateLandingRoute
   ApiCreativeStudioGenerateLogosRoute: typeof ApiCreativeStudioGenerateLogosRoute
   ApiCreativeStudioGenerateVideoRoute: typeof ApiCreativeStudioGenerateVideoRoute
   ApiCreativeStudioRegenerateRoute: typeof ApiCreativeStudioRegenerateRoute
@@ -725,6 +765,13 @@ declare module '@tanstack/react-router' {
       path: '/ai-logo-designer'
       fullPath: '/ai-logo-designer'
       preLoaderRoute: typeof AiLogoDesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-landing-page-creator': {
+      id: '/ai-landing-page-creator'
+      path: '/ai-landing-page-creator'
+      fullPath: '/ai-landing-page-creator'
+      preLoaderRoute: typeof AiLandingPageCreatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-image-generator': {
@@ -874,6 +921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreativeStudioLogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/creative-studio/landing': {
+      id: '/creative-studio/landing'
+      path: '/creative-studio/landing'
+      fullPath: '/creative-studio/landing'
+      preLoaderRoute: typeof CreativeStudioLandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -965,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCreativeStudioGenerateLogosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/creative-studio/generate-landing': {
+      id: '/api/creative-studio/generate-landing'
+      path: '/api/creative-studio/generate-landing'
+      fullPath: '/api/creative-studio/generate-landing'
+      preLoaderRoute: typeof ApiCreativeStudioGenerateLandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/creative-studio/generate': {
       id: '/api/creative-studio/generate'
       path: '/api/creative-studio/generate'
@@ -995,6 +1056,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AiImageDesignerRoute: AiImageDesignerRoute,
   AiImageGeneratorRoute: AiImageGeneratorRoute,
+  AiLandingPageCreatorRoute: AiLandingPageCreatorRoute,
   AiLogoDesignerRoute: AiLogoDesignerRoute,
   AiProductVideoGeneratorRoute: AiProductVideoGeneratorRoute,
   FeaturesRoute: FeaturesRoute,
@@ -1010,6 +1072,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUploadRoute: ApiUploadRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
+  CreativeStudioLandingRoute: CreativeStudioLandingRoute,
   CreativeStudioLogoRoute: CreativeStudioLogoRoute,
   CreativeStudioVideoRoute: CreativeStudioVideoRoute,
   DocumentsIdRoute: DocumentsIdRoute,
@@ -1026,6 +1089,7 @@ const rootRouteChildren: RootRouteChildren = {
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ApiCreativeStudioGenerateRoute: ApiCreativeStudioGenerateRoute,
+  ApiCreativeStudioGenerateLandingRoute: ApiCreativeStudioGenerateLandingRoute,
   ApiCreativeStudioGenerateLogosRoute: ApiCreativeStudioGenerateLogosRoute,
   ApiCreativeStudioGenerateVideoRoute: ApiCreativeStudioGenerateVideoRoute,
   ApiCreativeStudioRegenerateRoute: ApiCreativeStudioRegenerateRoute,

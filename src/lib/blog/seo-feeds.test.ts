@@ -8,9 +8,11 @@ describe('seo feeds', () => {
   it('includes Kixi tools in llm.txt', () => {
     const text = generateLlmTxt()
     expect(text).toContain('# Kixi')
+    expect(text).toContain('AI Landing Page Creator')
     expect(text).toContain('AI Logo Designer')
     expect(text).toContain('AI Product Video Generator')
     expect(text).toContain('AI Image Designer')
+    expect(text).toContain('/ai-landing-page-creator')
     expect(text).toContain('/ai-logo-designer')
     expect(text).toContain('/ai-image-designer')
   })
@@ -22,6 +24,7 @@ describe('seo feeds', () => {
 
   it('lists tool pages in the sitemap', async () => {
     const xml = await generateSitemapXml()
+    expect(xml).toContain('/ai-landing-page-creator')
     expect(xml).toContain('/ai-logo-designer')
     expect(xml).toContain('/ai-product-video-generator')
     expect(xml).toContain('/ai-image-designer')
@@ -32,6 +35,7 @@ describe('seo feeds', () => {
     const xml = await generateRssXml()
     expect(xml).toContain('<rss version="2.0"')
     expect(xml).toContain('Kixi')
+    expect(xml).toContain('/ai-landing-page-creator')
     expect(xml).toContain('/rss.xml')
   })
 })

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Clapperboard, Hexagon, ImageIcon } from 'lucide-react'
+import { Clapperboard, Hexagon, ImageIcon, LayoutTemplate } from 'lucide-react'
 
 import { LandingCtaSection } from '#/components/landing/landing-cta-section'
 import {
@@ -14,6 +14,7 @@ import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
 import { buildPageHead } from '#/lib/blog/seo'
 
 const STUDIO_ITEMS = [
+  { icon: LayoutTemplate, label: 'AI landing page creator — themed React, Vite, Next.js, or HTML' },
   { icon: Hexagon, label: 'AI logo designer — original SVG marks in 24 styles' },
   { icon: Clapperboard, label: 'AI product video generator — short MP4 clips from stills' },
   { icon: ImageIcon, label: 'AI image generator — marketplace stills from 1–3 photos' },
@@ -23,7 +24,7 @@ export const Route = createFileRoute('/about')({
   head: () =>
     buildPageHead({
       title: `About | ${APP_NAME} — ${APP_TAGLINE}`,
-      description: `${APP_NAME} is a creative studio for designers: AI logos, product videos, and images in one workspace.`,
+      description: `${APP_NAME} is a creative studio for designers: AI landing pages, logos, product videos, and images in one workspace.`,
       path: '/about',
       image: '/hero-banner.png',
     }),
@@ -79,7 +80,7 @@ function AboutPage() {
                 <Hexagon className="size-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="mt-6 text-lg font-semibold text-foreground">
-                Three studios, one workspace
+                Four studios, one workspace
               </h3>
               <ul className="mt-4 space-y-3">
                 {STUDIO_ITEMS.map((item) => (

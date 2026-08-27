@@ -2,6 +2,7 @@ import {
   Clapperboard,
   Hexagon,
   ImageIcon,
+  LayoutTemplate,
   Palette,
   Sparkles,
   WandSparkles,
@@ -27,16 +28,16 @@ export const LANDING_LEGAL_LINKS = [
 ] as const
 
 export const HERO_HOME_STATS = [
-  { value: '3 tools', label: 'Logo · video · image' },
+  { value: '4 tools', label: 'Landing · logo · video · image' },
   { value: '24', label: 'Logo styles at once' },
   { value: '1 brief', label: 'In → files you can ship' },
 ] as const
 
 export const LANDING_STATS = [
+  { value: 'Landing', label: 'Themed React pages' },
   { value: 'Logo', label: 'AI vector designer' },
   { value: 'Video', label: 'Product clips' },
   { value: 'Image', label: 'Listing stills' },
-  { value: 'Free', label: 'Live demo to try' },
 ] as const
 
 export interface LandingFeature {
@@ -46,6 +47,12 @@ export interface LandingFeature {
 }
 
 export const LANDING_FEATURES: LandingFeature[] = [
+  {
+    icon: LayoutTemplate,
+    title: 'AI landing page creator',
+    description:
+      'Describe the product, pick a design theme, and generate multiple React + Tailwind + Lucide variants. Download a Vite or Next.js repo, or convert to HTML.',
+  },
   {
     icon: Hexagon,
     title: 'AI logo designer',
@@ -74,13 +81,13 @@ export const LANDING_FEATURES: LandingFeature[] = [
     icon: Sparkles,
     title: 'Variants, not one-offs',
     description:
-      'Compare 3–10 image variants, 24 logo styles, or a focused product clip — then keep the one that fits the brand.',
+      'Compare 3–10 landing page layouts, 24 logo styles, or a focused product clip — then keep the one that fits the brand.',
   },
   {
     icon: WandSparkles,
     title: 'Files designers already use',
     description:
-      'Download logos as SVG or raster, stills as PNG/JPEG/GIF/SVG, and videos as MP4 — without a separate export pipeline.',
+      'Download landing pages as Vite, Next.js, or HTML; logos as SVG or raster; stills as PNG/JPEG/GIF/SVG; and videos as MP4 — without a separate export pipeline.',
   },
 ]
 
@@ -89,7 +96,7 @@ export const LANDING_STEPS = [
     step: '01',
     title: 'Open a studio',
     description:
-      'Choose AI logo designer, product video, or image generation — same workspace, same Kixi theme.',
+      'Choose AI landing pages, logo designer, product video, or image generation — same workspace, same Kixi theme.',
   },
   {
     step: '02',
@@ -101,13 +108,13 @@ export const LANDING_STEPS = [
     step: '03',
     title: 'Generate',
     description:
-      'Kixi runs the selected tool — 24 logo styles, a short product clip, or a set of marketplace stills.',
+      'Kixi runs the selected tool — themed landing page variants, 24 logo styles, a short product clip, or a set of marketplace stills.',
   },
   {
     step: '04',
     title: 'Download and ship',
     description:
-      'Export SVG, PNG, JPEG, GIF, or MP4 and drop the files into your listing, brand kit, or edit stack.',
+      'Export a landing-page repo, SVG, PNG, JPEG, GIF, or MP4 and drop the files into your listing, brand kit, or edit stack.',
   },
 ] as const
 
@@ -128,10 +135,10 @@ export const LANDING_PRICING_TIERS: PricingTier[] = [
     period: 'per month',
     description: 'Try every Kixi studio with the live demo.',
     features: [
+      'AI landing page creator (React / HTML)',
       'AI logo designer (SVG styles)',
       'AI product video generator',
       'AI image designer for listings',
-      'Downloads in common design formats',
     ],
     cta: 'Open Kixi',
   },
@@ -168,12 +175,12 @@ export const LANDING_FAQ = [
   {
     question: 'What is Kixi?',
     answer:
-      'Kixi is a creative studio for designers. It includes an AI logo designer, an AI product video generator, and an AI image designer in one workspace.',
+      'Kixi is a creative studio for designers. It includes an AI landing page creator, an AI logo designer, an AI product video generator, and an AI image designer in one workspace.',
   },
   {
     question: 'Do I need a credit card to try it?',
     answer:
-      'No. Open the live demo and generate logos, product videos, or images. Paid plans will unlock higher limits when checkout ships.',
+      'No. Open the live demo and generate landing pages, logos, product videos, or images. Paid plans will unlock higher limits when checkout ships.',
   },
   {
     question: 'Can I upload images as logo inspiration?',
@@ -183,6 +190,6 @@ export const LANDING_FAQ = [
   {
     question: 'What files can I download?',
     answer:
-      'Logos as SVG, PNG, JPEG, or a simple mark. Stills as PNG, JPEG, GIF, or SVG. Product videos as MP4.',
+      'Landing pages as a Vite or Next.js repo, or a Tailwind HTML file. Logos as SVG, PNG, JPEG, or a simple mark. Stills as PNG, JPEG, GIF, or SVG. Product videos as MP4.',
   },
 ] as const

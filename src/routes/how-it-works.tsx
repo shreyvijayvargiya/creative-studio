@@ -20,9 +20,9 @@ const WORKFLOW_STEPS: WorkflowStepItem[] = LANDING_STEPS.map((step, index) => ({
   ...step,
   extra:
     index === 1
-      ? 'A prompt is enough. Add a brand name for logos, or drop in 1–3 images as inspiration for logos, clips, and stills.'
+      ? 'A prompt is enough. Add a brand name for logos, pick a design theme for landing pages, or drop in images as inspiration.'
       : index === 2
-        ? 'Logo runs 24 styles in parallel. Video returns one short MP4. Images return 3–10 variants at the canvas you picked.'
+        ? 'Landing pages return 3–10 themed variants. Logo runs 24 styles in parallel. Video returns one short MP4. Images return 3–10 variants at the canvas you picked.'
         : undefined,
 }))
 
@@ -38,7 +38,7 @@ export const Route = createFileRoute('/how-it-works')({
   head: () =>
     buildPageHead({
       title: `How It Works | ${APP_NAME} ${APP_TAGLINE}`,
-      description: `See how ${APP_NAME} turns a brief into logos, product videos, and images — upload or describe, generate, download.`,
+      description: `See how ${APP_NAME} turns a brief into landing pages, logos, product videos, and images — upload or describe, generate, download.`,
       path: '/how-it-works',
       image: '/hero-banner.png',
     }),

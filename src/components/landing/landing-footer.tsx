@@ -15,8 +15,8 @@ export function LandingFooter() {
           <div className="space-y-4">
             <LandingLogo />
             <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-              {APP_NAME} is a {APP_TAGLINE.toLowerCase()} — AI logo designer, AI
-              product video generator, and AI image generator in one workspace.
+              {APP_NAME} is a {APP_TAGLINE.toLowerCase()} — AI landing pages, logos, product
+              videos, and images in one workspace.
             </p>
           </div>
 
