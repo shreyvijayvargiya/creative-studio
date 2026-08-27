@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Cloud, FileCheck, Shield } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 import { LandingCtaSection } from '#/components/landing/landing-cta-section'
@@ -9,14 +8,12 @@ import {
   LandingSectionHeading,
 } from '#/components/landing/landing-section-heading'
 import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { buildPageHead } from '#/lib/blog/seo'
+import { MARKETING_CAPABILITIES } from '#/lib/marketing/tools'
 import { cn } from '#/lib/utils'
 
 const FEATURE_STYLES = [
-  {
-    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-  },
   {
     iconBg: 'bg-fuchsia-100 dark:bg-fuchsia-950/50',
     iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
@@ -24,6 +21,10 @@ const FEATURE_STYLES = [
   {
     iconBg: 'bg-orange-100 dark:bg-orange-950/50',
     iconColor: 'text-orange-600 dark:text-orange-400',
+  },
+  {
+    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
+    iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
     iconBg: 'bg-emerald-100 dark:bg-emerald-950/50',
@@ -36,36 +37,6 @@ const FEATURE_STYLES = [
   {
     iconBg: 'bg-amber-100 dark:bg-amber-950/50',
     iconColor: 'text-amber-600 dark:text-amber-400',
-  },
-] as const
-
-const PROFESSIONAL_HIGHLIGHTS = [
-  {
-    number: '01',
-    icon: FileCheck,
-    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    title: 'Audit-friendly exports',
-    description:
-      'Generate PDFs with structured taxpayer data and budget summaries suitable for review and filing preparation.',
-  },
-  {
-    number: '02',
-    icon: Shield,
-    iconBg: 'bg-fuchsia-100 dark:bg-fuchsia-950/50',
-    iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
-    title: 'Client-ready sharing',
-    description:
-      'PIN-protected links let you share documents without exposing your full workspace or storage bucket.',
-  },
-  {
-    number: '03',
-    icon: Cloud,
-    iconBg: 'bg-emerald-100 dark:bg-emerald-950/50',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    title: 'Your cloud, your quota',
-    description:
-      'Google Drive sync uses the connected user account — not a shared service account with storage limits.',
   },
 ] as const
 
@@ -112,59 +83,15 @@ function CapabilityCard({
   )
 }
 
-function ProfessionalHighlightCard({
-  number,
-  icon: Icon,
-  iconBg,
-  iconColor,
-  title,
-  description,
-}: {
-  number: string
-  icon: LucideIcon
-  iconBg: string
-  iconColor: string
-  title: string
-  description: string
-}) {
-  return (
-    <article className="relative rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute top-4 right-5 text-4xl font-bold leading-none text-muted-foreground/15"
-      >
-        {number}
-      </span>
-
-      <div
-        className={cn(
-          'flex size-12 items-center justify-center rounded-xl',
-          iconBg,
-        )}
-      >
-        <Icon className={cn('size-6', iconColor)} strokeWidth={1.75} />
-      </div>
-
-      <h3 className="relative mt-6 text-lg font-semibold text-foreground">
-        {title}
-      </h3>
-      <p className="relative mt-2 text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-    </article>
-  )
-}
-
 export const Route = createFileRoute('/features')({
-  head: () => ({
-    meta: buildPageMetaTags({
-      title: 'Features | Creative Studio — AI Ecommerce Creatives',
+  head: () =>
+    buildPageHead({
+      title: `Features | ${APP_NAME} — ${APP_TAGLINE}`,
       description:
-        'Upload a product photo and generate marketplace-ready assets for Etsy, Shopify, Instagram, and Pinterest with styles, colour palettes, and platform sizes.',
+        'AI logo designer, AI product video generator, and AI image generator in one Kixi workspace for designers.',
       path: '/features',
       image: '/hero-banner.png',
     }),
-  }),
   component: FeaturesPage,
 })
 
@@ -175,12 +102,12 @@ function FeaturesPage() {
         eyebrow="Features"
         title={
           <>
-            Built for accounting{' '}
-            <LandingGradientText>workflows</LandingGradientText>, not generic CRMs
+            A creative studio for{' '}
+            <LandingGradientText>designers</LandingGradientText>
           </>
         }
-        description="Every feature maps to a real step in client engagement — from initial budget planning through to signed, stored, and shareable tax documents."
-        primaryCta={{ label: 'Start free', href: '/dashboard' }}
+        description={`${APP_NAME} combines an AI logo designer, an AI product video generator, and an AI image generator so you can ship files — not a pile of prompts.`}
+        primaryCta={{ label: `Open ${APP_NAME}`, href: '/ai-image-designer' }}
       />
 
       <section className="bg-background py-12 sm:py-20 lg:py-24">
@@ -189,11 +116,11 @@ function FeaturesPage() {
             eyebrow="Capabilities"
             title={
               <>
-                Core tools for{' '}
-                <LandingGradientText>modern practices</LandingGradientText>
+                Core tools in{' '}
+                <LandingGradientText>{APP_NAME}</LandingGradientText>
               </>
             }
-            description="A focused toolkit for bookkeepers, tax agents, and small business advisers."
+            description="Three generation studios plus the controls designers actually use: palettes, canvases, variants, and downloads."
           />
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -220,19 +147,27 @@ function FeaturesPage() {
       <section className="bg-muted/30 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
-            eyebrow="For professionals"
+            eyebrow="For designers"
             title={
               <>
-                Designed for teams who value{' '}
-                <LandingGradientText>precision</LandingGradientText>
+                Built to{' '}
+                <LandingGradientText>ship files</LandingGradientText>
               </>
             }
-            description="High contrast, minimal chrome, and generous whitespace keep focus on the numbers and documents that matter."
+            description="Same theme and layout across logo, video, and image — so you stay in flow."
           />
 
           <div className="grid gap-5 md:grid-cols-3">
-            {PROFESSIONAL_HIGHLIGHTS.map((item) => (
-              <ProfessionalHighlightCard key={item.title} {...item} />
+            {MARKETING_CAPABILITIES.map((item, index) => (
+              <CapabilityCard
+                key={item.title}
+                number={String(index + 1).padStart(2, '0')}
+                icon={item.icon}
+                iconBg={FEATURE_STYLES[index]!.iconBg}
+                iconColor={FEATURE_STYLES[index]!.iconColor}
+                title={item.title}
+                description={item.description}
+              />
             ))}
           </div>
         </div>
@@ -241,13 +176,14 @@ function FeaturesPage() {
       <LandingCtaSection
         title={
           <>
-            See the features in your own{' '}
-            <span className="text-blue-600 dark:text-blue-400">workspace</span>
+            See the tools in{' '}
+            <span className="text-blue-600 dark:text-blue-400">{APP_NAME}</span>
           </>
         }
-        description="Sign up free and walk through the budget planner, PDF generation, and signing flow today."
+        description="Open the live demo and generate a logo, a product clip, or marketplace stills."
         benefits={[]}
-        primaryLabel="Get started free"
+        primaryLabel={`Open ${APP_NAME}`}
+        primaryHref="/ai-image-designer"
       />
     </>
   )

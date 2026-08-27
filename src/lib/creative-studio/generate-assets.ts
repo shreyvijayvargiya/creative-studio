@@ -39,7 +39,7 @@ function getImageModelConfig() {
       process.env.OPENROUTER_IMAGE_MODEL?.trim() ||
       'google/gemini-2.5-flash-image',
     siteUrl: process.env.APP_URL?.trim() ?? 'http://localhost:3000',
-    siteName: 'Creative Studio',
+    siteName: 'Kixi',
   }
 }
 

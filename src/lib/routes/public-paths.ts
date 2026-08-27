@@ -18,6 +18,11 @@ export const AUTH_EXEMPT_PATHS = [
   '/api/paypal/webhook',
   '/api/email/send',
   '/api/upload',
+  '/sitemap.xml',
+  '/rss.xml',
+  '/llm.txt',
+  '/llms.txt',
+  '/robots.txt',
 ] as const
 
 export type PublicPath = (typeof PUBLIC_PATHS)[number]

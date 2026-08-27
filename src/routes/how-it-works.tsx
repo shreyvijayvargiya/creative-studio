@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Cloud, HardDrive, LayoutDashboard } from 'lucide-react'
 
 import { LANDING_STEPS } from '#/components/landing/landing-content'
 import { LandingCtaSection } from '#/components/landing/landing-cta-section'
@@ -12,53 +11,37 @@ import {
   LandingWorkflowSection,
   type WorkflowStepItem,
 } from '#/components/landing/landing-workflow-section'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { buildPageHead } from '#/lib/blog/seo'
+import { MARKETING_TOOLS } from '#/lib/marketing/tools'
 import { cn } from '#/lib/utils'
 
 const WORKFLOW_STEPS: WorkflowStepItem[] = LANDING_STEPS.map((step, index) => ({
   ...step,
   extra:
     index === 1
-      ? 'Capture income, expenses, and taxpayer details in a spreadsheet-style grid with ATO-oriented fields.'
+      ? 'A prompt is enough. Add a brand name for logos, or drop in 1–3 images as inspiration for logos, clips, and stills.'
       : index === 2
-        ? 'DocuSeal embeds directly in the app so clients sign without leaving your branded experience.'
+        ? 'Logo runs 24 styles in parallel. Video returns one short MP4. Images return 3–10 variants at the canvas you picked.'
         : undefined,
 }))
 
-const AFTER_SIGNING = [
-  {
-    number: '01',
-    icon: LayoutDashboard,
-    iconBg: 'bg-blue-100 dark:bg-blue-950/50',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    text: 'Document appears in your dashboard with created date and type.',
-  },
-  {
-    number: '02',
-    icon: HardDrive,
-    iconBg: 'bg-orange-100 dark:bg-orange-950/50',
-    iconColor: 'text-orange-600 dark:text-orange-400',
-    text: 'Optional PIN protection when sharing a view link externally.',
-  },
-  {
-    number: '03',
-    icon: Cloud,
-    iconBg: 'bg-emerald-100 dark:bg-emerald-950/50',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    text: 'Google Drive backup uses your connected account and storage quota.',
-  },
-] as const
+const TOOL_OUTCOMES = MARKETING_TOOLS.map((tool, index) => ({
+  number: String(index + 1).padStart(2, '0'),
+  icon: tool.icon,
+  iconBg: tool.iconBg,
+  iconColor: tool.iconColor,
+  text: `${tool.name}: ${tool.highlights[0]}.`,
+}))
 
 export const Route = createFileRoute('/how-it-works')({
-  head: () => ({
-    meta: buildPageMetaTags({
-      title: 'How It Works | Creative Studio AI Asset Workflow',
-      description:
-        'See how Creative Studio turns one product photo into Etsy, Shopify, Instagram, and Pinterest creatives in a few steps — upload, choose format, generate, download.',
+  head: () =>
+    buildPageHead({
+      title: `How It Works | ${APP_NAME} ${APP_TAGLINE}`,
+      description: `See how ${APP_NAME} turns a brief into logos, product videos, and images — upload or describe, generate, download.`,
       path: '/how-it-works',
       image: '/hero-banner.png',
     }),
-  }),
   component: HowItWorksPage,
 })
 
@@ -69,12 +52,12 @@ function HowItWorksPage() {
         eyebrow="How it works"
         title={
           <>
-            A clear path from budget to{' '}
-            <LandingGradientText>signed document</LandingGradientText>
+            Brief in.{' '}
+            <LandingGradientText>Files out.</LandingGradientText>
           </>
         }
-        description="Creative Studio connects upload, style, marketplace formats, and download in one continuous workflow — designed for ecommerce brands and sellers."
-        primaryCta={{ label: 'Try the demo', href: '/creative-studio' }}
+        description={`${APP_NAME} connects prompt, optional references, generation, and download for logos, product videos, and images.`}
+        primaryCta={{ label: `Open ${APP_NAME}`, href: '/ai-image-designer' }}
       />
 
       <LandingWorkflowSection
@@ -85,7 +68,7 @@ function HowItWorksPage() {
             <LandingGradientText>workflow</LandingGradientText>
           </>
         }
-        description="Each step builds on the last. No exports to mystery folders or manual uploads."
+        description="Each step is the same across tools so you can switch studios without relearning the UI."
         steps={WORKFLOW_STEPS}
         showCta={false}
       />
@@ -93,18 +76,18 @@ function HowItWorksPage() {
       <section className="bg-muted/30 py-12 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <LandingSectionHeading
-            eyebrow="After signing"
+            eyebrow="What you download"
             title={
               <>
-                What happens{' '}
-                <LandingGradientText>after signing?</LandingGradientText>
+                Three tools,{' '}
+                <LandingGradientText>three file types</LandingGradientText>
               </>
             }
-            description="Completed documents are saved to your private document library. Connect Google Drive in Settings to mirror signed PDFs automatically."
+            description="Vector logos, short MP4 clips, and marketplace stills — ready for a brand kit or a listing."
           />
 
           <div className="grid gap-5 md:grid-cols-3">
-            {AFTER_SIGNING.map((item) => (
+            {TOOL_OUTCOMES.map((item) => (
               <article
                 key={item.number}
                 className="relative rounded-2xl border border-border/60 bg-card p-5 shadow-sm sm:p-6"
@@ -142,9 +125,10 @@ function HowItWorksPage() {
             <span className="text-blue-600 dark:text-blue-400">yourself</span>
           </>
         }
-        description="Open the budget planner, generate a PDF, and see how signing and storage fit together."
+        description={`Open ${APP_NAME} and generate a logo, a product clip, or a set of stills.`}
         benefits={[]}
-        primaryLabel="Try it free"
+        primaryLabel={`Open ${APP_NAME}`}
+        primaryHref="/ai-image-designer"
       />
     </>
   )

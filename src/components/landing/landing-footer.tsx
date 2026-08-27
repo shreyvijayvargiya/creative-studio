@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router'
 
 import { LANDING_LEGAL_LINKS, LANDING_NAV_LINKS } from '#/components/landing/landing-content'
 import { LandingLogo } from '#/components/landing/landing-logo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { MARKETING_TOOLS } from '#/lib/marketing/tools'
 
 export function LandingFooter() {
   const year = new Date().getFullYear()
@@ -13,9 +15,8 @@ export function LandingFooter() {
           <div className="space-y-4">
             <LandingLogo />
             <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-              {/* DEMO: was Finance CRM accounting blurb */}
-              AI creative studio for ecommerce brands — turn one product photo into
-              Etsy, Shopify, Instagram, and Pinterest assets.
+              {APP_NAME} is a {APP_TAGLINE.toLowerCase()} — AI logo designer, AI
+              product video generator, and AI image generator in one workspace.
             </p>
           </div>
 
@@ -24,9 +25,10 @@ export function LandingFooter() {
               <p className="landing-label mb-3 text-foreground">Product</p>
               <ul className="space-y-2">
                 {LANDING_NAV_LINKS.map((link) => (
-                  <li key={link.href}>
+                  <li key={`${link.href}-${link.label}`}>
                     <Link
                       to={link.href}
+                      hash={'hash' in link ? link.hash : undefined}
                       className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {link.label}
@@ -36,25 +38,18 @@ export function LandingFooter() {
               </ul>
             </div>
             <div>
-              <p className="landing-label mb-3 text-foreground">App</p>
+              <p className="landing-label mb-3 text-foreground">Tools</p>
               <ul className="space-y-2">
-                {/* DEMO: was Dashboard / Budget / Documents */}
-                <li>
-                  <Link
-                    to="/creative-studio"
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Creative Studio
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/pricing"
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Pricing
-                  </Link>
-                </li>
+                {MARKETING_TOOLS.map((tool) => (
+                  <li key={tool.id}>
+                    <Link
+                      to={tool.path}
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {tool.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="col-span-2 sm:col-span-1">
@@ -70,14 +65,31 @@ export function LandingFooter() {
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href="/rss.xml"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    RSS
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/sitemap.xml"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Sitemap
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:mt-10 sm:flex-row">
-          {/* DEMO: was Finance CRM copyright */}
-          <p>© {year} Creative Studio. AI assets for ecommerce brands.</p>
+          <p>
+            © {year} {APP_NAME}. {APP_TAGLINE}.
+          </p>
           <div className="flex items-center gap-4">
             {LANDING_LEGAL_LINKS.map((link) => (
               <Link

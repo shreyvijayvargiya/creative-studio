@@ -8,18 +8,17 @@ import {
 } from '#/components/landing/landing-section-heading'
 import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
 import { PricingCard } from '#/components/landing/pricing-card'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { buildPageHead } from '#/lib/blog/seo'
 
 export const Route = createFileRoute('/pricing')({
-  head: () => ({
-    meta: buildPageMetaTags({
-      title: 'Pricing | Creative Studio — Plans for Ecommerce Brands',
-      description:
-        'Simple pricing for AI product creatives. Start with the live demo, then scale with per-image or full-app plans for Etsy, Shopify, and social assets.',
+  head: () =>
+    buildPageHead({
+      title: `Pricing | ${APP_NAME} — ${APP_TAGLINE}`,
+      description: `Simple plans for ${APP_NAME}. Try the AI logo designer, product video generator, and image generator free, then scale when you need more volume.`,
       path: '/pricing',
       image: '/hero-banner.png',
     }),
-  }),
   component: PricingPage,
 })
 
@@ -57,11 +56,11 @@ function PricingPage() {
         title={
           <>
             Start free. Upgrade when your{' '}
-            <LandingGradientText>practice grows</LandingGradientText>.
+            <LandingGradientText>studio grows</LandingGradientText>.
           </>
         }
-        description="Transparent plans for solo bookkeepers and growing firms. Payment checkout via Stripe and PayPal will be added in a future release."
-        primaryCta={{ label: 'Get started free', href: '/dashboard' }}
+        description={`Transparent plans for designers using ${APP_NAME}. Payment checkout via Stripe and PayPal will be added in a future release.`}
+        primaryCta={{ label: `Open ${APP_NAME}`, href: '/ai-image-designer' }}
       />
 
       <section className="bg-background py-12 sm:py-20 lg:py-24">
@@ -74,7 +73,7 @@ function PricingPage() {
                 <LandingGradientText>plan</LandingGradientText> for you
               </>
             }
-            description="Start on the free tier today. Upgrade when you need Drive sync and higher limits."
+            description="Start on the free demo today. Upgrade when you need higher generation limits."
           />
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -114,9 +113,10 @@ function PricingPage() {
             <span className="text-blue-600 dark:text-blue-400">today</span>
           </>
         }
-        description="Create documents, sign PDFs, and explore the full workflow while paid plans roll out."
+        description={`Open ${APP_NAME} and generate a logo, product clip, or stills while paid plans roll out.`}
         benefits={[]}
-        primaryLabel="Create free account"
+        primaryLabel={`Open ${APP_NAME}`}
+        primaryHref="/ai-image-designer"
         footer="Free to start · Upgrade anytime"
       />
     </>

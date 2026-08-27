@@ -115,6 +115,7 @@ interface LandingWorkflowSectionProps {
   ctaLabel?: string
   ctaHref?: string
   layout?: 'bento' | 'list'
+  id?: string
 }
 
 export function LandingWorkflowSection({
@@ -126,9 +127,10 @@ export function LandingWorkflowSection({
   ctaLabel = 'Explore the full workflow',
   ctaHref = '/features',
   layout = 'bento',
+  id,
 }: LandingWorkflowSectionProps) {
   return (
-    <section className="relative bg-background py-12 sm:py-20 lg:py-28">
+    <section id={id} className="relative scroll-mt-24 bg-background py-12 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <LandingSectionHeading
           eyebrow={eyebrow}

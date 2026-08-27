@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 
 import { LANDING_LEGAL_LINKS } from '#/components/landing/landing-content'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { buildPageHead } from '#/lib/blog/seo'
 
 interface LegalSection {
   title: string
@@ -67,7 +67,5 @@ export function LegalPageContent({
 }
 
 export function legalPageHead(title: string, description: string, path: string) {
-  return {
-    meta: buildPageMetaTags({ title, description, path }),
-  }
+  return buildPageHead({ title, description, path })
 }

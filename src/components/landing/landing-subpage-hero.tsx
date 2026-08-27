@@ -18,7 +18,7 @@ export function LandingSubpageHero({
   eyebrow,
   title,
   description,
-  primaryCta = { label: 'Get started free', href: '/dashboard' },
+  primaryCta = { label: 'Open Kixi', href: '/ai-image-designer' },
   className,
 }: LandingSubpageHeroProps) {
   return (

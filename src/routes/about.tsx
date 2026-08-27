@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Database, FileSignature, Layers } from 'lucide-react'
+import { Clapperboard, Hexagon, ImageIcon } from 'lucide-react'
 
 import { LandingCtaSection } from '#/components/landing/landing-cta-section'
 import {
@@ -10,28 +10,23 @@ import { LandingSubpageHero } from '#/components/landing/landing-subpage-hero'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { buildPageHead } from '#/lib/blog/seo'
 
-const INFRA_ITEMS = [
-  { icon: Layers, label: 'TanStack Start for a fast, full-stack React experience' },
-  { icon: Database, label: 'Supabase for auth, database, and private file storage' },
-  { icon: FileSignature, label: 'DocuSeal for compliant embedded e-signing' },
-  {
-    icon: Database,
-    label: 'Per-user Google Drive OAuth for optional cloud backup',
-  },
+const STUDIO_ITEMS = [
+  { icon: Hexagon, label: 'AI logo designer — original SVG marks in 24 styles' },
+  { icon: Clapperboard, label: 'AI product video generator — short MP4 clips from stills' },
+  { icon: ImageIcon, label: 'AI image generator — marketplace stills from 1–3 photos' },
 ] as const
 
 export const Route = createFileRoute('/about')({
-  head: () => ({
-    meta: buildPageMetaTags({
-      title: 'About | Creative Studio — AI Creatives for Ecommerce',
-      description:
-        'Creative Studio helps ecommerce brands turn one product photo into marketplace-ready assets for Etsy, Shopify, Instagram, and Pinterest.',
+  head: () =>
+    buildPageHead({
+      title: `About | ${APP_NAME} — ${APP_TAGLINE}`,
+      description: `${APP_NAME} is a creative studio for designers: AI logos, product videos, and images in one workspace.`,
       path: '/about',
       image: '/hero-banner.png',
     }),
-  }),
   component: AboutPage,
 })
 
@@ -42,12 +37,12 @@ function AboutPage() {
         eyebrow="About"
         title={
           <>
-            AI creatives that{' '}
-            <LandingGradientText>sell your products</LandingGradientText>
+            {APP_NAME} is a{' '}
+            <LandingGradientText>{APP_TAGLINE.toLowerCase()}</LandingGradientText>
           </>
         }
-        description="We built Creative Studio for ecommerce brands who want marketplace-ready assets from a single product photo — without a design team on every listing."
-        primaryCta={{ label: 'Try Creative Studio', href: '/creative-studio' }}
+        description="We built Kixi so designers can generate logos, product videos, and product images without jumping between five tools."
+        primaryCta={{ label: `Open ${APP_NAME}`, href: '/ai-image-designer' }}
       />
 
       <section className="bg-background py-12 sm:py-20 lg:py-24">
@@ -63,13 +58,13 @@ function AboutPage() {
                     <LandingGradientText>built this</LandingGradientText>
                   </>
                 }
-                description="Sellers often juggle Canva, freelancers, and platform size guides. Creative Studio brings upload, style, formats, and download into one calm workflow."
+                description="Listing photos, brand marks, and short product clips usually live in different apps. Kixi keeps them in one studio with the same brief and downloads."
                 className="mb-6"
               />
               <p className="text-sm leading-7 text-muted-foreground">
-                The product focuses on ecommerce use cases — Etsy listings, Shopify
-                banners, Instagram posts, and Pinterest pins — without the noise of a
-                generic design suite. Every screen is designed for speed and clear output.
+                Each tool is opinionated: logos come back as original SVG, videos as a
+                short MP4, images as sized stills. Optional references are inspiration —
+                not a trace of a photograph.
               </p>
             </div>
 
@@ -81,13 +76,13 @@ function AboutPage() {
                 01
               </span>
               <div className="flex size-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50">
-                <Layers className="size-6 text-blue-600 dark:text-blue-400" />
+                <Hexagon className="size-6 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="mt-6 text-lg font-semibold text-foreground">
-                Built with modern infrastructure
+                Three studios, one workspace
               </h3>
               <ul className="mt-4 space-y-3">
-                {INFRA_ITEMS.map((item) => (
+                {STUDIO_ITEMS.map((item) => (
                   <li
                     key={item.label}
                     className="flex gap-3 text-sm leading-6 text-muted-foreground"
@@ -111,7 +106,7 @@ function AboutPage() {
                 Get in <LandingGradientText>touch</LandingGradientText>
               </>
             }
-            description="Questions about onboarding, features, or partnerships? Send a message — we'll respond within two business days."
+            description="Questions about the studios, partnerships, or the live demo? Send a message."
           />
 
           <form
@@ -132,7 +127,7 @@ function AboutPage() {
                 <Input
                   id="contact-email"
                   type="email"
-                  placeholder="you@practice.com.au"
+                  placeholder="you@studio.com"
                   className="h-11 rounded-full"
                 />
               </div>
@@ -141,7 +136,7 @@ function AboutPage() {
               <Label htmlFor="contact-message">Message</Label>
               <textarea
                 id="contact-message"
-                placeholder="Tell us about your practice or question..."
+                placeholder="Tell us about your project..."
                 className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-28 w-full rounded-2xl border px-4 py-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
               />
             </div>
@@ -152,7 +147,7 @@ function AboutPage() {
               Send message
             </Button>
             <p className="mt-3 text-xs text-muted-foreground">
-              This form is a preview. Wire to email or CRM in a future release.
+              This form is a preview. Wire to email in a future release.
             </p>
           </form>
         </div>
@@ -161,14 +156,14 @@ function AboutPage() {
       <LandingCtaSection
         title={
           <>
-            Join accounting teams{' '}
-            <span className="text-blue-600 dark:text-blue-400">
-              shipping faster
-            </span>
+            Open {APP_NAME} and{' '}
+            <span className="text-blue-600 dark:text-blue-400">start generating</span>
           </>
         }
-        description="Create a free demo and see how Creative Studio fits your product listing workflow."
+        description="Try the AI logo designer, product video generator, and image generator in the live demo."
         benefits={[]}
+        primaryLabel={`Open ${APP_NAME}`}
+        primaryHref="/ai-image-designer"
       />
     </>
   )

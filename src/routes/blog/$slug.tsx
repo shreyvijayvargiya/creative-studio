@@ -18,7 +18,7 @@ export const Route = createFileRoute('/blog/$slug')({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: 'Article not found | Creative Studio Blog' }] }
+      return { meta: [{ title: 'Article not found | Kixi Blog' }] }
     }
 
     return { meta: buildBlogPostMeta(loaderData) }

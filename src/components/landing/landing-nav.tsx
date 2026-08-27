@@ -6,6 +6,7 @@ import { LANDING_NAV_LINKS } from '#/components/landing/landing-content'
 import { LandingLogo } from '#/components/landing/landing-logo'
 import { ThemeToggleButton } from '#/components/layout/theme-toggle-button'
 import { Button } from '#/components/ui/button'
+import { APP_NAME, APP_STUDIO_HREF } from '#/lib/brand'
 import { cn } from '#/lib/utils'
 
 interface LandingNavProps {
@@ -22,15 +23,17 @@ export function LandingNav({ className }: LandingNavProps) {
         className,
       )}
     >
-      <div className="mx-auto flex h-12 items-center justify-between gap-2 rounded-full border border-border/60 bg-white dark:bg-zinc-900 px-3 shadow-lg shadow-blue-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-blue-500/20 sm:h-14 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-12 items-center justify-between gap-2 rounded-full border border-border/60 bg-white px-3 shadow-lg shadow-blue-500/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 dark:border-blue-500/20 dark:bg-zinc-900 sm:h-14 sm:gap-4 sm:px-6">
         <LandingLogo />
 
         <nav className="hidden items-center gap-4 md:flex">
           {LANDING_NAV_LINKS.map((link) => (
             <Link
-              key={link.href}
+              key={`${link.href}-${link.label}`}
               to={link.href}
+              hash={'hash' in link ? link.hash : undefined}
               className="text-sm font-medium text-secondary-foreground transition-colors hover:text-foreground"
+              activeOptions={{ exact: link.href === '/', includeHash: false }}
               activeProps={{ className: 'text-foreground' }}
             >
               {link.label}
@@ -44,7 +47,7 @@ export function LandingNav({ className }: LandingNavProps) {
             asChild
             className="h-9 rounded-full bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
           >
-            <Link to="/creative-studio">Try demo</Link>
+            <Link to={APP_STUDIO_HREF}>Open {APP_NAME}</Link>
           </Button>
         </div>
 
@@ -68,8 +71,9 @@ export function LandingNav({ className }: LandingNavProps) {
           <nav className="flex flex-col gap-1">
             {LANDING_NAV_LINKS.map((link) => (
               <Link
-                key={link.href}
+                key={`${link.href}-${link.label}`}
                 to={link.href}
+                hash={'hash' in link ? link.hash : undefined}
                 className="rounded-sm px-2 py-2 text-sm font-medium text-foreground hover:bg-muted"
                 onClick={() => setMobileOpen(false)}
               >
@@ -78,10 +82,12 @@ export function LandingNav({ className }: LandingNavProps) {
             ))}
           </nav>
           <div className="mt-4">
-            <Button asChild className="h-10 w-full rounded-full bg-blue-600 text-white hover:bg-blue-700">
-              {/* DEMO: was /dashboard Get started */}
-              <Link to="/creative-studio" onClick={() => setMobileOpen(false)}>
-                Try demo
+            <Button
+              asChild
+              className="h-10 w-full rounded-full bg-blue-600 text-white hover:bg-blue-700"
+            >
+              <Link to={APP_STUDIO_HREF} onClick={() => setMobileOpen(false)}>
+                Open {APP_NAME}
               </Link>
             </Button>
           </div>

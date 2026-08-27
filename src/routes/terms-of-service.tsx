@@ -8,8 +8,8 @@ import {
 export const Route = createFileRoute('/terms-of-service')({
   head: () =>
     legalPageHead(
-      'Terms of Service | Creative Studio',
-      'Terms governing your use of Creative Studio AI ecommerce creative tools and generated assets.',
+      'Terms of Service | Kixi',
+      'Terms governing your use of Kixi AI logo, product video, and image tools and generated assets.',
       '/terms-of-service',
     ),
   component: TermsOfServicePage,

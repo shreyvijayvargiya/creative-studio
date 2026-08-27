@@ -3,19 +3,18 @@ import { createFileRoute } from '@tanstack/react-router'
 import { BlogSearchList } from '#/components/blog/blog-search-list'
 import { LandingGradientText } from '#/components/landing/landing-section-heading'
 import { listBlogPosts } from '#/lib/server/list-blog-posts'
-import { buildPageMetaTags } from '#/lib/blog/seo'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
+import { buildPageHead } from '#/lib/blog/seo'
 
 export const Route = createFileRoute('/blog/')({
   loader: async () => listBlogPosts(),
-  head: () => ({
-    meta: buildPageMetaTags({
-      title: 'Blog | Creative Studio — Ecommerce Creative Insights',
-      description:
-        'Articles on AI product photography, marketplace creatives, Etsy and Shopify assets, and ecommerce brand workflows.',
+  head: () =>
+    buildPageHead({
+      title: `Blog | ${APP_NAME} — ${APP_TAGLINE}`,
+      description: `Notes on AI logos, product videos, marketplace images, and product updates from ${APP_NAME}.`,
       path: '/blog',
       image: '/hero-banner.png',
     }),
-  }),
   component: BlogPage,
 })
 
@@ -30,10 +29,10 @@ function BlogPage() {
             Blog
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-            Insights on AI product creatives, marketplace assets, and product
+            Insights on AI logos, product videos, marketplace images, and product
             updates from{' '}
             <span className="font-semibold text-blue-600 dark:text-blue-400">
-              Creative Studio
+              {APP_NAME}
             </span>
             .
           </p>
@@ -43,7 +42,7 @@ function BlogPage() {
 
         <p className="mt-12 text-center text-sm text-muted-foreground">
           More guides on{' '}
-          <LandingGradientText>modern practice delivery</LandingGradientText> coming
+          <LandingGradientText>AI design workflows</LandingGradientText> coming
           soon.
         </p>
       </div>

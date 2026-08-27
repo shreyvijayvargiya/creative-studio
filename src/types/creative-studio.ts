@@ -106,3 +106,58 @@ export interface GenerateCreativesResult {
   heightPx: number
   count: number
 }
+
+export type VideoAspectRatio = '16:9' | '9:16' | '1:1'
+export type VideoResolution = '720p' | '1080p'
+
+export interface VideoFormatMeta {
+  id: string
+  label: string
+  tagline: string
+  description: string
+  aspectRatio: VideoAspectRatio
+  durationSeconds: number
+  resolution: VideoResolution
+  generateAudio: boolean
+  /** Storyboard labels shown on the format card so sellers can picture the clip. */
+  beats: [string, string, string]
+  previewFrom: string
+  previewTo: string
+  /**
+   * Injected into the model as the format brief.
+   * Edit this markdown (or add a new VIDEO_FORMATS entry) to change AI behaviour.
+   */
+  aiPrompt: string
+}
+
+export interface GenerateCreativeVideoResult {
+  url: string
+  mediaType: string
+  model: string
+  formatId: string
+  durationSeconds: number
+  aspectRatio: VideoAspectRatio
+}
+
+export interface LogoStyleMeta {
+  id: string
+  label: string
+  tagline: string
+  previewFrom: string
+  previewTo: string
+  /** Injected into the model for this one mark. Add a new LOGO_STYLES entry to ship another style. */
+  aiPrompt: string
+}
+
+export interface GeneratedLogoVariant {
+  styleId: string
+  label: string
+  svg?: string
+  error?: string
+}
+
+export interface GenerateCreativeLogosResult {
+  logos: GeneratedLogoVariant[]
+  model: string
+  count: number
+}

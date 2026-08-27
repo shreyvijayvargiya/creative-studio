@@ -3,14 +3,14 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import {
   ArrowRight,
+  Clapperboard,
+  Hexagon,
   ImageIcon,
-  Instagram,
-  ShoppingBag,
   Sparkles,
-  Store,
 } from 'lucide-react'
 
 import { HERO_HOME_STATS } from '#/components/landing/landing-content'
+import { APP_NAME, APP_STUDIO_HREF, APP_TAGLINE } from '#/lib/brand'
 import { Button } from '#/components/ui/button'
 import { cn } from '#/lib/utils'
 
@@ -147,32 +147,31 @@ function HeroVisual() {
           entranceDelay={0.1}
         />
 
-        {/* DEMO: was Drive/ATO/E-sign/Budget floating cards */}
         <FloatingCard
-          icon={<Store className="size-5 text-orange-600 dark:text-orange-400" />}
-          title="Etsy listing"
-          subtitle="2000×2000 ready"
+          icon={<Hexagon className="size-5 text-fuchsia-600 dark:text-fuchsia-400" />}
+          title="AI logo designer"
+          subtitle="24 SVG styles"
           className="-top-20 -left-4 z-30 sm:-left-8"
           delay={0.45}
         />
         <FloatingCard
-          icon={<ShoppingBag className="size-5 text-emerald-600 dark:text-emerald-400" />}
-          title="Shopify banner"
-          subtitle="16:9 store hero"
+          icon={<Clapperboard className="size-5 text-orange-600 dark:text-orange-400" />}
+          title="Product video"
+          subtitle="Short MP4 clip"
           className="top-[28%] -left-6 z-30 sm:-left-10"
           delay={0}
         />
         <FloatingCard
-          icon={<Instagram className="size-5 text-pink-600 dark:text-pink-400" />}
-          title="Instagram post"
-          subtitle="4:5 feed ready"
+          icon={<ImageIcon className="size-5 text-blue-600 dark:text-blue-400" />}
+          title="AI images"
+          subtitle="Listing stills"
           className="right-0 bottom-[32%] z-30 sm:-right-6"
           delay={0.15}
         />
         <FloatingCard
-          icon={<ImageIcon className="size-5 text-blue-600 dark:text-blue-400" />}
-          title="AI styled"
-          subtitle="3–10 variants"
+          icon={<Sparkles className="size-5 text-blue-600 dark:text-blue-400" />}
+          title={APP_NAME}
+          subtitle={APP_TAGLINE}
           className="-bottom-2 left-[12%] z-30 sm:left-[8%]"
           delay={0.3}
         />
@@ -214,8 +213,7 @@ export function LandingHomeHero() {
             className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-blue-100/80 bg-blue-50/50 px-3 py-1.5 text-xs text-zinc-700 sm:mb-6 sm:px-4 sm:text-sm dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300"
           >
             <Sparkles className="size-4 shrink-0" />
-            {/* DEMO: was "Built for accounting practices" */}
-            AI creative studio for ecommerce brands
+            {APP_NAME} · {APP_TAGLINE}
           </motion.div>
 
           <motion.h1
@@ -224,10 +222,9 @@ export function LandingHomeHero() {
             transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl lg:text-6xl lg:leading-[1.1]"
           >
-            {/* DEMO: was accounting headline */}
-            One product photo.{' '}
-            <span className="text-blue-600 dark:text-blue-400">Marketplace</span>{' '}
-            creatives out.
+            Logos, product videos, and images —{' '}
+            <span className="text-blue-600 dark:text-blue-400">designed with AI</span>
+            .
           </motion.h1>
 
           <motion.p
@@ -236,11 +233,10 @@ export function LandingHomeHero() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="mt-4 text-sm leading-7 text-muted-foreground sm:mt-6 sm:text-base sm:leading-7 lg:text-lg"
           >
-            {/* DEMO: was ATO/budget copy */}
-            Generate Etsy, Shopify, Instagram, and Pinterest assets from a single
-            image — styles, colour palettes, and platform sizes built in.{' '}
+            Open {APP_NAME} and generate an original SVG logo, a short product clip,
+            or marketplace stills from a brief and optional references.{' '}
             <span className="font-semibold text-foreground">
-              Built for ecommerce brands.
+              Built for designers who ship files, not mood boards.
             </span>
           </motion.p>
 
@@ -256,14 +252,19 @@ export function LandingHomeHero() {
               className="h-11 w-full rounded-full bg-blue-600 px-6 text-sm font-medium text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700 sm:h-12 sm:w-auto sm:text-base"
             >
               {/* DEMO: was Link to="/dashboard" Get started free */}
-              <Link to="/creative-studio">
-                Try Creative Studio
+              <Link to={APP_STUDIO_HREF}>
+                Open {APP_NAME}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <p className="text-center text-xs text-muted-foreground sm:text-left sm:text-sm">
-              Live demo · Free to try
-            </p>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-11 w-full rounded-full px-6 text-sm sm:h-12 sm:w-auto sm:text-base"
+            >
+              <a href="#tools">See the tools</a>
+            </Button>
           </motion.div>
 
           <motion.div

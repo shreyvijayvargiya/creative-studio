@@ -11,10 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as LlmDottxtRouteImport } from './routes/llm[.]txt'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as AiProductVideoGeneratorRouteImport } from './routes/ai-product-video-generator'
+import { Route as AiLogoDesignerRouteImport } from './routes/ai-logo-designer'
+import { Route as AiImageGeneratorRouteImport } from './routes/ai-image-generator'
+import { Route as AiImageDesignerRouteImport } from './routes/ai-image-designer'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BlogRouteRouteImport } from './routes/blog/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -32,6 +40,8 @@ import { Route as CreativeStudioIndexRouteImport } from './routes/creative-studi
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as BankStatementsIndexRouteImport } from './routes/bank-statements/index'
 import { Route as DocumentsIdRouteImport } from './routes/documents/$id'
+import { Route as CreativeStudioVideoRouteImport } from './routes/creative-studio/video'
+import { Route as CreativeStudioLogoRouteImport } from './routes/creative-studio/logo'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthDriveCallbackRouteImport } from './routes/auth/drive-callback'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
@@ -43,6 +53,8 @@ import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhoo
 import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
 import { Route as ApiEmailSendRouteImport } from './routes/api/email/send'
 import { Route as ApiCreativeStudioRegenerateRouteImport } from './routes/api/creative-studio/regenerate'
+import { Route as ApiCreativeStudioGenerateVideoRouteImport } from './routes/api/creative-studio/generate-video'
+import { Route as ApiCreativeStudioGenerateLogosRouteImport } from './routes/api/creative-studio/generate-logos'
 import { Route as ApiCreativeStudioGenerateRouteImport } from './routes/api/creative-studio/generate'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
@@ -55,6 +67,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
@@ -65,6 +87,16 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmDottxtRoute = LlmDottxtRouteImport.update({
+  id: '/llm.txt',
+  path: '/llm.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
@@ -73,6 +105,26 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const FeaturesRoute = FeaturesRouteImport.update({
   id: '/features',
   path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiProductVideoGeneratorRoute = AiProductVideoGeneratorRouteImport.update({
+  id: '/ai-product-video-generator',
+  path: '/ai-product-video-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiLogoDesignerRoute = AiLogoDesignerRouteImport.update({
+  id: '/ai-logo-designer',
+  path: '/ai-logo-designer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiImageGeneratorRoute = AiImageGeneratorRouteImport.update({
+  id: '/ai-image-generator',
+  path: '/ai-image-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiImageDesignerRoute = AiImageDesignerRouteImport.update({
+  id: '/ai-image-designer',
+  path: '/ai-image-designer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -160,6 +212,16 @@ const DocumentsIdRoute = DocumentsIdRouteImport.update({
   path: '/documents/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreativeStudioVideoRoute = CreativeStudioVideoRouteImport.update({
+  id: '/creative-studio/video',
+  path: '/creative-studio/video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreativeStudioLogoRoute = CreativeStudioLogoRouteImport.update({
+  id: '/creative-studio/logo',
+  path: '/creative-studio/logo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -216,6 +278,18 @@ const ApiCreativeStudioRegenerateRoute =
     path: '/api/creative-studio/regenerate',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCreativeStudioGenerateVideoRoute =
+  ApiCreativeStudioGenerateVideoRouteImport.update({
+    id: '/api/creative-studio/generate-video',
+    path: '/api/creative-studio/generate-video',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCreativeStudioGenerateLogosRoute =
+  ApiCreativeStudioGenerateLogosRouteImport.update({
+    id: '/api/creative-studio/generate-logos',
+    path: '/api/creative-studio/generate-logos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCreativeStudioGenerateRoute =
   ApiCreativeStudioGenerateRouteImport.update({
     id: '/api/creative-studio/generate',
@@ -227,16 +301,26 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/ai-image-designer': typeof AiImageDesignerRoute
+  '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-logo-designer': typeof AiLogoDesignerRoute
+  '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/llm.txt': typeof LlmDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/pricing': typeof PricingRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/logo': typeof CreativeStudioLogoRoute
+  '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -252,6 +336,8 @@ export interface FileRoutesByFullPath {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
+  '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
@@ -263,16 +349,26 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-image-designer': typeof AiImageDesignerRoute
+  '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-logo-designer': typeof AiLogoDesignerRoute
+  '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/llm.txt': typeof LlmDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/pricing': typeof PricingRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/logo': typeof CreativeStudioLogoRoute
+  '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements': typeof BankStatementsIndexRoute
   '/blog': typeof BlogIndexRoute
@@ -288,6 +384,8 @@ export interface FileRoutesByTo {
   '/storage': typeof StorageIndexRoute
   '/users': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
+  '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
@@ -301,16 +399,26 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/ai-image-designer': typeof AiImageDesignerRoute
+  '/ai-image-generator': typeof AiImageGeneratorRoute
+  '/ai-logo-designer': typeof AiLogoDesignerRoute
+  '/ai-product-video-generator': typeof AiProductVideoGeneratorRoute
   '/features': typeof FeaturesRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/llm.txt': typeof LlmDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/pricing': typeof PricingRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/api/upload': typeof ApiUploadRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/drive-callback': typeof AuthDriveCallbackRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/creative-studio/logo': typeof CreativeStudioLogoRoute
+  '/creative-studio/video': typeof CreativeStudioVideoRoute
   '/documents/$id': typeof DocumentsIdRoute
   '/bank-statements/': typeof BankStatementsIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -326,6 +434,8 @@ export interface FileRoutesById {
   '/storage/': typeof StorageIndexRoute
   '/users/': typeof UsersIndexRoute
   '/api/creative-studio/generate': typeof ApiCreativeStudioGenerateRoute
+  '/api/creative-studio/generate-logos': typeof ApiCreativeStudioGenerateLogosRoute
+  '/api/creative-studio/generate-video': typeof ApiCreativeStudioGenerateVideoRoute
   '/api/creative-studio/regenerate': typeof ApiCreativeStudioRegenerateRoute
   '/api/email/send': typeof ApiEmailSendRoute
   '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
@@ -340,16 +450,26 @@ export interface FileRouteTypes {
     | '/'
     | '/blog'
     | '/about'
+    | '/ai-image-designer'
+    | '/ai-image-generator'
+    | '/ai-logo-designer'
+    | '/ai-product-video-generator'
     | '/features'
     | '/how-it-works'
+    | '/llm.txt'
+    | '/llms.txt'
     | '/pricing'
     | '/privacy-policy'
+    | '/robots.txt'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/logo'
+    | '/creative-studio/video'
     | '/documents/$id'
     | '/bank-statements/'
     | '/blog/'
@@ -365,6 +485,8 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-logos'
+    | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
@@ -376,16 +498,26 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/ai-image-designer'
+    | '/ai-image-generator'
+    | '/ai-logo-designer'
+    | '/ai-product-video-generator'
     | '/features'
     | '/how-it-works'
+    | '/llm.txt'
+    | '/llms.txt'
     | '/pricing'
     | '/privacy-policy'
+    | '/robots.txt'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/logo'
+    | '/creative-studio/video'
     | '/documents/$id'
     | '/bank-statements'
     | '/blog'
@@ -401,6 +533,8 @@ export interface FileRouteTypes {
     | '/storage'
     | '/users'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-logos'
+    | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
@@ -413,16 +547,26 @@ export interface FileRouteTypes {
     | '/'
     | '/blog'
     | '/about'
+    | '/ai-image-designer'
+    | '/ai-image-generator'
+    | '/ai-logo-designer'
+    | '/ai-product-video-generator'
     | '/features'
     | '/how-it-works'
+    | '/llm.txt'
+    | '/llms.txt'
     | '/pricing'
     | '/privacy-policy'
+    | '/robots.txt'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/api/upload'
     | '/auth/callback'
     | '/auth/drive-callback'
     | '/blog/$slug'
+    | '/creative-studio/logo'
+    | '/creative-studio/video'
     | '/documents/$id'
     | '/bank-statements/'
     | '/blog/'
@@ -438,6 +582,8 @@ export interface FileRouteTypes {
     | '/storage/'
     | '/users/'
     | '/api/creative-studio/generate'
+    | '/api/creative-studio/generate-logos'
+    | '/api/creative-studio/generate-video'
     | '/api/creative-studio/regenerate'
     | '/api/email/send'
     | '/api/paypal/webhook'
@@ -451,15 +597,25 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRouteRoute: typeof BlogRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AiImageDesignerRoute: typeof AiImageDesignerRoute
+  AiImageGeneratorRoute: typeof AiImageGeneratorRoute
+  AiLogoDesignerRoute: typeof AiLogoDesignerRoute
+  AiProductVideoGeneratorRoute: typeof AiProductVideoGeneratorRoute
   FeaturesRoute: typeof FeaturesRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  LlmDottxtRoute: typeof LlmDottxtRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   PricingRoute: typeof PricingRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
   ApiUploadRoute: typeof ApiUploadRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthDriveCallbackRoute: typeof AuthDriveCallbackRoute
+  CreativeStudioLogoRoute: typeof CreativeStudioLogoRoute
+  CreativeStudioVideoRoute: typeof CreativeStudioVideoRoute
   DocumentsIdRoute: typeof DocumentsIdRoute
   BankStatementsIndexRoute: typeof BankStatementsIndexRoute
   CreativeStudioIndexRoute: typeof CreativeStudioIndexRoute
@@ -474,6 +630,8 @@ export interface RootRouteChildren {
   StorageIndexRoute: typeof StorageIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ApiCreativeStudioGenerateRoute: typeof ApiCreativeStudioGenerateRoute
+  ApiCreativeStudioGenerateLogosRoute: typeof ApiCreativeStudioGenerateLogosRoute
+  ApiCreativeStudioGenerateVideoRoute: typeof ApiCreativeStudioGenerateVideoRoute
   ApiCreativeStudioRegenerateRoute: typeof ApiCreativeStudioRegenerateRoute
   ApiEmailSendRoute: typeof ApiEmailSendRoute
   ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
@@ -499,6 +657,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy-policy': {
       id: '/privacy-policy'
       path: '/privacy-policy'
@@ -513,6 +685,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llm.txt': {
+      id: '/llm.txt'
+      path: '/llm.txt'
+      fullPath: '/llm.txt'
+      preLoaderRoute: typeof LlmDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/how-it-works': {
       id: '/how-it-works'
       path: '/how-it-works'
@@ -525,6 +711,34 @@ declare module '@tanstack/react-router' {
       path: '/features'
       fullPath: '/features'
       preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-product-video-generator': {
+      id: '/ai-product-video-generator'
+      path: '/ai-product-video-generator'
+      fullPath: '/ai-product-video-generator'
+      preLoaderRoute: typeof AiProductVideoGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-logo-designer': {
+      id: '/ai-logo-designer'
+      path: '/ai-logo-designer'
+      fullPath: '/ai-logo-designer'
+      preLoaderRoute: typeof AiLogoDesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-image-generator': {
+      id: '/ai-image-generator'
+      path: '/ai-image-generator'
+      fullPath: '/ai-image-generator'
+      preLoaderRoute: typeof AiImageGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-image-designer': {
+      id: '/ai-image-designer'
+      path: '/ai-image-designer'
+      fullPath: '/ai-image-designer'
+      preLoaderRoute: typeof AiImageDesignerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -646,6 +860,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/creative-studio/video': {
+      id: '/creative-studio/video'
+      path: '/creative-studio/video'
+      fullPath: '/creative-studio/video'
+      preLoaderRoute: typeof CreativeStudioVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creative-studio/logo': {
+      id: '/creative-studio/logo'
+      path: '/creative-studio/logo'
+      fullPath: '/creative-studio/logo'
+      preLoaderRoute: typeof CreativeStudioLogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -723,6 +951,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCreativeStudioRegenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/creative-studio/generate-video': {
+      id: '/api/creative-studio/generate-video'
+      path: '/api/creative-studio/generate-video'
+      fullPath: '/api/creative-studio/generate-video'
+      preLoaderRoute: typeof ApiCreativeStudioGenerateVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/creative-studio/generate-logos': {
+      id: '/api/creative-studio/generate-logos'
+      path: '/api/creative-studio/generate-logos'
+      fullPath: '/api/creative-studio/generate-logos'
+      preLoaderRoute: typeof ApiCreativeStudioGenerateLogosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/creative-studio/generate': {
       id: '/api/creative-studio/generate'
       path: '/api/creative-studio/generate'
@@ -751,15 +993,25 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRouteRoute: BlogRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AiImageDesignerRoute: AiImageDesignerRoute,
+  AiImageGeneratorRoute: AiImageGeneratorRoute,
+  AiLogoDesignerRoute: AiLogoDesignerRoute,
+  AiProductVideoGeneratorRoute: AiProductVideoGeneratorRoute,
   FeaturesRoute: FeaturesRoute,
   HowItWorksRoute: HowItWorksRoute,
+  LlmDottxtRoute: LlmDottxtRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   PricingRoute: PricingRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
   ApiUploadRoute: ApiUploadRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthDriveCallbackRoute: AuthDriveCallbackRoute,
+  CreativeStudioLogoRoute: CreativeStudioLogoRoute,
+  CreativeStudioVideoRoute: CreativeStudioVideoRoute,
   DocumentsIdRoute: DocumentsIdRoute,
   BankStatementsIndexRoute: BankStatementsIndexRoute,
   CreativeStudioIndexRoute: CreativeStudioIndexRoute,
@@ -774,6 +1026,8 @@ const rootRouteChildren: RootRouteChildren = {
   StorageIndexRoute: StorageIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ApiCreativeStudioGenerateRoute: ApiCreativeStudioGenerateRoute,
+  ApiCreativeStudioGenerateLogosRoute: ApiCreativeStudioGenerateLogosRoute,
+  ApiCreativeStudioGenerateVideoRoute: ApiCreativeStudioGenerateVideoRoute,
   ApiCreativeStudioRegenerateRoute: ApiCreativeStudioRegenerateRoute,
   ApiEmailSendRoute: ApiEmailSendRoute,
   ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,

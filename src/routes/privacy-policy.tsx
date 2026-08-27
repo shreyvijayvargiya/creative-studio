@@ -8,8 +8,8 @@ import {
 export const Route = createFileRoute('/privacy-policy')({
   head: () =>
     legalPageHead(
-      'Privacy Policy | Creative Studio',
-      'How Creative Studio collects, uses, and protects your data when you use our AI ecommerce creative tools.',
+      'Privacy Policy | Kixi',
+      'How Kixi collects, uses, and protects your data when you use our AI logo, video, and image tools.',
       '/privacy-policy',
     ),
   component: PrivacyPolicyPage,

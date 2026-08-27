@@ -20,6 +20,7 @@ import { toast } from 'sonner'
 // import { useLoginModal } from '#/components/auth/login-modal-provider'
 import { ColorPaletteDropdown } from '#/components/creative-studio/color-palette-dropdown'
 import { CreativeVariantCard } from '#/components/creative-studio/creative-variant-card'
+import { StudioPreviewPanel } from '#/components/creative-studio/studio-preview-panel'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -32,7 +33,6 @@ import { Checkbox } from '#/components/ui/checkbox'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { PageHeader } from '#/components/ui/page-header'
-import { Skeleton } from '#/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import { Textarea } from '#/components/ui/textarea'
 import { useStableServerFn } from '#/hooks/use-stable-server-fn'
@@ -248,12 +248,10 @@ export function CreativeStudioDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <PageHeader
-          title="Creative Studio"
-          description="Upload 1–3 product photos, write a prompt, and generate marketplace creatives."
-        />
-      </div>
+      <PageHeader
+        title="AI Image Designer"
+        description="Upload 1–3 product photos, write a prompt, and generate marketplace creatives."
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[400px_1fr]">
         <div className="space-y-4">
@@ -592,85 +590,46 @@ export function CreativeStudioDashboard() {
           </Card>
         </div>
 
-        <Card className="min-h-[420px]">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Results</CardTitle>
-            <CardDescription>
-              Compare original vs generated, apply effects, then download as PNG, JPEG, GIF, or SVG.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {results.length === 0 && !generateMutation.isPending ? (
-              <div className="flex min-h-[320px] flex-col items-center justify-center rounded-xl border border-dashed text-center">
-                <ImageIcon className="mb-2 size-8 text-muted-foreground/50" />
-                <p className="text-sm text-muted-foreground">
-                  Generated creatives will appear here
-                </p>
-              </div>
-            ) : null}
-
-            {generateMutation.isPending ? (
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Generating {count} creative{count > 1 ? 's' : ''} for{' '}
-                  {CREATIVE_PLATFORMS.find((p) => p.id === platformId)?.label}…
-                </p>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {Array.from({ length: count }, (_, i) => (
-                    <div key={`loader-${i}`} className="space-y-2">
-                      <Skeleton
-                        className="w-full rounded-xl"
-                        style={{
-                          aspectRatio: resolvedDimension
-                            ? `${resolvedDimension.widthPx} / ${resolvedDimension.heightPx}`
-                            : '1 / 1',
-                        }}
-                      />
-                      <div className="flex items-center justify-between gap-2">
-                        <Skeleton className="h-3 w-20" />
-                        <Skeleton className="h-7 w-20" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            {results.length > 0 && primaryPreview && files.length > 0 && !generateMutation.isPending ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {results.map((variant) => (
-                  <CreativeVariantCard
-                    key={`${variant.formatId}-${variant.index}`}
-                    variant={variant}
-                    beforeUrl={primaryPreview}
-                    files={files}
-                    platformId={platformId}
-                    formatId={formatId}
-                    dimensionId={dimensionId}
-                    widthPx={variant.widthPx || resolvedDimension?.widthPx || 1080}
-                    heightPx={variant.heightPx || resolvedDimension?.heightPx || 1080}
-                    styleId={styleId}
-                    paletteId={paletteId}
-                    count={count}
-                    productNotes={productNotes}
-                    disabled={generateMutation.isPending}
-                    onVariantUpdated={handleVariantUpdated}
-                  />
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-dashed sm:col-span-2"
-                  onClick={() => generateMutation.mutate()}
-                  disabled={!canGenerate}
-                >
-                  <RefreshCcw className="size-3.5" />
-                  Regenerate all
-                </Button>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
+        <StudioPreviewPanel
+          icon={ImageIcon}
+          emptyLabel="Fill in the form and generate — results show up here."
+          loading={generateMutation.isPending}
+          loadingLabel={`Generating ${count} creative${count > 1 ? 's' : ''}…`}
+        >
+          {results.length > 0 && primaryPreview && files.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {results.map((variant) => (
+                <CreativeVariantCard
+                  key={`${variant.formatId}-${variant.index}`}
+                  variant={variant}
+                  beforeUrl={primaryPreview}
+                  files={files}
+                  platformId={platformId}
+                  formatId={formatId}
+                  dimensionId={dimensionId}
+                  widthPx={variant.widthPx || resolvedDimension?.widthPx || 1080}
+                  heightPx={variant.heightPx || resolvedDimension?.heightPx || 1080}
+                  styleId={styleId}
+                  paletteId={paletteId}
+                  count={count}
+                  productNotes={productNotes}
+                  disabled={generateMutation.isPending}
+                  onVariantUpdated={handleVariantUpdated}
+                />
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                className="border-dashed sm:col-span-2"
+                onClick={() => generateMutation.mutate()}
+                disabled={!canGenerate}
+              >
+                <RefreshCcw className="size-3.5" />
+                Regenerate all
+              </Button>
+            </div>
+          ) : null}
+        </StudioPreviewPanel>
       </div>
     </div>
   )

@@ -1,11 +1,10 @@
 import {
-  Calculator,
-  Cloud,
-  FileCheck,
-  FileText,
-  PenLine,
-  Shield,
-  TableProperties,
+  Clapperboard,
+  Hexagon,
+  ImageIcon,
+  Palette,
+  Sparkles,
+  WandSparkles,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -17,7 +16,8 @@ export const LANDING_NAV_LINKS = [
 ] as const
 */
 export const LANDING_NAV_LINKS = [
-  { label: 'Try demo', href: '/creative-studio' },
+  { label: 'Tools', href: '/', hash: 'tools' },
+  { label: 'How it works', href: '/', hash: 'how-it-works' },
   { label: 'Pricing', href: '/pricing' },
 ] as const
 
@@ -26,24 +26,17 @@ export const LANDING_LEGAL_LINKS = [
   { label: 'Terms of service', href: '/terms-of-service' },
 ] as const
 
-/* DEMO: original stats
 export const HERO_HOME_STATS = [
-  { value: 'Free', label: 'To get started' },
-  { value: 'ATO', label: 'PDF templates' },
-  { value: '100%', label: 'Secure storage' },
-] as const
-*/
-export const HERO_HOME_STATS = [
-  { value: '1 photo', label: 'In → multi-platform out' },
-  { value: 'Etsy+', label: 'Shopify · IG · Pinterest' },
-  { value: '3–10', label: 'Assets per run' },
+  { value: '3 tools', label: 'Logo · video · image' },
+  { value: '24', label: 'Logo styles at once' },
+  { value: '1 brief', label: 'In → files you can ship' },
 ] as const
 
 export const LANDING_STATS = [
-  { value: 'ATO-ready', label: 'Tax PDF templates' },
-  { value: 'E-sign', label: 'Built-in DocuSeal' },
-  { value: 'Drive', label: 'Per-user backup' },
-  { value: 'Secure', label: 'PIN-protected shares' },
+  { value: 'Logo', label: 'AI vector designer' },
+  { value: 'Video', label: 'Product clips' },
+  { value: 'Image', label: 'Listing stills' },
+  { value: 'Free', label: 'Live demo to try' },
 ] as const
 
 export interface LandingFeature {
@@ -54,67 +47,67 @@ export interface LandingFeature {
 
 export const LANDING_FEATURES: LandingFeature[] = [
   {
-    icon: TableProperties,
-    title: 'Budget planner',
+    icon: Hexagon,
+    title: 'AI logo designer',
     description:
-      'Spreadsheet-style budget grid with income, expenses, and net position — built for small business accounting workflows.',
+      'Generate original SVG logos in 24 styles from a brand name, a brief, or optional inspiration images — then download SVG, PNG, or JPEG.',
   },
   {
-    icon: FileText,
-    title: 'ATO tax PDFs',
+    icon: Clapperboard,
+    title: 'AI product video generator',
     description:
-      'Generate structured tax return PDFs from your budget data and taxpayer details in a few guided steps.',
+      'Turn product stills into a short clip for storefronts, UGC-style ads, and lifestyle stories. Pick a format, generate once, download MP4.',
   },
   {
-    icon: PenLine,
-    title: 'E-signing',
+    icon: ImageIcon,
+    title: 'AI image designer',
     description:
-      'Send documents to DocuSeal for embedded signing. Completed PDFs are saved automatically to your workspace.',
+      'Upload 1–3 product photos and generate marketplace creatives for Etsy, Shopify, Instagram, and Pinterest with palettes and exact canvas sizes.',
   },
   {
-    icon: Cloud,
-    title: 'Google Drive backup',
+    icon: Palette,
+    title: 'Colour and canvas control',
     description:
-      'Connect your own Google account and sync signed PDFs to Drive using your storage quota — not a shared service account.',
+      'Steer output with palettes, platform sizes, and custom dimensions so assets match the listing or social slot you need.',
   },
   {
-    icon: Shield,
-    title: 'Secure document storage',
+    icon: Sparkles,
+    title: 'Variants, not one-offs',
     description:
-      'Private Supabase storage with optional PIN protection when sharing PDF links with clients or advisers.',
+      'Compare 3–10 image variants, 24 logo styles, or a focused product clip — then keep the one that fits the brand.',
   },
   {
-    icon: Calculator,
-    title: 'Finance workspace',
+    icon: WandSparkles,
+    title: 'Files designers already use',
     description:
-      'Dashboard, document library, and settings in one calm interface designed for accountants and bookkeepers.',
+      'Download logos as SVG or raster, stills as PNG/JPEG/GIF/SVG, and videos as MP4 — without a separate export pipeline.',
   },
 ]
 
 export const LANDING_STEPS = [
   {
     step: '01',
-    title: 'Create your account',
+    title: 'Open a studio',
     description:
-      'Sign up with email or Google. Your workspace is ready in seconds.',
+      'Choose AI logo designer, product video, or image generation — same workspace, same Kixi theme.',
   },
   {
     step: '02',
-    title: 'Plan your budget',
+    title: 'Add a brief',
     description:
-      'Use the budget grid and taxpayer form to capture figures and client details.',
+      'Write a prompt, add a brand name, and optionally drop in 1–3 reference images as inspiration.',
   },
   {
     step: '03',
-    title: 'Generate & sign',
+    title: 'Generate',
     description:
-      'Create an ATO PDF, sign in the embedded DocuSeal flow, and finalize the document.',
+      'Kixi runs the selected tool — 24 logo styles, a short product clip, or a set of marketplace stills.',
   },
   {
     step: '04',
-    title: 'Store & share',
+    title: 'Download and ship',
     description:
-      'Documents save to your library. Optionally back up to Google Drive or share with a PIN.',
+      'Export SVG, PNG, JPEG, GIF, or MP4 and drop the files into your listing, brand kit, or edit stack.',
   },
 ] as const
 
@@ -133,24 +126,24 @@ export const LANDING_PRICING_TIERS: PricingTier[] = [
     name: 'Free',
     price: '$0',
     period: 'per month',
-    description: 'For solo practitioners getting started with digital workflows.',
+    description: 'Try every Kixi studio with the live demo.',
     features: [
-      'Budget planner & ATO PDF generation',
-      'Document library',
-      'E-sign via DocuSeal',
-      '100MB storage',
+      'AI logo designer (SVG styles)',
+      'AI product video generator',
+      'AI image designer for listings',
+      'Downloads in common design formats',
     ],
-    cta: 'Get started free',
+    cta: 'Open Kixi',
   },
   {
     name: 'Pro',
     price: '$29',
     period: 'per month',
-    description: 'For growing practices that need more volume and Drive sync.',
+    description: 'For designers who generate every week.',
     features: [
       'Everything in Free',
-      'Google Drive backup',
-      'Priority document storage',
+      'Higher generation limits',
+      'Priority rendering',
       'Email support',
     ],
     highlighted: true,
@@ -160,11 +153,11 @@ export const LANDING_PRICING_TIERS: PricingTier[] = [
     name: 'Team',
     price: '$79',
     period: 'per month',
-    description: 'For small firms coordinating multiple clients and users.',
+    description: 'For studios sharing a creative workspace.',
     features: [
       'Everything in Pro',
+      'Shared brand briefs (coming soon)',
       'Multi-user workspace (coming soon)',
-      'Shared document folders',
       'Dedicated onboarding',
     ],
     cta: 'Contact sales',
@@ -173,23 +166,23 @@ export const LANDING_PRICING_TIERS: PricingTier[] = [
 
 export const LANDING_FAQ = [
   {
-    question: 'Is this built for Australian accounting?',
+    question: 'What is Kixi?',
     answer:
-      'Yes. The budget planner and ATO tax PDF workflow are designed for Australian small business and tax preparation use cases.',
+      'Kixi is a creative studio for designers. It includes an AI logo designer, an AI product video generator, and an AI image designer in one workspace.',
   },
   {
-    question: 'When will payments be available?',
+    question: 'Do I need a credit card to try it?',
     answer:
-      'Pricing shown is indicative. Stripe and PayPal checkout will be added in a future release. You can use the free tier today.',
+      'No. Open the live demo and generate logos, product videos, or images. Paid plans will unlock higher limits when checkout ships.',
   },
   {
-    question: 'Where are my documents stored?',
+    question: 'Can I upload images as logo inspiration?',
     answer:
-      'Documents are stored in your private Supabase workspace. Signed PDFs can optionally sync to your own Google Drive.',
+      'Yes. The logo tool accepts up to three optional references. They steer colour, subject, or an existing mark — Kixi redraws a new vector logo rather than tracing a photo.',
   },
   {
-    question: 'Do I need to connect Google Drive?',
+    question: 'What files can I download?',
     answer:
-      'No. Drive backup is optional. Connect it once in Settings to automatically upload signed PDFs.',
+      'Logos as SVG, PNG, JPEG, or a simple mark. Stills as PNG, JPEG, GIF, or SVG. Product videos as MP4.',
   },
 ] as const

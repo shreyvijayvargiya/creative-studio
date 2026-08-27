@@ -1,11 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-
-import { CreativeStudioDashboard } from '#/components/creative-studio/creative-studio-dashboard'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/creative-studio/')({
-  component: CreativeStudioPage,
+  beforeLoad: () => {
+    throw redirect({ to: '/ai-image-designer' })
+  },
+  component: () => null,
 })
-
-function CreativeStudioPage() {
-  return <CreativeStudioDashboard />
-}

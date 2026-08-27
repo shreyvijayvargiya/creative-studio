@@ -46,9 +46,13 @@ export const navSections: NavSection[] = [
         ],
       },
       {
-        label: 'Creative Studio',
+        label: 'Kixi',
         icon: Sparkles,
-        href: '/creative-studio',
+        children: [
+          { label: 'Images', href: '/ai-image-designer' },
+          { label: 'Video', href: '/ai-product-video-generator' },
+          { label: 'Logo', href: '/ai-logo-designer' },
+        ],
       },
       {
         label: 'Workspace',

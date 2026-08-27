@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  Briefcase,
-  Code2,
-  Rocket,
-  TrendingUp,
+  Clapperboard,
+  Hexagon,
+  ImageIcon,
+  Sparkles,
   Zap,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -23,28 +23,28 @@ export interface CtaBenefitItem {
 
 const DEFAULT_CTA_BENEFITS: CtaBenefitItem[] = [
   {
-    icon: TrendingUp,
-    label: 'Never miss a client filing deadline',
-    iconBg: 'bg-emerald-100 dark:bg-emerald-950/50',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    icon: Hexagon,
+    label: 'AI logo designer — original SVG marks',
+    iconBg: 'bg-fuchsia-100 dark:bg-fuchsia-950/50',
+    iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
   },
   {
-    icon: Rocket,
-    label: 'Generate ATO-ready PDFs in minutes',
+    icon: Clapperboard,
+    label: 'AI product video generator — short clips',
+    iconBg: 'bg-orange-100 dark:bg-orange-950/50',
+    iconColor: 'text-orange-600 dark:text-orange-400',
+  },
+  {
+    icon: ImageIcon,
+    label: 'AI image designer — listing stills',
     iconBg: 'bg-blue-100 dark:bg-blue-950/50',
     iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
-    icon: Briefcase,
-    label: 'Collect e-signatures without switching tools',
+    icon: Sparkles,
+    label: 'One creative studio for designers',
     iconBg: 'bg-teal-100 dark:bg-teal-950/50',
     iconColor: 'text-teal-600 dark:text-teal-400',
-  },
-  {
-    icon: Code2,
-    label: 'Keep every client document in one workspace',
-    iconBg: 'bg-orange-100 dark:bg-orange-950/50',
-    iconColor: 'text-orange-600 dark:text-orange-400',
   },
 ]
 
@@ -82,9 +82,9 @@ export function LandingCtaSection({
   title,
   description,
   benefits = DEFAULT_CTA_BENEFITS,
-  primaryLabel = 'Get started free',
-  primaryHref = '/dashboard',
-  footer = 'Join accounting teams · Free to start',
+  primaryLabel = 'Open Kixi',
+  primaryHref = '/ai-image-designer',
+  footer = 'Live demo · Free to try',
   fullScreen = true,
 }: LandingCtaSectionProps) {
   return (

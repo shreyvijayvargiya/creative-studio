@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Bell, Menu, PanelLeft, PanelLeftClose, Search, Sparkles } from 'lucide-react'
+import { Bell, Menu, PanelLeft, PanelLeftClose, Search } from 'lucide-react'
 
 import {
   AppAiSidebarMobile,
   AppAiSidebarToggle,
 } from '#/components/layout/app-ai-sidebar'
 import { SearchCommand } from '#/components/layout/search-command'
+import { CreativeStudioSidebarContent } from '#/components/layout/creative-studio-sidebar'
 import { SidebarContent } from '#/components/layout/sidebar'
 import { useSidebar } from '#/components/layout/sidebar-provider'
 import { ThemeToggleButton } from '#/components/layout/theme-toggle-button'
 import { TopbarUserMenu } from '#/components/layout/topbar-user-menu'
 import { Button } from '#/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '#/components/ui/sheet'
+import { APP_NAME, APP_TAGLINE } from '#/lib/brand'
 
 interface TopbarProps {
   /** DEMO: Creative Studio — hide Finance CRM chrome, keep avatar */
@@ -42,52 +44,62 @@ export function Topbar({ demoMode = false }: TopbarProps) {
   return (
     <>
       <header className="z-30 flex h-14 shrink-0 items-center gap-2 rounded-xl border border-border bg-background px-3 sm:gap-3 sm:px-4">
-        {/* DEMO: Finance CRM mobile nav + sidebar toggle hidden on Creative Studio */}
-        {!demoMode ? (
-          <>
-            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
-                  <Menu className="size-5" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-64 border-border bg-sidebar p-0 text-sidebar-foreground"
-              >
-                <SidebarContent onNavigate={() => setMobileNavOpen(false)} />
-              </SheetContent>
-            </Sheet>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="hidden text-muted-foreground lg:inline-flex"
-              onClick={toggleSidebar}
-            >
-              {collapsed ? (
-                <PanelLeft className="size-5" />
-              ) : (
-                <PanelLeftClose className="size-5" />
-              )}
-              <span className="sr-only">
-                {collapsed ? 'Open sidebar' : 'Close sidebar'}
-              </span>
+        <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="lg:hidden">
+              <Menu className="size-5" />
+              <span className="sr-only">Open menu</span>
             </Button>
-          </>
-        ) : (
+          </SheetTrigger>
+          <SheetContent
+            side="left"
+            className="w-64 border-border bg-sidebar p-0 text-sidebar-foreground"
+          >
+            {demoMode ? (
+              <CreativeStudioSidebarContent
+                onNavigate={() => setMobileNavOpen(false)}
+              />
+            ) : (
+              <SidebarContent onNavigate={() => setMobileNavOpen(false)} />
+            )}
+          </SheetContent>
+        </Sheet>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="hidden text-muted-foreground lg:inline-flex"
+          onClick={toggleSidebar}
+        >
+          {collapsed ? (
+            <PanelLeft className="size-5" />
+          ) : (
+            <PanelLeftClose className="size-5" />
+          )}
+          <span className="sr-only">
+            {collapsed ? 'Open sidebar' : 'Close sidebar'}
+          </span>
+        </Button>
+
+        {demoMode ? (
           <Link
             to="/"
-            className="inline-flex items-center gap-2 rounded-lg px-1.5 py-1 text-sm font-semibold tracking-tight text-foreground hover:bg-muted"
+            className="inline-flex min-w-0 items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-muted"
           >
-            <span className="flex size-7 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Sparkles className="size-3.5" />
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-[11px] font-semibold text-white">
+              K
             </span>
-            <span className="hidden sm:inline">Creative Studio</span>
+            <span className="hidden min-w-0 sm:block">
+              <span className="block text-sm font-semibold tracking-tight text-foreground">
+                {APP_NAME}
+              </span>
+              <span className="block text-[10px] leading-none text-muted-foreground">
+                {APP_TAGLINE}
+              </span>
+            </span>
           </Link>
-        )}
+        ) : null}
 
         {/* DEMO: document search hidden on Creative Studio */}
         {!demoMode ? (

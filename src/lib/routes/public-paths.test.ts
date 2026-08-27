@@ -12,6 +12,9 @@ describe('public-paths', () => {
     expect(isPublicRoute('/features')).toBe(true)
     expect(isPublicRoute('/blog')).toBe(true)
     expect(isPublicRoute('/pricing')).toBe(true)
+    expect(isPublicRoute('/ai-logo-designer')).toBe(false)
+    expect(isPublicRoute('/ai-product-video-generator')).toBe(false)
+    expect(isPublicRoute('/ai-image-designer')).toBe(false)
   })
 
   it('marks auth callbacks and pin pdf views as exempt', () => {
@@ -22,6 +25,11 @@ describe('public-paths', () => {
     expect(isAuthExemptRoute('/api/email/send')).toBe(true)
     expect(isAuthExemptRoute('/api/upload')).toBe(true)
     expect(isAuthExemptRoute('/pdf/view/report.pdf')).toBe(true)
+    expect(isAuthExemptRoute('/sitemap.xml')).toBe(true)
+    expect(isAuthExemptRoute('/rss.xml')).toBe(true)
+    expect(isAuthExemptRoute('/llm.txt')).toBe(true)
+    expect(isAuthExemptRoute('/llms.txt')).toBe(true)
+    expect(isAuthExemptRoute('/robots.txt')).toBe(true)
   })
 
   it('requires auth for dashboard and app routes', () => {
