@@ -5,6 +5,16 @@ import type { LandingThemeMeta } from '#/types/creative-studio'
 
 const THEME_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/
 
+/**
+ * Vite inlines these at build time so Vercel / Nitro do not need a prompts/
+ * folder on disk (process.cwd() is /var/task there).
+ */
+const bundledPromptFiles = import.meta.glob('../../../prompts/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+
 export function getPromptsDirectory(): string {
   return join(process.cwd(), 'prompts')
 }
@@ -142,22 +152,27 @@ export function parseLandingThemeMarkdown(
   }
 }
 
-export async function listLandingThemes(): Promise<LandingThemeMeta[]> {
+function fileNameFromPath(path: string): string {
+  return path.split(/[\\/]/).pop() ?? path
+}
+
+function loadBundledPrompts(): Array<{ id: string; fileName: string; markdown: string }> {
+  return Object.entries(bundledPromptFiles)
+    .map(([path, markdown]) => {
+      const fileName = fileNameFromPath(path)
+      const id = fileName.replace(/\.md$/i, '')
+      return { id, fileName, markdown }
+    })
+    .filter((item) => isLandingThemeId(item.id) && item.markdown.trim().length > 0)
+    .sort((a, b) => a.fileName.localeCompare(b.fileName))
+}
+
+async function loadDiskPrompts(): Promise<
+  Array<{ id: string; fileName: string; markdown: string }>
+> {
   const directory = getPromptsDirectory()
-  let entries: string[]
-
-  try {
-    entries = await readdir(directory)
-  } catch {
-    throw new Error(
-      `Landing themes not found. Expected markdown files in ${directory}`,
-    )
-  }
-
+  const entries = await readdir(directory)
   const files = entries.filter((name) => name.endsWith('.md')).sort()
-  if (files.length === 0) {
-    throw new Error(`No theme prompts found in ${directory}`)
-  }
 
   const themes = await Promise.all(
     files.map(async (fileName) => {
@@ -166,11 +181,42 @@ export async function listLandingThemes(): Promise<LandingThemeMeta[]> {
         return null
       }
       const markdown = await readFile(join(directory, fileName), 'utf-8')
-      return parseLandingThemeMarkdown(id, fileName, markdown)
+      return { id, fileName, markdown }
     }),
   )
 
-  return themes.filter((theme): theme is LandingThemeMeta => theme !== null)
+  return themes.filter(
+    (item): item is { id: string; fileName: string; markdown: string } => item !== null,
+  )
+}
+
+async function loadPromptFiles(): Promise<
+  Array<{ id: string; fileName: string; markdown: string }>
+> {
+  const bundled = loadBundledPrompts()
+  if (bundled.length > 0) {
+    return bundled
+  }
+
+  try {
+    const fromDisk = await loadDiskPrompts()
+    if (fromDisk.length > 0) {
+      return fromDisk
+    }
+  } catch {
+    // Vercel cwd is /var/task and does not include prompts/.
+  }
+
+  throw new Error(
+    'Landing themes not found. Add markdown files to prompts/ and rebuild.',
+  )
+}
+
+export async function listLandingThemes(): Promise<LandingThemeMeta[]> {
+  const files = await loadPromptFiles()
+  return files.map((file) =>
+    parseLandingThemeMarkdown(file.id, file.fileName, file.markdown),
+  )
 }
 
 export async function readLandingThemePrompt(id: string): Promise<{
@@ -181,18 +227,14 @@ export async function readLandingThemePrompt(id: string): Promise<{
     throw new Error('Unknown landing theme')
   }
 
-  const fileName = `${id}.md`
-  const filePath = join(getPromptsDirectory(), fileName)
-  let markdown: string
-
-  try {
-    markdown = await readFile(filePath, 'utf-8')
-  } catch {
+  const files = await loadPromptFiles()
+  const match = files.find((file) => file.id === id)
+  if (!match) {
     throw new Error(`Theme "${id}" was not found in prompts/`)
   }
 
   return {
-    meta: parseLandingThemeMarkdown(id, fileName, markdown),
-    prompt: extractDesignSystemPrompt(markdown),
+    meta: parseLandingThemeMarkdown(match.id, match.fileName, match.markdown),
+    prompt: extractDesignSystemPrompt(match.markdown),
   }
 }

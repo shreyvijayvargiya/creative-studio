@@ -29,6 +29,7 @@ describe('landing themes', () => {
     const themes = await listLandingThemes()
     expect(themes.length).toBeGreaterThanOrEqual(20)
     expect(themes.some((theme) => theme.id === 'saas')).toBe(true)
+    expect(themes.some((theme) => theme.id === 'swiss')).toBe(true)
     expect(themes.every((theme) => theme.name.length > 0)).toBe(true)
     expect(themes.every((theme) => theme.tagline.length >= 8)).toBe(true)
   })

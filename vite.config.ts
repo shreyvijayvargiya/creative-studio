@@ -7,6 +7,15 @@ import tailwindcss from '@tailwindcss/vite'
 
 const isVercel = Boolean(process.env.VERCEL)
 
+const nitroOptions = {
+  serverAssets: [
+    {
+      baseName: 'prompts',
+      dir: './prompts',
+    },
+  ],
+}
+
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
@@ -16,6 +25,7 @@ export default defineConfig({
     nitro(
       isVercel
         ? {
+            ...nitroOptions,
             preset: 'vercel',
             vercel: {
               entryFormat: 'node',
@@ -24,7 +34,7 @@ export default defineConfig({
               },
             },
           }
-        : undefined,
+        : nitroOptions,
     ),
     viteReact(),
   ],
