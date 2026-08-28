@@ -51,7 +51,7 @@ export const MARKETING_TOOLS: MarketingTool[] = [
     eyebrow: 'React pages in 24 themes',
     headline: 'One brief into themed landing pages you can ship',
     description:
-      'Write a prompt, optionally drop in photos, and pick a design theme. Kixi injects the theme system into the generator and returns multiple React + Tailwind + Lucide variants — download as a Vite or Next.js repo, or as HTML.',
+      'Write a prompt, drop in 3–10 product photos, and pick a design theme. Kixi stores the photos, injects them into the generator, and returns one React + Tailwind page you can refine in chat — download as a Vite or Next.js repo, or as HTML.',
     path: STUDIO_PATHS.landing,
     ctaLabel: 'Create a landing page',
     icon: LayoutTemplate,
@@ -60,7 +60,8 @@ export const MARKETING_TOOLS: MarketingTool[] = [
     cardHoverBg: 'hover:bg-emerald-50 dark:hover:bg-emerald-950/30',
     highlights: [
       '24 design themes from markdown prompts',
-      '3–10 layout variants per brief',
+      '3–10 product photos per page',
+      'Chat to update copy, layout, and sections',
       'Download Vite, Next.js, or HTML + Tailwind',
     ],
   },

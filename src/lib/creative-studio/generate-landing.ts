@@ -1,13 +1,14 @@
 import {
+  buildLandingRevisePrompt,
   buildLandingSystemPrompt,
   buildLandingUserPrompt,
 } from '#/lib/creative-studio/build-landing-prompt'
-import { LANDING_PARALLELISM } from '#/lib/creative-studio/landing-config'
-import { getLandingLayouts } from '#/lib/creative-studio/landing-layouts'
+import { getLandingLayout, getLandingLayouts } from '#/lib/creative-studio/landing-layouts'
 import { readLandingThemePrompt } from '#/lib/creative-studio/landing-themes'
 import type {
   GenerateLandingPagesResult,
   GeneratedLandingVariant,
+  LandingStoredImage,
 } from '#/types/creative-studio'
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
@@ -37,16 +38,7 @@ function toDataUrl(imageBase64: string, mimeType: string): string {
   return `data:${mimeType};base64,${cleaned}`
 }
 
-export function imagePublicPath(
-  index: number,
-  fileName: string,
-  mimeType: string,
-): string {
-  const fromName = fileName.match(/\.(png|jpe?g|webp)$/i)?.[1]?.toLowerCase()
-  const fromMime = mimeType.replace('image/', '').replace('jpeg', 'jpg')
-  const ext = fromName === 'jpeg' ? 'jpg' : (fromName ?? fromMime ?? 'png')
-  return `/images/ref-${index + 1}.${ext}`
-}
+export { imagePublicPath } from '#/lib/creative-studio/landing-images'
 
 type UserContent =
   | string
@@ -59,6 +51,7 @@ export function extractLandingPayload(raw: string): {
   title: string
   reactCode: string
   htmlCode: string
+  chatReply?: string
 } {
   const fencedJson = raw.match(/```(?:json)?\s*([\s\S]*?)```/i)
   const candidate = fencedJson?.[1]?.trim() ?? raw.trim()
@@ -71,6 +64,7 @@ export function extractLandingPayload(raw: string): {
         title?: unknown
         reactCode?: unknown
         htmlCode?: unknown
+        chatReply?: unknown
       }
       const reactCode = typeof parsed.reactCode === 'string' ? parsed.reactCode.trim() : ''
       const htmlCode = typeof parsed.htmlCode === 'string' ? parsed.htmlCode.trim() : ''
@@ -82,6 +76,10 @@ export function extractLandingPayload(raw: string): {
               : 'Landing page',
           reactCode,
           htmlCode,
+          chatReply:
+            typeof parsed.chatReply === 'string' && parsed.chatReply.trim()
+              ? parsed.chatReply.trim()
+              : undefined,
         }
       }
     } catch {
@@ -99,34 +97,24 @@ export function extractLandingPayload(raw: string): {
   }
 }
 
-async function mapPool<T, R>(
-  items: T[],
-  limit: number,
-  mapper: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const results = new Array<R>(items.length)
-  let cursor = 0
-
-  async function worker() {
-    while (cursor < items.length) {
-      const index = cursor
-      cursor += 1
-      const item = items[index]
-      if (item === undefined) continue
-      results[index] = await mapper(item, index)
-    }
-  }
-
-  const pool = Array.from({ length: Math.min(limit, items.length) }, () => worker())
-  await Promise.all(pool)
-  return results
+function visionUserContent(
+  text: string,
+  images: Array<{ imageBase64: string; mimeType: string }>,
+): UserContent {
+  return [
+    { type: 'text', text },
+    ...images.map((image) => ({
+      type: 'image_url' as const,
+      image_url: { url: toDataUrl(image.imageBase64, image.mimeType) },
+    })),
+  ]
 }
 
 async function requestLandingVariant(input: {
   config: ReturnType<typeof getLandingModelConfig>
   system: string
   user: UserContent
-}): Promise<{ title: string; reactCode: string; htmlCode: string }> {
+}): Promise<{ title: string; reactCode: string; htmlCode: string; chatReply?: string }> {
   const response = await fetch(OPENROUTER_API_URL, {
     method: 'POST',
     headers: {
@@ -176,8 +164,8 @@ async function requestLandingVariant(input: {
 export interface GenerateLandingPagesInput {
   themeId: string
   userPrompt: string
-  count: number
   images: Array<{ imageBase64: string; mimeType: string; fileName: string }>
+  storedImages: LandingStoredImage[]
 }
 
 export async function generateLandingPages(
@@ -185,70 +173,106 @@ export async function generateLandingPages(
 ): Promise<GenerateLandingPagesResult> {
   const config = getLandingModelConfig()
   const { meta, prompt: themePrompt } = await readLandingThemePrompt(input.themeId)
-  const layouts = getLandingLayouts(input.count)
-  const system = buildLandingSystemPrompt()
-  const imagePaths = input.images.map((image, index) =>
-    imagePublicPath(index, image.fileName, image.mimeType),
-  )
-  const referenceUrls = input.images.map((image) =>
-    toDataUrl(image.imageBase64, image.mimeType),
-  )
+  const layout = getLandingLayouts(1)[0]
 
-  const variants = await mapPool(layouts, LANDING_PARALLELISM, async (layout, index) => {
-    const text = buildLandingUserPrompt({
-      theme: meta,
-      themePrompt,
-      layout,
-      userPrompt: input.userPrompt,
-      imagePaths,
-      variantIndex: index,
-      variantCount: layouts.length,
-    })
+  const imagePaths = input.storedImages.map((image) => image.publicPath)
+  const text = buildLandingUserPrompt({
+    theme: meta,
+    themePrompt,
+    layout,
+    userPrompt: input.userPrompt,
+    imagePaths,
+  })
+  const generated = await requestLandingVariant({
+    config,
+    system: buildLandingSystemPrompt(),
+    user: visionUserContent(text, input.images),
+  })
 
-    const user: UserContent =
-      referenceUrls.length === 0
-        ? text
-        : [
-            { type: 'text', text },
-            ...referenceUrls.map((url) => ({
-              type: 'image_url' as const,
-              image_url: { url },
-            })),
-          ]
+  if (!generated.reactCode && !generated.htmlCode) {
+    throw new Error('Landing page generation failed')
+  }
 
-    try {
-      const generated = await requestLandingVariant({ config, system, user })
-      const variant: GeneratedLandingVariant = {
-        index,
+  return {
+    variants: [
+      {
+        index: 0,
         layoutId: layout.id,
         label: layout.label,
         title: generated.title,
         reactCode: generated.reactCode || undefined,
         htmlCode: generated.htmlCode || undefined,
-      }
-      return variant
-    } catch (error) {
-      const variant: GeneratedLandingVariant = {
-        index,
-        layoutId: layout.id,
-        label: layout.label,
-        error: error instanceof Error ? error.message : 'Landing generation failed',
-      }
-      return variant
-    }
-  })
-
-  const succeeded = variants.filter((item) => item.reactCode || item.htmlCode).length
-  if (succeeded === 0) {
-    throw new Error(variants[0]?.error || 'Landing page generation failed')
-  }
-
-  return {
-    variants,
+      },
+    ],
     model: config.model,
     themeId: meta.id,
     themeName: meta.name,
-    count: succeeded,
+    count: 1,
     imagePaths,
+    storedImages: input.storedImages,
+  }
+}
+
+export interface ReviseLandingPageInput {
+  themeId: string
+  userPrompt: string
+  editPrompt: string
+  layoutId: string
+  previousTitle?: string
+  previousReactCode?: string
+  previousHtmlCode?: string
+  images: Array<{ imageBase64: string; mimeType: string; fileName: string }>
+  storedImages: LandingStoredImage[]
+  chatHistory?: Array<{ role: 'user' | 'assistant'; content: string }>
+}
+
+export interface ReviseLandingPageResult {
+  variant: GeneratedLandingVariant
+  chatReply: string
+  model: string
+  storedImages: LandingStoredImage[]
+}
+
+export async function reviseLandingPage(
+  input: ReviseLandingPageInput,
+): Promise<ReviseLandingPageResult> {
+  const config = getLandingModelConfig()
+  const { meta, prompt: themePrompt } = await readLandingThemePrompt(input.themeId)
+  const layout = getLandingLayout(input.layoutId) ?? getLandingLayouts(1)[0]
+
+  const imagePaths = input.storedImages.map((image) => image.publicPath)
+  const text = buildLandingRevisePrompt({
+    theme: meta,
+    themePrompt,
+    layout,
+    userPrompt: input.userPrompt,
+    editPrompt: input.editPrompt,
+    previousTitle: input.previousTitle,
+    previousReactCode: input.previousReactCode,
+    previousHtmlCode: input.previousHtmlCode,
+    imagePaths,
+    chatHistory: input.chatHistory,
+  })
+  const generated = await requestLandingVariant({
+    config,
+    system: buildLandingSystemPrompt(),
+    user: visionUserContent(text, input.images),
+  })
+  if (!generated.reactCode && !generated.htmlCode) {
+    throw new Error('Model did not return an updated landing page')
+  }
+
+  return {
+    variant: {
+      index: 0,
+      layoutId: layout.id,
+      label: layout.label,
+      title: generated.title,
+      reactCode: generated.reactCode || input.previousReactCode,
+      htmlCode: generated.htmlCode || input.previousHtmlCode,
+    },
+    chatReply: generated.chatReply || 'Updated the landing page.',
+    model: config.model,
+    storedImages: input.storedImages,
   }
 }

@@ -79,3 +79,7 @@ export const LANDING_LAYOUTS: LandingLayoutMeta[] = [
 export function getLandingLayouts(count: number): LandingLayoutMeta[] {
   return LANDING_LAYOUTS.slice(0, count)
 }
+
+export function getLandingLayout(id: string): LandingLayoutMeta | undefined {
+  return LANDING_LAYOUTS.find((layout) => layout.id === id)
+}

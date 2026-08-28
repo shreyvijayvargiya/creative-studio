@@ -22,7 +22,7 @@ const WORKFLOW_STEPS: WorkflowStepItem[] = LANDING_STEPS.map((step, index) => ({
     index === 1
       ? 'A prompt is enough. Add a brand name for logos, pick a design theme for landing pages, or drop in images as inspiration.'
       : index === 2
-        ? 'Landing pages return 3–10 themed variants. Logo runs 24 styles in parallel. Video returns one short MP4. Images return 3–10 variants at the canvas you picked.'
+        ? 'Landing pages return one themed page you can update in chat. Logo runs 24 styles in parallel. Video returns one short MP4. Images return 3–10 variants at the canvas you picked.'
         : undefined,
 }))
 

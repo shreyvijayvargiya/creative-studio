@@ -187,6 +187,13 @@ export interface GeneratedLandingVariant {
   error?: string
 }
 
+export interface LandingStoredImage {
+  storagePath: string
+  publicPath: string
+  fileName: string
+  mimeType: string
+}
+
 export interface GenerateLandingPagesResult {
   variants: GeneratedLandingVariant[]
   model: string
@@ -194,4 +201,5 @@ export interface GenerateLandingPagesResult {
   themeName: string
   count: number
   imagePaths: string[]
+  storedImages: LandingStoredImage[]
 }

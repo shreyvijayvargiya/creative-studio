@@ -51,7 +51,7 @@ export const LANDING_FEATURES: LandingFeature[] = [
     icon: LayoutTemplate,
     title: 'AI landing page creator',
     description:
-      'Describe the product, pick a design theme, and generate multiple React + Tailwind + Lucide variants. Download a Vite or Next.js repo, or convert to HTML.',
+      'Describe the product, upload 3–10 photos, pick a design theme, and generate one React + Tailwind page. Refine it in chat, then download a Vite or Next.js repo or HTML.',
   },
   {
     icon: Hexagon,
@@ -81,7 +81,7 @@ export const LANDING_FEATURES: LandingFeature[] = [
     icon: Sparkles,
     title: 'Variants, not one-offs',
     description:
-      'Compare 3–10 landing page layouts, 24 logo styles, or a focused product clip — then keep the one that fits the brand.',
+      'Compare 24 logo styles or 3–10 image variants, then refine a landing page in chat until it fits the brand.',
   },
   {
     icon: WandSparkles,
@@ -102,13 +102,13 @@ export const LANDING_STEPS = [
     step: '02',
     title: 'Add a brief',
     description:
-      'Write a prompt, add a brand name, and optionally drop in 1–3 reference images as inspiration.',
+      'Write a prompt, add a brand name, and drop in reference photos (3–10 for landing pages).',
   },
   {
     step: '03',
     title: 'Generate',
     description:
-      'Kixi runs the selected tool — themed landing page variants, 24 logo styles, a short product clip, or a set of marketplace stills.',
+      'Kixi runs the selected tool — one themed landing page you can chat-update, 24 logo styles, a short product clip, or a set of marketplace stills.',
   },
   {
     step: '04',
